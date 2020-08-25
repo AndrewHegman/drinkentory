@@ -1,6 +1,6 @@
 import React from "react";
 import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
-import { Route } from "react-router";
+import { Route, Switch } from "react-router";
 import { map, list, codeWorking } from "ionicons/icons";
 import { IonReactRouter } from "@ionic/react-router";
 import { routes } from "../Utils/Routes";
@@ -12,9 +12,7 @@ export const BaseTabs: React.FC<IBaseTabsProps> = () => {
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          {/* <Redirect exact path="/" to="/inventory" /> */}
           {routes.map((route, idx) => {
-            console.log(route);
             return (
               <Route key={idx} path={route.to} render={(props) => <route.component {...props} {...route.componentProps} />} exact={route.exact} />
             );

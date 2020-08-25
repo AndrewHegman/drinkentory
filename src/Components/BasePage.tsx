@@ -23,10 +23,14 @@ export const BasePage: React.FC<IBasePage> = (props) => {
   const [showSettingsPopover, setShowSettingsPopover] = React.useState<boolean>(false);
 
   React.useEffect(() => {
+    if (urlParams.has("domain")) {
+      return;
+    }
+
     history.push({
-      search: `?domain=${domain}`,
+      search: `?domain=${domain}${urlParams.toString().length > 0 ? "&" + urlParams.toString() : ""}`,
     });
-  }, [history, domain]);
+  }, [history, domain, urlParams]);
 
   const handleChange = (value: any) => {
     setDomain(value.detail.value);

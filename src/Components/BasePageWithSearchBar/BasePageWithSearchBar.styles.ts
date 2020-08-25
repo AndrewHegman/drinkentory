@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/styles";
 
-export const useAddNewItemModalStyles = makeStyles({
+export const useBasePageWithSearchBarStyles = makeStyles({
   root: {
     "--background": "lightgrey",
   },

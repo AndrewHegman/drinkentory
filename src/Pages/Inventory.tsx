@@ -5,15 +5,12 @@ import { addCircleOutline, filterOutline } from "ionicons/icons";
 import { InventoryItem } from "../Components/InventoryItem";
 import { QuantityChangeDirection } from "../Utils/Types";
 import { useInventoryStyles } from "./Inventory.styles";
-import { useHistory } from "react-router-dom";
-import { AddNewItemModal } from "../Components/Modals/AddNewItemModal";
+import { useHistory, Link } from "react-router-dom";
 import { getWineIds, getBeerIds } from "../TestingUtils/API";
 import { Domains } from "../Utils/Routes";
 import { InventoryFilterPopover } from "../Components/Popovers/InventoryFilterPopover";
 
-export interface IInventory {
-  showAddModal: boolean;
-}
+export interface IInventory {}
 
 export const Inventory: React.FC<IInventory> = (props: IInventory) => {
   const domain = new URLSearchParams(window.location.search).get("domain");
@@ -37,20 +34,6 @@ export const Inventory: React.FC<IInventory> = (props: IInventory) => {
     console.log(`${id} -- ${dir === 0 ? "Up" : "Down"}`);
   };
 
-  const onAddItemClick = () => {
-    history.push({
-      pathname: `${history.location.pathname}/add`,
-      search: history.location.search,
-    });
-  };
-
-  const closeAddItemModal = () => {
-    history.push({
-      pathname: "/inventory",
-      search: history.location.search,
-    });
-  };
-
   const closeFilterPopover = () => {
     setShowFilterPopover(false);
   };
@@ -59,7 +42,14 @@ export const Inventory: React.FC<IInventory> = (props: IInventory) => {
     <div className={classes.headerContentContainer}>
       <IonIcon icon={filterOutline} className={classes.filterIcon} onClick={() => setShowFilterPopover(true)} />
       <IonSearchbar onIonChange={(event) => console.log(event.detail.value)}></IonSearchbar>
-      <IonIcon icon={addCircleOutline} onClick={onAddItemClick} className={classes.addItemIcon} />
+      <Link
+        to={{
+          pathname: "/inventory/add",
+          search: window.location.search,
+        }}
+      >
+        <IonIcon icon={addCircleOutline} className={classes.addItemIcon} />
+      </Link>
     </div>
   );
 
@@ -72,7 +62,6 @@ export const Inventory: React.FC<IInventory> = (props: IInventory) => {
           ))}
         </IonList>
       </BasePage>
-      <AddNewItemModal onClose={() => closeAddItemModal()} />
       <InventoryFilterPopover isOpen={showFilterPopover} onClose={() => closeFilterPopover()} />
     </>
   );
