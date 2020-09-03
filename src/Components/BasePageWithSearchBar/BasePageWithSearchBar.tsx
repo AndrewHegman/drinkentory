@@ -1,12 +1,14 @@
 import React from "react";
-import { IonContent, IonToolbar, IonTitle, IonButtons, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
-import { withRouter, RouteComponentProps } from "react-router";
+import { IonContent, IonToolbar, IonTitle, IonButtons, IonHeader, IonSearchbar, IonList, IonPage, useIonViewWillEnter } from "@ionic/react";
+import { RouteComponentProps } from "react-router";
 import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
-import { ButtonLink } from "../../Components/ButtonLink";
-import { IonItemLink } from "../../Components/IonItemLink";
+import { ButtonLink } from "../ButtonLink/ButtonLink";
+import { IonItemLink } from "../IonItemLink/IonItemLink";
+import { SearchParams } from "../../Utils/Constants";
+import * as queryString from "query-string";
 
 // TODO: Add a selectRoute interface as well
-export interface IAddNewItemModal {
+export interface IAddNewItemModal extends RouteComponentProps {
   title: string;
   items: string[];
   closeRoute: {
@@ -19,17 +21,12 @@ export interface IAddNewItemModal {
   };
 }
 
-const BasePageWithSearchBarComponent: React.FC<IAddNewItemModal & RouteComponentProps> = (props) => {
-  const { location } = props;
-
-  const searchParams = new URLSearchParams(location.search);
+export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
+  const { closeRoute, notFoundRoute, title, items, history } = props;
 
   const [searchText, setSearchText] = React.useState<string>("");
   const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
-
   const classes = useBasePageWithSearchBarStyles();
-
-  const { closeRoute, notFoundRoute, title, items } = props;
 
   React.useEffect(() => {
     if (searchText !== "") {
@@ -37,47 +34,53 @@ const BasePageWithSearchBarComponent: React.FC<IAddNewItemModal & RouteComponent
     } else {
       setShowNotFound(false);
     }
-  }, [searchText]);
+  }, [searchText, notFoundRoute]);
 
   const getCloseSearchText = () => {
-    closeRoute.searchParamToDelete && searchParams.delete(closeRoute.searchParamToDelete);
-    return `?${searchParams.toString()}`;
+    const searchParams = queryString.parse(history.location.search);
+
+    closeRoute.searchParamToDelete && delete searchParams[closeRoute.searchParamToDelete];
+    return `?${queryString.stringify(searchParams)}`;
   };
 
   const getNotFoundSearchText = () => {
-    const searchParam = notFoundRoute?.searchParamToAdd;
-    return searchParam ? `${location.search}&${searchParam}=${searchText}` : location.search;
+    const searchParams = queryString.parse(history.location.search);
+
+    if (notFoundRoute?.searchParamToAdd) {
+      searchParams[notFoundRoute?.searchParamToAdd] = searchText;
+    }
+    return queryString.stringify(searchParams);
   };
 
+  useIonViewWillEnter(() => {
+    setSearchText((queryString.parse(history.location.search)[SearchParams.NewItemName] as string) || "");
+  });
+
   return (
-    <>
-      <IonPage>
-        <IonHeader translucent>
-          <IonToolbar>
-            <IonTitle slot={"start"}>{title}</IonTitle>
-            <IonButtons slot={"end"}>
-              <ButtonLink to={{ pathname: closeRoute.pathname, search: getCloseSearchText() }}>Close</ButtonLink>
-            </IonButtons>
-          </IonToolbar>
-          <IonToolbar>
-            <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} />
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className={classes.root}>
-          <IonList>
-            {items.map((item) => (
-              <div></div>
-            ))}
-            {showNotFound && (
-              <IonItemLink to={{ pathname: notFoundRoute?.pathname, search: getNotFoundSearchText() }}>
-                Add&nbsp;<b>{searchText}?</b>
-              </IonItemLink>
-            )}
-          </IonList>
-        </IonContent>
-      </IonPage>
-    </>
+    <IonPage>
+      <IonHeader translucent>
+        <IonToolbar>
+          <IonTitle slot={"start"}>{title}</IonTitle>
+          <IonButtons slot={"end"}>
+            <ButtonLink to={{ pathname: closeRoute.pathname, search: getCloseSearchText() }}>Close</ButtonLink>
+          </IonButtons>
+        </IonToolbar>
+        <IonToolbar>
+          <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} value={searchText} />
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className={classes.root}>
+        <IonList>
+          {items.map((item) => (
+            <div></div>
+          ))}
+          {showNotFound && (
+            <IonItemLink to={{ pathname: notFoundRoute?.pathname, search: getNotFoundSearchText() }}>
+              Add&nbsp;<b>{searchText}?</b>
+            </IonItemLink>
+          )}
+        </IonList>
+      </IonContent>
+    </IonPage>
   );
 };
-
-export const BasePageWithSearchBar = withRouter(BasePageWithSearchBarComponent);

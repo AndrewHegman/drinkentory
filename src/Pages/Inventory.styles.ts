@@ -12,6 +12,9 @@ export const useInventoryStyles = makeStyles({
     fontSize: "xxx-large",
     cursor: "pointer",
   },
+  addItemLink: {
+    color: "rgb(66, 66, 66)",
+  },
   filterIcon: {
     fontSize: "xxx-large",
     cursor: "pointer",

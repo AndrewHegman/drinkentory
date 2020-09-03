@@ -10,16 +10,16 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
-  IonItem,
   IonInput,
   IonLabel,
 } from "@ionic/react";
-import { addNewItemRoute, setBreweryRoute, setStyleRoute } from "../../Utils/Routes";
-import { ButtonLink } from "../../Components/ButtonLink";
+import { setBreweryRoute, setStyleRoute } from "../../Utils/Routes";
+import { ButtonLink } from "../../Components/ButtonLink/ButtonLink";
 import { withRouter, RouteComponentProps } from "react-router";
 import { useCreateNewBreweryStyles } from "./CreateNewBrewery.styles";
-import { IonItemLink } from "../../Components/IonItemLink";
+import { IonItemLink } from "../../Components/IonItemLink/IonItemLink";
 import { SearchParams } from "../../Utils/Constants";
+import * as queryString from "query-string";
 
 export interface CreateNewBreweryProps {
   onClose: () => void;
@@ -27,19 +27,19 @@ export interface CreateNewBreweryProps {
 
 const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps & RouteComponentProps> = (props) => {
   const { onClose, location } = props;
-  const searchParams = new URLSearchParams(location.search);
-  const [name, setName] = React.useState<string>(searchParams.get(SearchParams.NewItemName) || "");
+  const searchParams = queryString.parse(location.search);
+  const [name, setName] = React.useState<string>((searchParams[SearchParams.NewItemName] as string) || "");
   const classes = useCreateNewBreweryStyles();
 
   React.useEffect(() => {
-    setName(searchParams.get(SearchParams.NewItemName) || "");
+    setName((searchParams[SearchParams.NewItemName] as string) || "");
   }, [searchParams]);
 
   const onNameChange = () => {};
 
   const removeBreweryNameFromSearchParams = () => {
-    searchParams.delete(SearchParams.BreweryName);
-    return `?${searchParams.toString()}`;
+    delete searchParams[SearchParams.BreweryName];
+    return `?${queryString.stringify(searchParams)}`;
   };
 
   return (

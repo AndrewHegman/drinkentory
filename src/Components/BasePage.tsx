@@ -5,6 +5,8 @@ import { Domains } from "../Utils/Routes";
 import { SettingsMenu } from "./SettingsMenu";
 import { menuOutline } from "ionicons/icons";
 import { useBasePageStyles } from "./BasePage.styles";
+import { SearchParams } from "../Utils/Constants";
+import * as queryString from "query-string";
 
 require("dotenv");
 
@@ -14,22 +16,21 @@ export interface IBasePage {
 }
 
 export const BasePage: React.FC<IBasePage> = (props) => {
-  const urlParams = new URLSearchParams(window.location.search);
   const history = useHistory();
+  const urlParams = queryString.parse(history.location.search);
   const isProd = process.env.REACT_APP_IS_PROD === "true";
 
   // TODO: Force a default value if domain is invalid (not `beer` or `wine`)
-  const [domain, setDomain] = React.useState<string>(urlParams.get("domain") || Domains.Beer);
+  const [domain, setDomain] = React.useState<string>((urlParams[SearchParams.Domain] as string) || Domains.Beer);
   const [showSettingsPopover, setShowSettingsPopover] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (urlParams.has("domain")) {
-      return;
+    if (urlParams[SearchParams.Domain] !== domain) {
+      urlParams[SearchParams.Domain] = domain;
+      history.push({
+        search: `?${queryString.stringify(urlParams)}`,
+      });
     }
-
-    history.push({
-      search: `?domain=${domain}${urlParams.toString().length > 0 ? "&" + urlParams.toString() : ""}`,
-    });
   }, [history, domain, urlParams]);
 
   const handleChange = (value: any) => {

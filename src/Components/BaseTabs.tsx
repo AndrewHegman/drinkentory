@@ -1,11 +1,11 @@
 import React from "react";
 import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
-import { Route, Switch } from "react-router";
+import { Route, RouteComponentProps } from "react-router";
 import { map, list, codeWorking } from "ionicons/icons";
 import { IonReactRouter } from "@ionic/react-router";
 import { routes } from "../Utils/Routes";
 
-interface IBaseTabsProps {}
+interface IBaseTabsProps extends RouteComponentProps {}
 
 export const BaseTabs: React.FC<IBaseTabsProps> = () => {
   return (

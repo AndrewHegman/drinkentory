@@ -5,16 +5,17 @@ import { addCircleOutline, filterOutline } from "ionicons/icons";
 import { InventoryItem } from "../Components/InventoryItem";
 import { QuantityChangeDirection } from "../Utils/Types";
 import { useInventoryStyles } from "./Inventory.styles";
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getWineIds, getBeerIds } from "../TestingUtils/API";
 import { Domains } from "../Utils/Routes";
 import { InventoryFilterPopover } from "../Components/Popovers/InventoryFilterPopover";
+import { SearchParams } from "../Utils/Constants";
+import * as queryString from "query-string";
 
 export interface IInventory {}
 
 export const Inventory: React.FC<IInventory> = (props: IInventory) => {
-  const domain = new URLSearchParams(window.location.search).get("domain");
-  const history = useHistory();
+  const domain = queryString.parse(window.location.search)[SearchParams.Domain];
 
   const [searchBarText, setSearchBarText] = React.useState<string>("");
   const [inventoryIds, setInventoryIds] = React.useState<string[]>([]);
@@ -47,6 +48,7 @@ export const Inventory: React.FC<IInventory> = (props: IInventory) => {
           pathname: "/inventory/add",
           search: window.location.search,
         }}
+        className={classes.addItemLink}
       >
         <IonIcon icon={addCircleOutline} className={classes.addItemIcon} />
       </Link>
