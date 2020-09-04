@@ -5,6 +5,7 @@ import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
 import { ButtonLink } from "../ButtonLink/ButtonLink";
 import { IonItemLink } from "../IonItemLink/IonItemLink";
 import { SearchParams } from "../../Utils/Constants";
+import { CloseButton } from "../CloseButton/CloseButton";
 import * as queryString from "query-string";
 
 // TODO: Add a selectRoute interface as well
@@ -62,7 +63,7 @@ export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
         <IonToolbar>
           <IonTitle slot={"start"}>{title}</IonTitle>
           <IonButtons slot={"end"}>
-            <ButtonLink to={{ pathname: closeRoute.pathname, search: getCloseSearchText() }}>Close</ButtonLink>
+            <CloseButton history={history} pathname={closeRoute.pathname} searchParamToDelete={closeRoute.searchParamToDelete} />
           </IonButtons>
         </IonToolbar>
         <IonToolbar>

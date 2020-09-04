@@ -13,8 +13,8 @@ export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
     <BasePageWithSearchBar
       title="Choose a Brewery"
       items={breweries}
-      closeRoute={{ pathname: createNewItemRoute.to, searchParamToDelete: SearchParams.Brewery }}
-      notFoundRoute={{ pathname: createNewBreweryRoute.to, searchParamToAdd: SearchParams.BreweryName }}
+      closeRoute={{ pathname: createNewItemRoute.pathname, searchParamToDelete: SearchParams.Brewery }}
+      notFoundRoute={{ pathname: createNewBreweryRoute.pathname, searchParamToAdd: SearchParams.BreweryName }}
       {...props}
     />
   );

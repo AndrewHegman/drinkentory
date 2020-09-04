@@ -14,11 +14,11 @@ export const AddNewItem: React.FC<IAddNewItemModal> = (props) => {
       title="Choose a Beer"
       items={beers}
       closeRoute={{
-        pathname: inventoryRoute.to,
+        pathname: inventoryRoute.pathname,
         searchParamToDelete: SearchParams.NewItemName,
       }}
       notFoundRoute={{
-        pathname: createNewItemRoute.to,
+        pathname: createNewItemRoute.pathname,
         searchParamToAdd: SearchParams.NewItemName,
       }}
       {...props}

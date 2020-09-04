@@ -1,85 +1,41 @@
 import React from "react";
-import {
-  IonButton,
-  IonContent,
-  IonPage,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent,
-  IonInput,
-  IonLabel,
-} from "@ionic/react";
-import { setBreweryRoute, setStyleRoute } from "../../Utils/Routes";
-import { ButtonLink } from "../../Components/ButtonLink/ButtonLink";
+
+import { setBreweryRoute, setStyleRoute, setBreweryCountryRoute } from "../../Utils/Routes";
 import { withRouter, RouteComponentProps } from "react-router";
 import { useCreateNewBreweryStyles } from "./CreateNewBrewery.styles";
-import { IonItemLink } from "../../Components/IonItemLink/IonItemLink";
 import { SearchParams } from "../../Utils/Constants";
 import * as queryString from "query-string";
+import { BasePageWithInputCards } from "../../Components/BasePageWithInputCards/BasePageWithInputCards";
+import { EditableInputCard } from "../../Components/EditableInputCard/EditableInputCard";
+import { LinkInputCard } from "../../Components/LinkInputCard/LinkInputCard";
 
-export interface CreateNewBreweryProps {
-  onClose: () => void;
-}
+export interface CreateNewBreweryProps extends RouteComponentProps {}
 
 const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps & RouteComponentProps> = (props) => {
-  const { onClose, location } = props;
-  const searchParams = queryString.parse(location.search);
+  const { history } = props;
+  const searchParams = queryString.parse(history.location.search);
   const [name, setName] = React.useState<string>((searchParams[SearchParams.NewItemName] as string) || "");
-  const classes = useCreateNewBreweryStyles();
-
-  React.useEffect(() => {
-    setName((searchParams[SearchParams.NewItemName] as string) || "");
-  }, [searchParams]);
-
-  const onNameChange = () => {};
-
-  const removeBreweryNameFromSearchParams = () => {
-    delete searchParams[SearchParams.BreweryName];
-    return `?${queryString.stringify(searchParams)}`;
-  };
 
   return (
-    <>
-      <IonPage>
-        <IonToolbar>
-          <IonTitle>Create new Brewery</IonTitle>
-          <IonButtons slot={"end"}>
-            <ButtonLink to={{ pathname: setBreweryRoute.to, search: removeBreweryNameFromSearchParams() }}>Close</ButtonLink>
-          </IonButtons>
-        </IonToolbar>
-        <IonContent>
-          <IonCard>
-            <IonCardContent>
-              <IonLabel position="floating" className={classes.label}>
-                Brewery
-              </IonLabel>
-              <IonInput onIonChange={onNameChange} value={name} />
-            </IonCardContent>
-          </IonCard>
-          <IonCard>
-            <IonCardHeader>
-              <IonCardTitle>Country</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <IonItemLink to={{ pathname: setBreweryRoute.to, search: location.search }}>Select</IonItemLink>
-            </IonCardContent>
-          </IonCard>
-          <IonCard>
-            <IonCardHeader>
-              <IonCardTitle>Style</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <IonItemLink to={{ pathname: setStyleRoute.to, search: location.search }}>Select</IonItemLink>
-            </IonCardContent>
-          </IonCard>
-          <IonButton onClick={onClose}>Close</IonButton>
-        </IonContent>
-      </IonPage>
-    </>
+    <BasePageWithInputCards
+      title={"Create new Brewery"}
+      history={history}
+      closeRoute={{ pathname: setBreweryRoute.pathname, searchParamToDelete: SearchParams.BreweryName }}
+    >
+      <EditableInputCard
+        title={"Brewery"}
+        onChange={(event) => setName(event.detail.value || "")}
+        onBlur={() => {
+          searchParams[SearchParams.BreweryName] = name;
+          history.push({
+            search: `?${queryString.stringify(searchParams)}`,
+          });
+        }}
+        value={name}
+      />
+      <LinkInputCard title={"Country"} pathname={setBreweryCountryRoute.pathname} search={history.location.search} />
+      <LinkInputCard title={"City"} pathname={setBreweryCountryRoute.pathname} search={history.location.search} />
+    </BasePageWithInputCards>
   );
 };
 

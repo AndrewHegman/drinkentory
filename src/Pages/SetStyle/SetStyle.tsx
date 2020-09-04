@@ -15,7 +15,7 @@ export const SetStyle: React.FC<IAddNewItemModal> = (props) => {
         title="Choose a Style"
         items={styles}
         closeRoute={{
-          pathname: createNewBreweryRoute.to,
+          pathname: createNewBreweryRoute.pathname,
         }}
         {...props}
       />

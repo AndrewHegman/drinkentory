@@ -14,7 +14,7 @@ export const SetBreweryCountry: React.FC<IAddNewItemModal> = (props) => {
         title="Choose a Country"
         items={countries}
         closeRoute={{
-          pathname: createNewBreweryRoute.to,
+          pathname: createNewBreweryRoute.pathname,
         }}
         {...props}
       />

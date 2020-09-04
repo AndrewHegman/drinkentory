@@ -14,56 +14,56 @@ export enum Domains {
 }
 
 export interface IRoute {
-  to: string;
+  pathname: string;
   exact: boolean;
   component: React.FC<any> | React.ComponentClass<any>;
   componentProps?: { [key: string]: any };
 }
 
 export const inventoryRoute: IRoute = {
-  to: "/inventory",
+  pathname: "/inventory",
   exact: true,
   component: Inventory,
 };
 
 export const statisticsRoute: IRoute = {
-  to: "/statistics",
+  pathname: "/statistics",
   exact: false,
   component: Inventory,
 };
 
 export const addNewItemRoute: IRoute = {
-  to: "/inventory/add",
+  pathname: "/inventory/add",
   exact: true,
   component: AddNewItem,
 };
 
 export const createNewItemRoute: IRoute = {
-  to: "/inventory/create",
+  pathname: "/inventory/create",
   exact: true,
   component: CreateNewItem,
 };
 
 export const setBreweryRoute: IRoute = {
-  to: "/inventory/create/setbrewery",
+  pathname: "/inventory/create/setbrewery",
   exact: true,
   component: SetBrewery,
 };
 
 export const createNewBreweryRoute: IRoute = {
-  to: "/inventory/create/brewery",
+  pathname: "/inventory/create/brewery",
   exact: true,
   component: CreateNewBrewery,
 };
 
 export const setBreweryCountryRoute: IRoute = {
-  to: "/inventory/create/brewery/setcountry",
+  pathname: "/inventory/create/brewery/setcountry",
   exact: true,
   component: SetBreweryCountry,
 };
 
 export const setStyleRoute: IRoute = {
-  to: "/inventory/create/setstyle",
+  pathname: "/inventory/create/setstyle",
   exact: true,
   component: SetStyle,
 };
