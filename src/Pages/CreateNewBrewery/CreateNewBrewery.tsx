@@ -1,42 +1,45 @@
 import React from "react";
 
-import { setBreweryRoute, setStyleRoute, setBreweryCountryRoute } from "../../Utils/Routes";
-import { withRouter, RouteComponentProps } from "react-router";
-import { useCreateNewBreweryStyles } from "./CreateNewBrewery.styles";
-import { SearchParams } from "../../Utils/Constants";
-import * as queryString from "query-string";
+import { routes } from "../../Utils/Routes";
 import { BasePageWithInputCards } from "../../Components/BasePageWithInputCards/BasePageWithInputCards";
 import { EditableInputCard } from "../../Components/EditableInputCard/EditableInputCard";
 import { LinkInputCard } from "../../Components/LinkInputCard/LinkInputCard";
+import { RootState } from "../../Redux/Store/index";
+import { useDispatch, connect } from "react-redux";
+import { actions } from "../../Redux";
 
-export interface CreateNewBreweryProps extends RouteComponentProps {}
+const mapStateToProps = (state: RootState) => {
+  return {
+    name: state.breweries.newBrewery?.name || "",
+  };
+};
 
-const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps & RouteComponentProps> = (props) => {
-  const { history } = props;
-  const searchParams = queryString.parse(history.location.search);
-  const [name, setName] = React.useState<string>((searchParams[SearchParams.NewItemName] as string) || "");
+export interface CreateNewBreweryProps {}
+
+const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps & { name: string }> = (props) => {
+  const { setBreweryRoute, setBreweryCountryRoute } = routes;
+  const dispatch = useDispatch();
+
+  const [name, setName] = React.useState<string>(props.name);
+
+  React.useEffect(() => {
+    setName(props.name);
+  }, [props.name]);
 
   return (
-    <BasePageWithInputCards
-      title={"Create new Brewery"}
-      history={history}
-      closeRoute={{ pathname: setBreweryRoute.pathname, searchParamToDelete: SearchParams.BreweryName }}
-    >
+    <BasePageWithInputCards title={"Create new Brewery"} closeRoute={{ pathname: setBreweryRoute.pathname }}>
       <EditableInputCard
         title={"Brewery"}
         onChange={(event) => setName(event.detail.value || "")}
         onBlur={() => {
-          searchParams[SearchParams.BreweryName] = name;
-          history.push({
-            search: `?${queryString.stringify(searchParams)}`,
-          });
+          dispatch(actions.breweries.setNewBreweryName(name));
         }}
         value={name}
       />
-      <LinkInputCard title={"Country"} pathname={setBreweryCountryRoute.pathname} search={history.location.search} />
-      <LinkInputCard title={"City"} pathname={setBreweryCountryRoute.pathname} search={history.location.search} />
+      <LinkInputCard title={"Country"} pathname={setBreweryCountryRoute.pathname} />
+      <LinkInputCard title={"City"} pathname={setBreweryCountryRoute.pathname} />
     </BasePageWithInputCards>
   );
 };
 
-export const CreateNewBrewery = withRouter(CreateNewBreweryComponent);
+export const CreateNewBrewery = connect(mapStateToProps)(CreateNewBreweryComponent);

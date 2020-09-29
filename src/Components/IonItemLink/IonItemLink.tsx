@@ -5,15 +5,16 @@ import { useIonItemLinkStyles } from "./IonItemLink.styles";
 
 export interface IIonItemLinkProps extends LinkProps {
   search?: string;
+  onClick?: () => void;
 }
 
 export const IonItemLink: React.FC<IIonItemLinkProps> = (props) => {
-  const { to } = props;
+  const { to, onClick } = props;
   const classes = useIonItemLinkStyles();
 
   return (
     <IonItem>
-      <Link to={to} className={classes.root}>
+      <Link to={to} className={classes.root} onClick={onClick}>
         {props.children}
       </Link>
     </IonItem>

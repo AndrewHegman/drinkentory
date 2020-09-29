@@ -12,7 +12,8 @@ export const BaseTabs: React.FC<IBaseTabsProps> = () => {
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          {routes.map((route, idx) => {
+          {Object.keys(routes).map((routeName, idx) => {
+            const route = routes[routeName];
             return (
               <Route
                 key={idx}

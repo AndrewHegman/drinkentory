@@ -5,7 +5,7 @@ import { InputChangeEventDetail } from "@ionic/core";
 export interface IEditableInputCard {
   title: string;
   onChange: (event: CustomEvent<InputChangeEventDetail>) => void;
-  onBlur: (event: CustomEvent<FocusEvent>) => void;
+  onBlur?: (event: CustomEvent<FocusEvent>) => void;
   value: string;
 }
 

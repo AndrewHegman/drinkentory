@@ -1,10 +1,9 @@
 import React from "react";
 import { IonContent, IonPage, IonToolbar, IonTitle, IonButtons } from "@ionic/react";
-import { RouteComponentProps } from "react-router";
 import { CloseButton } from "../CloseButton/CloseButton";
 import { useCreateNewItemStyles } from "./BasePageWithInputCards.styles";
 
-export interface IBasePageWithInputCardsProps extends Pick<RouteComponentProps, "history"> {
+export interface IBasePageWithInputCardsProps {
   title: string;
   closeRoute: {
     pathname: string;
@@ -13,7 +12,7 @@ export interface IBasePageWithInputCardsProps extends Pick<RouteComponentProps, 
 }
 
 export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (props) => {
-  const { history, closeRoute, title } = props;
+  const { closeRoute, title } = props;
 
   const classes = useCreateNewItemStyles();
 
@@ -22,7 +21,7 @@ export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (p
       <IonToolbar>
         <IonTitle>{title}</IonTitle>
         <IonButtons slot={"end"}>
-          <CloseButton pathname={closeRoute.pathname} history={history} />
+          <CloseButton pathname={closeRoute.pathname} />
         </IonButtons>
       </IonToolbar>
       <IonContent className={classes.root}>{props.children}</IonContent>

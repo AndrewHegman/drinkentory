@@ -1,13 +1,27 @@
 import React from "react";
-import { createNewBreweryRoute, createNewItemRoute } from "../../Utils/Routes";
+import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { SearchParams } from "../../Utils/Constants";
-import { RouteComponentProps } from "react-router";
+import { actions } from "../../Redux";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../Redux/Store/index";
 
-export interface ISetBreweryProps extends RouteComponentProps {}
+export interface ISetBreweryProps {}
 
 export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
   const [breweries, setBreweries] = React.useState<string[]>([]);
+  const { createNewBreweryRoute, createNewItemRoute } = routes;
+  const dispatch = useDispatch();
+
+  const useInitialSearchText = () => useSelector((state: RootState) => state.breweries.newBrewery?.name);
+
+  // console.log("SetBrewery*: ", initialSearchText);
+
+  const onClick = (searchText: string) => {
+    dispatch(actions.breweries.setNewBreweryName(searchText));
+  };
+
+  const initialSearchText = useInitialSearchText();
 
   return (
     <BasePageWithSearchBar
@@ -15,7 +29,9 @@ export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
       items={breweries}
       closeRoute={{ pathname: createNewItemRoute.pathname, searchParamToDelete: SearchParams.Brewery }}
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname, searchParamToAdd: SearchParams.BreweryName }}
-      {...props}
+      onClick={onClick}
+      initialSearchText={initialSearchText}
+      parent={"SetBrewery: "}
     />
   );
 };

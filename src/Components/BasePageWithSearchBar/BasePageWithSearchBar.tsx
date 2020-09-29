@@ -1,17 +1,17 @@
 import React from "react";
-import { IonContent, IonToolbar, IonTitle, IonButtons, IonHeader, IonSearchbar, IonList, IonPage, useIonViewWillEnter } from "@ionic/react";
-import { RouteComponentProps } from "react-router";
+import { IonContent, IonToolbar, IonTitle, IonButtons, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
 import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
-import { ButtonLink } from "../ButtonLink/ButtonLink";
 import { IonItemLink } from "../IonItemLink/IonItemLink";
-import { SearchParams } from "../../Utils/Constants";
 import { CloseButton } from "../CloseButton/CloseButton";
-import * as queryString from "query-string";
 
 // TODO: Add a selectRoute interface as well
-export interface IAddNewItemModal extends RouteComponentProps {
+export interface IAddNewItemModal {
   title: string;
   items: string[];
+  // action?: BreweryActionCallbacks;
+  initialSearchText?: string;
+  parent?: string;
+  onClick?: (searchText: string) => void;
   closeRoute: {
     pathname: string;
     searchParamToDelete?: string;
@@ -22,12 +22,18 @@ export interface IAddNewItemModal extends RouteComponentProps {
   };
 }
 
+// let initialSearchText: string;
+
 export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
-  const { closeRoute, notFoundRoute, title, items, history } = props;
+  const { closeRoute, notFoundRoute, title, items, initialSearchText } = props;
 
   const [searchText, setSearchText] = React.useState<string>("");
   const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
+  // const dispatch = useDispatch();
   const classes = useBasePageWithSearchBarStyles();
+
+  // console.log(props.parent, initialSearchText);
+  // initialSearchText = useSelector(selector || ((state: RootState) => state.breweries.name));
 
   React.useEffect(() => {
     if (searchText !== "") {
@@ -37,25 +43,10 @@ export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
     }
   }, [searchText, notFoundRoute]);
 
-  const getCloseSearchText = () => {
-    const searchParams = queryString.parse(history.location.search);
-
-    closeRoute.searchParamToDelete && delete searchParams[closeRoute.searchParamToDelete];
-    return `?${queryString.stringify(searchParams)}`;
-  };
-
-  const getNotFoundSearchText = () => {
-    const searchParams = queryString.parse(history.location.search);
-
-    if (notFoundRoute?.searchParamToAdd) {
-      searchParams[notFoundRoute?.searchParamToAdd] = searchText;
-    }
-    return queryString.stringify(searchParams);
-  };
-
-  useIonViewWillEnter(() => {
-    setSearchText((queryString.parse(history.location.search)[SearchParams.NewItemName] as string) || "");
-  });
+  React.useEffect(() => {
+    console.log("searchText: ", props.initialSearchText);
+    setSearchText(props.initialSearchText || "");
+  }, [props.initialSearchText]);
 
   return (
     <IonPage>
@@ -63,7 +54,7 @@ export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
         <IonToolbar>
           <IonTitle slot={"start"}>{title}</IonTitle>
           <IonButtons slot={"end"}>
-            <CloseButton history={history} pathname={closeRoute.pathname} searchParamToDelete={closeRoute.searchParamToDelete} />
+            <CloseButton pathname={closeRoute.pathname} searchParamToDelete={closeRoute.searchParamToDelete} />
           </IonButtons>
         </IonToolbar>
         <IonToolbar>
@@ -76,7 +67,12 @@ export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
             <div></div>
           ))}
           {showNotFound && (
-            <IonItemLink to={{ pathname: notFoundRoute?.pathname, search: getNotFoundSearchText() }}>
+            <IonItemLink
+              to={{ pathname: notFoundRoute?.pathname }}
+              onClick={() => {
+                props.onClick && props.onClick(searchText);
+              }}
+            >
               Add&nbsp;<b>{searchText}?</b>
             </IonItemLink>
           )}

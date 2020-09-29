@@ -20,61 +20,52 @@ export interface IRoute {
   componentProps?: { [key: string]: any };
 }
 
-export const inventoryRoute: IRoute = {
-  pathname: "/inventory",
-  exact: true,
-  component: Inventory,
-};
+export const routes: { [key: string]: IRoute } = {
+  inventoryRoute: {
+    pathname: "/inventory",
+    exact: true,
+    component: Inventory,
+  },
 
-export const statisticsRoute: IRoute = {
-  pathname: "/statistics",
-  exact: false,
-  component: Inventory,
-};
+  statisticsRoute: {
+    pathname: "/statistics",
+    exact: false,
+    component: Inventory,
+  },
 
-export const addNewItemRoute: IRoute = {
-  pathname: "/inventory/add",
-  exact: true,
-  component: AddNewItem,
-};
+  addNewItemRoute: {
+    pathname: "/inventory/add",
+    exact: true,
+    component: AddNewItem,
+  },
 
-export const createNewItemRoute: IRoute = {
-  pathname: "/inventory/create",
-  exact: true,
-  component: CreateNewItem,
-};
+  createNewItemRoute: {
+    pathname: "/inventory/create",
+    exact: true,
+    component: CreateNewItem,
+  },
 
-export const setBreweryRoute: IRoute = {
-  pathname: "/inventory/create/setbrewery",
-  exact: true,
-  component: SetBrewery,
-};
+  setBreweryRoute: {
+    pathname: "/inventory/create/setbrewery",
+    exact: true,
+    component: SetBrewery,
+  },
 
-export const createNewBreweryRoute: IRoute = {
-  pathname: "/inventory/create/brewery",
-  exact: true,
-  component: CreateNewBrewery,
-};
+  createNewBreweryRoute: {
+    pathname: "/inventory/create/brewery",
+    exact: true,
+    component: CreateNewBrewery,
+  },
 
-export const setBreweryCountryRoute: IRoute = {
-  pathname: "/inventory/create/brewery/setcountry",
-  exact: true,
-  component: SetBreweryCountry,
-};
+  setBreweryCountryRoute: {
+    pathname: "/inventory/create/brewery/setcountry",
+    exact: true,
+    component: SetBreweryCountry,
+  },
 
-export const setStyleRoute: IRoute = {
-  pathname: "/inventory/create/setstyle",
-  exact: true,
-  component: SetStyle,
+  setStyleRoute: {
+    pathname: "/inventory/create/setstyle",
+    exact: true,
+    component: SetStyle,
+  },
 };
-
-export const routes: IRoute[] = [
-  inventoryRoute,
-  statisticsRoute,
-  addNewItemRoute,
-  createNewItemRoute,
-  createNewBreweryRoute,
-  setBreweryRoute,
-  setBreweryCountryRoute,
-  setStyleRoute,
-];
