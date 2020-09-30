@@ -1,3 +1,4 @@
+import Axios from "axios";
 import {
   SET_NEW_BEER_ID,
   SET_NEW_BEER_NAME,
@@ -5,10 +6,12 @@ import {
   SET_NEW_BEER_STYLE,
   SET_NEW_BEER_QUANTITY,
   SET_NEW_BEER_HISTORIC_QUANTITY,
-  FETCH_ALL_BEER,
+  REQUEST_ALL_BEER,
+  RECEIVE_ALL_BEER,
   BeerActionTypes,
   Beer,
 } from "./Types";
+import { ThunkAction, ThunkDispatch } from "redux-thunk";
 
 export const setNewBeerId = (id: string): BeerActionTypes => {
   return {
@@ -52,11 +55,25 @@ export const setNewBeerHistoricQuantity = (historicQuantity: number): BeerAction
   };
 };
 
-export const fetchAllBeer = (): BeerActionTypes => {
-  const inventory: Beer[] = [];
+const requestAllBeer = (): BeerActionTypes => {
   return {
-    type: FETCH_ALL_BEER,
+    type: REQUEST_ALL_BEER,
+  };
+};
+
+const receiveAllBeer = (inventory: Beer[]): BeerActionTypes => {
+  return {
+    type: RECEIVE_ALL_BEER,
     inventory,
+  };
+};
+
+export const fetchAllBeer = (): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+  return (dispatch) => {
+    dispatch(requestAllBeer());
+    return Axios.get("http://localhost:3001/v1/beer")
+      .then((res) => res.data)
+      .then((json) => dispatch(receiveAllBeer(json)));
   };
 };
 
@@ -67,4 +84,5 @@ export type BeerActionCallbacks =
   | typeof setNewBeerStyle
   | typeof setNewBeerQuantity
   | typeof setNewBeerHistoricQuantity
-  | typeof fetchAllBeer;
+  | typeof fetchAllBeer
+  | typeof requestAllBeer;

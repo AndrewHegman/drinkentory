@@ -1,11 +1,11 @@
 import { RootState } from "../index";
 
-export const getBreweryName = (state: RootState): string => state.breweries.name;
+export const getNewBreweryName = (state: RootState): string => state.breweries.newBrewery?.name || "";
 
-export const getBreweryCountry = (state: RootState): string => state.breweries.country;
+export const getNewBreweryCountry = (state: RootState): string => state.breweries.newBrewery?.country || "";
 
-export const getBreweryState = (state: RootState): string => state.breweries.state || "";
+export const getNewBreweryState = (state: RootState): string => state.breweries.newBrewery?.state || "";
 
-export const getBreweryCity = (state: RootState): string => state.breweries.city || "";
+export const getNewBreweryCity = (state: RootState): string => state.breweries.newBrewery?.city || "";
 
-export type BrewerySelectors = typeof getBreweryName | typeof getBreweryCountry | typeof getBreweryState | typeof getBreweryCity;
+export type BrewerySelectors = typeof getNewBreweryName | typeof getNewBreweryCountry | typeof getNewBreweryState | typeof getNewBreweryCity;

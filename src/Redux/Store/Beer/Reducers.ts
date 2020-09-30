@@ -6,6 +6,8 @@ import {
   SET_NEW_BEER_QUANTITY,
   SET_NEW_BEER_HISTORIC_QUANTITY,
   FETCH_ALL_BEER,
+  REQUEST_ALL_BEER,
+  RECEIVE_ALL_BEER,
   BeerActionTypes,
   BeerState,
   Beer,
@@ -22,6 +24,7 @@ const initialNewBeerState: Beer = {
 
 const initialState: BeerState = {
   inventory: [],
+  isLoading: false,
 };
 
 export const beerReducer = (state = initialState, action: BeerActionTypes): BeerState => {
@@ -80,9 +83,16 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           historicQuantity: action.historicQuantity,
         },
       };
-    case FETCH_ALL_BEER:
+    case REQUEST_ALL_BEER:
       return {
         ...state,
+        isLoading: true,
+        inventory: [],
+      };
+    case RECEIVE_ALL_BEER:
+      return {
+        ...state,
+        isLoading: false,
         inventory: action.inventory,
       };
     default:

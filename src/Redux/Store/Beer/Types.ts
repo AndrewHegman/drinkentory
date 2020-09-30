@@ -8,6 +8,8 @@ export const SET_NEW_BEER_HISTORIC_QUANTITY = "SET_NEW_BEER_HISTORIC_QUANTITY";
 export const FETCH_ALL_BEER = "FETCH_ALL_BEER";
 export const FETCH_CURRENT_BEER = "FETCH_CURRENT_BEER";
 export const FETCH_BEER_BY_ID = "FETCH_BEER_BY_ID";
+export const RECEIVE_ALL_BEER = "RECEIVE_ALL_BEER";
+export const REQUEST_ALL_BEER = "REQUEST_ALL_BEER";
 
 export interface Beer {
   id: string;
@@ -21,6 +23,7 @@ export interface Beer {
 export interface BeerState {
   newBeer?: Beer;
   inventory: Beer[];
+  isLoading: boolean;
 }
 
 interface SetNewBeerIdAction {
@@ -63,6 +66,15 @@ interface FetchCurrentBeer {
   inventory: Beer[];
 }
 
+interface ReceiveAllBeer {
+  type: typeof RECEIVE_ALL_BEER;
+  inventory: Beer[];
+}
+
+interface RequestAllBeer {
+  type: typeof REQUEST_ALL_BEER;
+}
+
 export type BeerActionTypes =
   | SetNewBeerIdAction
   | SetNewBeerNameAction
@@ -71,4 +83,6 @@ export type BeerActionTypes =
   | SetNewBeerQuantityAction
   | SetNewBeerHistoricQuantityAction
   | FetchAllBeer
-  | FetchCurrentBeer;
+  | FetchCurrentBeer
+  | ReceiveAllBeer
+  | RequestAllBeer;

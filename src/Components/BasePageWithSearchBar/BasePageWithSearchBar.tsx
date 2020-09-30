@@ -64,7 +64,7 @@ export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
       <IonContent className={classes.root}>
         <IonList>
           {items.map((item) => (
-            <div></div>
+            <div>{item}</div>
           ))}
           {showNotFound && (
             <IonItemLink
