@@ -1,28 +1,26 @@
 import React from "react";
 import { IonItem, IonLabel, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
-import { QuantityChangeDirection } from "../Utils/Types";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
-import { getBeer } from "../TestingUtils/API/Beer";
-import { getWine } from "../TestingUtils/API/Wine";
-import { withRouter, RouteComponentProps } from "react-router-dom";
-import { Domains } from "../Utils/Routes";
+import { getBeer } from "../../TestingUtils/API/Beer";
+import { getWine } from "../../TestingUtils/API/Wine";
+import { Domains, QuantityChangeDirection } from "../../Utils";
 
 interface IBaseInventoryItemProps {
+  domain: Domains;
   id: string;
   onQuantityChange: (dir: QuantityChangeDirection) => void;
 }
 
-const InventoryItemComponent: React.FC<IBaseInventoryItemProps & RouteComponentProps> = (props) => {
+export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
   const [content, setContent] = React.useState<React.ReactNode>();
-  const { id, onQuantityChange, location } = props;
+  const { id, onQuantityChange, domain } = props;
 
   const classes = useInventoryItemStyles();
 
   React.useEffect(() => {
-    const domain = location.search.match(/.*domain=([^&|\n|\t\s]+)/);
-
-    if (domain && domain[1] === Domains.Wine) {
+    // const domain = location.search.match(/.*domain=([^&|\n|\t\s]+)/);
+    if (domain === Domains.Wine) {
       const data = getWine(id);
       setContent(
         <IonLabel>
@@ -42,7 +40,7 @@ const InventoryItemComponent: React.FC<IBaseInventoryItemProps & RouteComponentP
         </IonLabel>
       );
     }
-  }, [id, location.search]);
+  }, [id]);
 
   return (
     <IonItem>
@@ -67,5 +65,3 @@ const InventoryItemComponent: React.FC<IBaseInventoryItemProps & RouteComponentP
     </IonItem>
   );
 };
-
-export const InventoryItem = withRouter(InventoryItemComponent);

@@ -27,11 +27,10 @@ export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
     <BasePageWithSearchBar
       title="Choose a Brewery"
       items={breweries}
-      closeRoute={{ pathname: createNewItemRoute.pathname, searchParamToDelete: SearchParams.Brewery }}
+      pathname={ createNewItemRoute.pathname }
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname, searchParamToAdd: SearchParams.BreweryName }}
       onClick={onClick}
       initialSearchText={initialSearchText}
-      parent={"SetBrewery: "}
     />
   );
 };

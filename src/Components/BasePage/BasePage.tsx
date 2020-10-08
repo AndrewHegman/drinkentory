@@ -1,11 +1,22 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { IonPage, IonToolbar, IonSegmentButton, IonLabel, IonSegment, IonContent, IonHeader, IonButtons, IonIcon, IonPopover } from "@ionic/react";
-import { Domains } from "../Utils/Routes";
-import { SettingsMenu } from "./SettingsMenu";
+import {
+  IonPage,
+  IonToolbar,
+  IonSegmentButton,
+  IonLabel,
+  IonSegment,
+  IonContent,
+  IonHeader,
+  IonButtons,
+  IonIcon,
+  IonPopover
+} from "@ionic/react";
+import { Domains } from "../../Utils/Routes";
+import { SettingsMenu } from "../SettingsMenu";
 import { menuOutline } from "ionicons/icons";
 import { useBasePageStyles } from "./BasePage.styles";
-import { SearchParams } from "../Utils/Constants";
+import { SearchParams } from "../../Utils/Constants";
 import * as queryString from "query-string";
 
 require("dotenv");
@@ -21,7 +32,9 @@ export const BasePage: React.FC<IBasePage> = (props) => {
   const isProd = process.env.REACT_APP_IS_PROD === "true";
 
   // TODO: Force a default value if domain is invalid (not `beer` or `wine`)
-  const [domain, setDomain] = React.useState<string>((urlParams[SearchParams.Domain] as string) || Domains.Beer);
+  const [domain, setDomain] = React.useState<string>(
+    (urlParams[SearchParams.Domain] as string) || Domains.Beer
+  );
   const [showSettingsPopover, setShowSettingsPopover] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -29,7 +42,7 @@ export const BasePage: React.FC<IBasePage> = (props) => {
     if (urlParams[SearchParams.Domain] !== domain) {
       urlParams[SearchParams.Domain] = domain;
       history.push({
-        search: `?${queryString.stringify(urlParams)}`,
+        search: `?${queryString.stringify(urlParams)}`
       });
     }
   }, [history, domain]);
@@ -52,7 +65,11 @@ export const BasePage: React.FC<IBasePage> = (props) => {
         <IonToolbar>
           {!isProd && (
             <IonButtons slot="start">
-              <IonIcon icon={menuOutline} onClick={() => setShowSettingsPopover(true)} className={classes.settingsPopoverToggle} />
+              <IonIcon
+                icon={menuOutline}
+                onClick={() => setShowSettingsPopover(true)}
+                className={classes.settingsPopoverToggle}
+              />
             </IonButtons>
           )}
           <IonSegment onIonChange={handleChange} value={domain}>

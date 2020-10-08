@@ -4,7 +4,6 @@ import { IonItem } from "@ionic/react";
 import { useIonItemLinkStyles } from "./IonItemLink.styles";
 
 export interface IIonItemLinkProps extends LinkProps {
-  search?: string;
   onClick?: () => void;
 }
 

@@ -11,11 +11,13 @@ export interface IAddNewItemModal {}
 const mapStateToProps = (state: RootState) => {
   return {
     isLoading: state.beer.isLoading,
-    beer: state.beer.inventory,
+    beer: state.beer.inventory
   };
 };
 
-export const AddNewItemComponent: React.FC<IAddNewItemModal & { isLoading: boolean; beer: any[] }> = (props) => {
+export const AddNewItemComponent: React.FC<
+  IAddNewItemModal & { isLoading: boolean; beer: any[] }
+> = (props) => {
   const [beers, setBeers] = React.useState<string[]>([]);
   const { inventoryRoute, createNewItemRoute } = routes;
   const dispatch = useDispatch();
@@ -35,13 +37,10 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal & { isLoading: boole
     <BasePageWithSearchBar
       title="Choose a Beer"
       items={beers}
-      closeRoute={{
-        pathname: inventoryRoute.pathname,
-        searchParamToDelete: SearchParams.NewItemName,
-      }}
+      pathname={inventoryRoute.pathname}
       notFoundRoute={{
         pathname: createNewItemRoute.pathname,
-        searchParamToAdd: SearchParams.NewItemName,
+        searchParamToAdd: SearchParams.NewItemName
       }}
     />
   );

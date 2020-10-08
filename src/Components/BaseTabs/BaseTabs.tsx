@@ -1,9 +1,8 @@
 import React from "react";
 import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
 import { Route, RouteComponentProps } from "react-router";
-import { map, list, codeWorking } from "ionicons/icons";
 import { IonReactRouter } from "@ionic/react-router";
-import { routes } from "../Utils/Routes";
+import { routes, tabs } from "../../Utils";
 
 interface IBaseTabsProps extends RouteComponentProps {}
 
@@ -25,18 +24,12 @@ export const BaseTabs: React.FC<IBaseTabsProps> = () => {
           })}
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="inventory" href="/inventory">
-            <IonIcon icon={list} />
-            <IonLabel>Inventory</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="statistics" href="/statistics">
-            <IonIcon icon={map} />
-            <IonLabel>Statistics</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="developers" href="/developers">
-            <IonIcon icon={codeWorking} />
-            <IonLabel>Developers</IonLabel>
-          </IonTabButton>
+          {tabs.map((tab) => (
+            <IonTabButton tab={tab.tabId} href={tab.href} key={tab.tabId}>
+              <IonIcon icon={tab.icon} />
+              <IonLabel>{tab.name}</IonLabel>
+            </IonTabButton>
+          ))}
         </IonTabBar>
       </IonTabs>
     </IonReactRouter>

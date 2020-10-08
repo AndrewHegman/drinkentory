@@ -41,12 +41,16 @@ export const Inventory: React.FC<IInventory> = (props: IInventory) => {
 
   const toolbarHeaderContent = (
     <div className={classes.headerContentContainer}>
-      <IonIcon icon={filterOutline} className={classes.filterIcon} onClick={() => setShowFilterPopover(true)} />
+      <IonIcon
+        icon={filterOutline}
+        className={classes.filterIcon}
+        onClick={() => setShowFilterPopover(true)}
+      />
       <IonSearchbar onIonChange={(event) => console.log(event.detail.value)}></IonSearchbar>
       <Link
         to={{
           pathname: "/inventory/add",
-          search: window.location.search,
+          search: window.location.search
         }}
         className={classes.addItemLink}
       >
@@ -60,7 +64,12 @@ export const Inventory: React.FC<IInventory> = (props: IInventory) => {
       <BasePage headerContent={toolbarHeaderContent}>
         <IonList>
           {inventoryIds.map((id) => (
-            <InventoryItem key={id} onQuantityChange={(dir) => handleQuantityChange("1", dir)} id={id} />
+            <InventoryItem
+              key={id}
+              onQuantityChange={(dir) => handleQuantityChange("1", dir)}
+              id={id}
+              domain={(domain as Domains) || Domains.Beer} // this is done because domain can be an array--this should be fixed
+            />
           ))}
         </IonList>
       </BasePage>

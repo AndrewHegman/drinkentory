@@ -3,9 +3,7 @@ import { Link, LinkProps } from "react-router-dom";
 import { IonButton } from "@ionic/react";
 import { useButtonLinkStyles } from "./ButtonLink.styles";
 
-export interface IButtonLinkProps extends LinkProps {
-  search?: string;
-}
+export interface IButtonLinkProps extends LinkProps {}
 
 export const ButtonLink: React.FC<IButtonLinkProps> = (props) => {
   const { to } = props;

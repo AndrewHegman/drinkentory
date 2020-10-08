@@ -23,7 +23,7 @@ const CreateNewItemComponent: React.FC<CreateNewItemProps> = (props) => {
   const [name, setName] = React.useState<string>("");
 
   return (
-    <BasePageWithInputCards title={"Create new Beer"} closeRoute={{ pathname: addNewItemRoute.pathname }}>
+    <BasePageWithInputCards title={"Create new Beer"} pathname={addNewItemRoute.pathname}>
       <EditableInputCard
         title={"Beer"}
         onChange={(event) => setName(event.detail.value || "")}

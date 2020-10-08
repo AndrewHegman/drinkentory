@@ -23,10 +23,9 @@ export const SetBreweryCountry: React.FC<IAddNewItemModal> = (props) => {
       <BasePageWithSearchBar
         title="Choose a Country"
         items={countries}
-        closeRoute={{ pathname: createNewBreweryRoute.pathname }}
+        pathname={createNewBreweryRoute.pathname}
         onClick={onClick}
         initialSearchText={initialSearchText}
-        parent={"SetBreweryCountry: "}
       />
     </>
   );

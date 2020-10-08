@@ -2,38 +2,27 @@ import React from "react";
 import { IonContent, IonToolbar, IonTitle, IonButtons, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
 import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
 import { IonItemLink } from "../IonItemLink/IonItemLink";
-import { CloseButton } from "../CloseButton/CloseButton";
+import { BasePageHeader } from "../BasePageHeader";
 
 // TODO: Add a selectRoute interface as well
-export interface IAddNewItemModal {
+export interface IBasePageWithSearchBarProps {
   title: string;
   items: string[];
-  // action?: BreweryActionCallbacks;
   initialSearchText?: string;
-  parent?: string;
   onClick?: (searchText: string) => void;
-  closeRoute: {
-    pathname: string;
-    searchParamToDelete?: string;
-  };
+  pathname: string;
   notFoundRoute?: {
     pathname: string;
     searchParamToAdd?: string;
   };
 }
 
-// let initialSearchText: string;
-
-export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
-  const { closeRoute, notFoundRoute, title, items, initialSearchText } = props;
+export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (props) => {
+  const { pathname, notFoundRoute, title, items } = props;
 
   const [searchText, setSearchText] = React.useState<string>("");
   const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
-  // const dispatch = useDispatch();
   const classes = useBasePageWithSearchBarStyles();
-
-  // console.log(props.parent, initialSearchText);
-  // initialSearchText = useSelector(selector || ((state: RootState) => state.breweries.name));
 
   React.useEffect(() => {
     if (searchText !== "") {
@@ -44,19 +33,13 @@ export const BasePageWithSearchBar: React.FC<IAddNewItemModal> = (props) => {
   }, [searchText, notFoundRoute]);
 
   React.useEffect(() => {
-    console.log("searchText: ", props.initialSearchText);
     setSearchText(props.initialSearchText || "");
   }, [props.initialSearchText]);
 
   return (
     <IonPage>
       <IonHeader translucent>
-        <IonToolbar>
-          <IonTitle slot={"start"}>{title}</IonTitle>
-          <IonButtons slot={"end"}>
-            <CloseButton pathname={closeRoute.pathname} searchParamToDelete={closeRoute.searchParamToDelete} />
-          </IonButtons>
-        </IonToolbar>
+      <BasePageHeader title={title} pathname={pathname} />
         <IonToolbar>
           <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} value={searchText} />
         </IonToolbar>

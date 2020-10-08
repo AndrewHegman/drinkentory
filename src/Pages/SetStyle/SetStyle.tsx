@@ -15,9 +15,7 @@ export const SetStyle: React.FC<IAddNewItemModal> = (props) => {
       <BasePageWithSearchBar
         title="Choose a Style"
         items={styles}
-        closeRoute={{
-          pathname: createNewBreweryRoute.pathname,
-        }}
+        pathname={createNewBreweryRoute.pathname}
         // {...props}
       />
     </>
