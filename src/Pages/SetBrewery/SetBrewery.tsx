@@ -15,8 +15,6 @@ export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
 
   const useInitialSearchText = () => useSelector((state: RootState) => state.breweries.newBrewery?.name);
 
-  // console.log("SetBrewery*: ", initialSearchText);
-
   const onClick = (searchText: string) => {
     dispatch(actions.breweries.setNewBreweryName(searchText));
   };

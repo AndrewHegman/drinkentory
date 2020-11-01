@@ -65,7 +65,6 @@ export const breweryReducer = (state = initialState, action: BreweryActionTypes)
         breweries: action.breweries,
       };
     case WAIT_ON_BREWERIES_REQUEST:
-      console.log(action);
       if (action.fieldToUpdate) {
         return {
           ...state,

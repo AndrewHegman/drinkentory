@@ -8,23 +8,25 @@ import { useInventoryStyles } from "./Inventory.styles";
 import { Link } from "react-router-dom";
 import { InventoryFilterPopover } from "../../Components/Popovers/InventoryFilterPopover";
 import * as queryString from "query-string";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
 import { Beer } from "../../Interfaces/Beer.types";
 
-import { fetchAllBeer, updateBeerQuantity } from "../../Redux/Store/Beer/Actions";
+import { decrementBeerQuantity, fetchAllBeer, incrementBeerQuantity } from "../../Redux/Store/Beer/Actions";
+import { getCurrentBeer } from "../../Redux/Store/Beer/Selectors";
 import { fetchAllBreweries } from "../../Redux/Store/Breweries/Actions";
 
 const mapStateToProps = (state: RootState) => {
   return {
     isLoading: state.beer.isLoading && state.breweries.isLoading,
-    beer: state.beer.inventory,
+    // beer: state.beer.inventory,
+    currentBeer: getCurrentBeer(state),
   };
 };
 
-export interface IInventory {}
+export interface IInventory extends PropsFromRedux {}
 
-const InventoryComponent: React.FC<IInventory & { isLoading: boolean; beer: Beer[] }> = (props) => {
+const InventoryComponent: React.FC<IInventory> = (props) => {
   const domain = queryString.parse(window.location.search)[SearchParams.Domain];
   const dispatch = useDispatch();
 
@@ -41,16 +43,19 @@ const InventoryComponent: React.FC<IInventory & { isLoading: boolean; beer: Beer
 
   React.useEffect(() => {
     if (!props.isLoading) {
-      setBeers(props.beer);
+      setBeers(props.currentBeer);
     }
   }, [props]);
 
   const handleQuantityChange = (id: string, dir: QuantityChangeDirection) => {
-    const currentQuantity = beers?.find((beer) => beer._id === id)?.quantity;
-    if (currentQuantity) {
-      dispatch(updateBeerQuantity(id, dir === QuantityChangeDirection.Up ? currentQuantity + 1 : currentQuantity - 1));
-    } else {
-      setAlertText(`Unable to find current quantity of ID: ${id}`);
+    try {
+      if (dir === QuantityChangeDirection.Up) {
+        dispatch(incrementBeerQuantity(id));
+      } else {
+        dispatch(decrementBeerQuantity(id));
+      }
+    } catch (error) {
+      setAlertText(error);
       setShowAlert(true);
     }
   };
@@ -99,4 +104,7 @@ const InventoryComponent: React.FC<IInventory & { isLoading: boolean; beer: Beer
   );
 };
 
-export const Inventory = connect(mapStateToProps)(InventoryComponent);
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const Inventory = connector(InventoryComponent);

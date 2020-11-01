@@ -27,7 +27,6 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal & { isLoading: boole
 
   React.useEffect(() => {
     if (!props.isLoading) {
-      console.log(props);
       setBeers(props.beer.map((beer) => beer._id));
     }
   }, [props]);

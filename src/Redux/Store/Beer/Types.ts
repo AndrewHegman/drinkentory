@@ -13,6 +13,8 @@ export const FETCH_BEER_BY_ID = "FETCH_BEER_BY_ID";
 export const UPDATE_BEER_BY_ID = "UPDATE_BEER_BY_ID";
 
 export const WAIT_ON_BEER_REQUEST = "WAIT_ON_REQUEST";
+export const FETCH_ALL_BEER_RECEIVED = "FETCH_ALL_BEER_RECEIVED";
+export const FETCH_BY_ID_RECEIVED = "FETCH_BY_ID_RECEIVED";
 
 export interface BeerState {
   newBeer?: Beer;
@@ -50,16 +52,18 @@ interface SetNewBeerHistoricQuantityAction {
   historicQuantity: number;
 }
 
-interface FetchCurrentBeer {
-  type: typeof FETCH_CURRENT_BEER;
+interface WaitOnRequest {
+  type: typeof WAIT_ON_BEER_REQUEST;
+}
+
+interface FetchAllBeerReceived {
+  type: typeof FETCH_ALL_BEER_RECEIVED;
   inventory: Beer[];
 }
 
-interface WaitOnRequest {
-  type: typeof WAIT_ON_BEER_REQUEST;
-  isLoading: boolean;
-  fieldToUpdate?: keyof BeerState | keyof Beer;
-  payload?: any;
+interface FetchByIdReceived {
+  type: typeof FETCH_BY_ID_RECEIVED;
+  byId: Beer;
 }
 
 interface UpdateBeerById {
@@ -75,6 +79,7 @@ export type BeerActionTypes =
   | SetNewBeerStyleAction
   | SetNewBeerQuantityAction
   | SetNewBeerHistoricQuantityAction
-  | FetchCurrentBeer
   | WaitOnRequest
-  | UpdateBeerById;
+  | UpdateBeerById
+  | FetchByIdReceived
+  | FetchAllBeerReceived;

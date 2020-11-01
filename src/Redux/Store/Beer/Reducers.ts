@@ -5,9 +5,11 @@ import {
   SET_NEW_BEER_STYLE,
   SET_NEW_BEER_QUANTITY,
   SET_NEW_BEER_HISTORIC_QUANTITY,
-  BeerActionTypes,
   WAIT_ON_BEER_REQUEST,
   UPDATE_BEER_BY_ID,
+  FETCH_BY_ID_RECEIVED,
+  FETCH_ALL_BEER_RECEIVED,
+  BeerActionTypes,
   BeerState,
 } from "./Types";
 import { Beer } from "../../../Interfaces/Beer.types";
@@ -73,6 +75,7 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           quantity: action.quantity,
         },
       };
+
     case SET_NEW_BEER_HISTORIC_QUANTITY:
       return {
         ...state,
@@ -82,25 +85,34 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           historicQuantity: action.historicQuantity,
         },
       };
+
     case WAIT_ON_BEER_REQUEST:
-      if (action.fieldToUpdate) {
-        return {
-          ...state,
-          isLoading: action.isLoading,
-          [action.fieldToUpdate]: action.payload,
-        };
-      }
       return {
         ...state,
-        isLoading: action.isLoading,
+        isLoading: true,
       };
-    case UPDATE_BEER_BY_ID:
-      const newState = {
+
+    case FETCH_BY_ID_RECEIVED:
+      return {
         ...state,
+        isLoading: false,
+        inventory: [...state.inventory, action.byId],
+      };
+
+    case FETCH_ALL_BEER_RECEIVED:
+      return {
+        ...state,
+        isLoading: false,
+        inventory: action.inventory,
+      };
+
+    case UPDATE_BEER_BY_ID:
+      return {
+        ...state,
+        isLoading: false,
         inventory: [
           ...state.inventory.map((beer) => {
             if (beer._id !== action.id) {
-              console.log("no match");
               return beer;
             }
 
@@ -111,8 +123,6 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           }),
         ],
       };
-      console.log(newState);
-      return newState;
 
     default:
       return state;
