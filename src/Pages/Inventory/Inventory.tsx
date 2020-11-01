@@ -17,7 +17,7 @@ import { fetchAllBreweries } from "../../Redux/Store/Breweries/Actions";
 
 const mapStateToProps = (state: RootState) => {
   return {
-    isLoading: false,
+    isLoading: state.beer.isLoading && state.breweries.isLoading,
     beer: state.beer.inventory,
   };
 };
@@ -76,6 +76,7 @@ const InventoryComponent: React.FC<IInventory & { isLoading: boolean; beer: Beer
       </Link>
     </div>
   );
+
   return (
     <>
       <BasePage headerContent={toolbarHeaderContent}>
