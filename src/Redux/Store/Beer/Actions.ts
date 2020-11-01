@@ -6,11 +6,13 @@ import {
   SET_NEW_BEER_STYLE,
   SET_NEW_BEER_QUANTITY,
   SET_NEW_BEER_HISTORIC_QUANTITY,
-  REQUEST_ALL_BEER,
-  RECEIVE_ALL_BEER,
+  WAIT_ON_BEER_REQUEST,
+  UPDATE_BEER_BY_ID,
   BeerActionTypes,
-  Beer,
 } from "./Types";
+import { Beer } from "../../../Interfaces/Beer.types";
+import { BeerState } from "./Types";
+
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
 
 export const setNewBeerId = (id: string): BeerActionTypes => {
@@ -55,25 +57,50 @@ export const setNewBeerHistoricQuantity = (historicQuantity: number): BeerAction
   };
 };
 
-const requestAllBeer = (): BeerActionTypes => {
+const setWaitOnRequestStatus = (isLoading: boolean, fieldToUpdate?: keyof BeerState | keyof Beer, payload?: any): BeerActionTypes => {
   return {
-    type: REQUEST_ALL_BEER,
+    type: WAIT_ON_BEER_REQUEST,
+    isLoading,
+    fieldToUpdate,
+    payload,
   };
 };
 
-const receiveAllBeer = (inventory: Beer[]): BeerActionTypes => {
-  return {
-    type: RECEIVE_ALL_BEER,
-    inventory,
-  };
-};
-
-export const fetchAllBeer = (): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+export const fetchAllBeer = (expandFields?: [keyof Beer]): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
   return (dispatch) => {
-    dispatch(requestAllBeer());
-    return Axios.get("http://localhost:3001/v1/beer")
+    setWaitOnRequestStatus(true);
+    return Axios.get(`http://localhost:3002/v1/beer${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
       .then((res) => res.data)
-      .then((json) => dispatch(receiveAllBeer(json)));
+      .then((json) => dispatch(setWaitOnRequestStatus(false, "inventory", json)));
+  };
+};
+
+export const fetchBeerById = (expandFields?: [keyof Beer]): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+  return (dispatch) => {
+    setWaitOnRequestStatus(true);
+    return Axios.get(`http://localhost:3002/v1/beer${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
+      .then((res) => res.data)
+      .then((json) => dispatch(setWaitOnRequestStatus(false, "inventory", json)));
+  };
+};
+
+export const updateBeerById = (id: string, beer: Partial<Beer>): BeerActionTypes => {
+  return {
+    type: UPDATE_BEER_BY_ID,
+    id,
+    beer,
+  };
+};
+
+export const updateBeerQuantity = (id: string, quantity: number): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+  return (dispatch) => {
+    setWaitOnRequestStatus(true);
+    return Axios.put(`http://localhost:3002/v1/beer/${id}`, { quantity })
+      .then((res) => res.data)
+      .then((json) => {
+        setWaitOnRequestStatus(false);
+        return dispatch(updateBeerById(id, json));
+      });
   };
 };
 
@@ -84,5 +111,4 @@ export type BeerActionCallbacks =
   | typeof setNewBeerStyle
   | typeof setNewBeerQuantity
   | typeof setNewBeerHistoricQuantity
-  | typeof fetchAllBeer
-  | typeof requestAllBeer;
+  | typeof fetchAllBeer;

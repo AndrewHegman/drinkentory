@@ -4,9 +4,6 @@ export enum config {
 
 export enum SearchParams {
   Domain = "domain",
-  NewItemName = "name",
-  BreweryName = "breweryname",
-  Brewery = "brewery",
 }
 
 export const greyFont = "rgb(66, 66, 66)";

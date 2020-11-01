@@ -13,7 +13,6 @@ export interface IBasePageWithSearchBarProps {
   pathname: string;
   notFoundRoute?: {
     pathname: string;
-    searchParamToAdd?: string;
   };
 }
 
@@ -39,7 +38,7 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
   return (
     <IonPage>
       <IonHeader translucent>
-      <BasePageHeader title={title} pathname={pathname} />
+        <BasePageHeader title={title} pathname={pathname} />
         <IonToolbar>
           <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} value={searchText} />
         </IonToolbar>

@@ -2,9 +2,11 @@ import React from "react";
 import { IonItem, IonLabel, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
-import { getBeer } from "../../TestingUtils/API/Beer";
-import { getWine } from "../../TestingUtils/API/Wine";
 import { Domains, QuantityChangeDirection } from "../../Utils";
+import { BeerExpanded } from "../../Interfaces/Beer.types";
+import { getExpandedBeerById } from "../../Redux/Store/Beer/Selectors";
+import { RootState } from "../../Redux/Store/index";
+import { connect } from "react-redux";
 
 interface IBaseInventoryItemProps {
   domain: Domains;
@@ -12,35 +14,43 @@ interface IBaseInventoryItemProps {
   onQuantityChange: (dir: QuantityChangeDirection) => void;
 }
 
-export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
+const mapStateToProps = (state: RootState, props: IBaseInventoryItemProps) => {
+  return {
+    item: getExpandedBeerById(state, props.id),
+  };
+};
+
+const InventoryItemComponent: React.FC<IBaseInventoryItemProps & { item: BeerExpanded | undefined }> = (props) => {
   const [content, setContent] = React.useState<React.ReactNode>();
-  const { id, onQuantityChange, domain } = props;
+  const { onQuantityChange, domain, item } = props;
 
   const classes = useInventoryItemStyles();
 
   React.useEffect(() => {
-    // const domain = location.search.match(/.*domain=([^&|\n|\t\s]+)/);
-    if (domain === Domains.Wine) {
-      const data = getWine(id);
+    if (domain === Domains.Beer) {
+      const beer = item;
       setContent(
         <IonLabel>
-          <p>{data.producer}</p>
-          <h1>{data.name}</h1>
-          <h3>{`${data.varietal} ${data.vintage}`}</h3>
-          <p>{`${data.region}, ${data.country}`}</p>
-        </IonLabel>
-      );
-    } else {
-      const data = getBeer(id);
-      setContent(
-        <IonLabel>
-          <h1>{data.name}</h1>
-          <h3>{data.brewery}</h3>
-          <p>{data.style}</p>
+          <h1>{beer?.name}</h1>
+          <h3>{beer?.brewery.name}</h3>
+          <p>{beer?.style}</p>
         </IonLabel>
       );
     }
-  }, [id]);
+    // } else {
+    //   const { name, brewery, style } = data as Beer;
+    //   const breweryName = brewery instanceof Object ? brewery.name : brewery;
+    //   setContent(
+    //     <IonLabel>
+    //       <p>{(data as Wine).producer}</p>
+    //       <h1>{(data as Wine).name}</h1>
+    //       <h3>{`${(data as Wine).varietal} ${(data as Wine).vintage}`}</h3>
+    //       <p>{`${(data as Wine).region}, ${(data as Wine).country}`}</p>
+    //     </IonLabel>
+    //   );
+
+    // }
+  }, [item]);
 
   return (
     <IonItem>
@@ -53,7 +63,7 @@ export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
           onQuantityChange(QuantityChangeDirection.Up);
         }}
       />
-      <IonText style={{ fontSize: "30px", paddingLeft: "5px", paddingRight: "5px" }}>{12}</IonText>
+      <IonText style={{ fontSize: "30px", paddingLeft: "5px", paddingRight: "5px" }}>{item?.quantity}</IonText>
       <IonIcon
         icon={removeCircleOutline}
         className={classes.subtractButton}
@@ -65,3 +75,5 @@ export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
     </IonItem>
   );
 };
+
+export const InventoryItem = connect(mapStateToProps)(InventoryItemComponent);

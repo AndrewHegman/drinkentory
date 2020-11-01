@@ -9,17 +9,17 @@ export enum QuantityChangeDirection {
   Down = 1,
 }
 
-export type BeerItem = {
-  name: string;
-  brewery: string;
-  style: string;
-};
+// export type BeerItem = {
+//   name: string;
+//   brewery: string;
+//   style: string;
+// };
 
-export type WineItem = {
-  name: string;
-  varietal: string;
-  producer: string;
-  country: string;
-  vintage: number;
-  region: string;
-};
+// export type WineItem = {
+//   name: string;
+//   varietal: string;
+//   producer: string;
+//   country: string;
+//   vintage: number;
+//   region: string;
+// };
