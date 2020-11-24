@@ -12,7 +12,7 @@ import {
   UPDATE_BEER_BY_ID,
   BeerActionTypes,
 } from "./Types";
-import { Beer } from "../../../Interfaces/Beer.types";
+import { Beer, BeerExpanded } from "../../../Interfaces/Beer.types";
 import { BeerState } from "./Types";
 import { getBeerById } from "./Selectors";
 
@@ -67,39 +67,39 @@ const setWaitOnRequestStatus = (): BeerActionTypes => {
   };
 };
 
-const onFetchAllBeerReceived = (inventory: Beer[]): BeerActionTypes => {
+const onFetchAllBeerReceived = (inventory: BeerExpanded[]): BeerActionTypes => {
   return {
     type: FETCH_ALL_BEER_RECEIVED,
     inventory,
   };
 };
 
-const onFetchByIdReceived = (byId: Beer): BeerActionTypes => {
+const onFetchByIdReceived = (byId: BeerExpanded): BeerActionTypes => {
   return {
     type: FETCH_BY_ID_RECEIVED,
     byId,
   };
 };
 
-export const fetchAllBeer = (expandFields?: [keyof Beer]): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+export const fetchAllBeer = (): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
   return (dispatch) => {
     setWaitOnRequestStatus();
-    return Axios.get(`http://localhost:3002/v1/beer${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
+    return Axios.get("http://localhost:3002/v1/beer?expand=brewery,style")
       .then((res) => res.data)
       .then((json) => dispatch(onFetchAllBeerReceived(json)));
   };
 };
 
-export const fetchBeerById = (id: string, expandFields?: [keyof Beer]): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+export const fetchBeerById = (id: string): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
   return (dispatch) => {
     setWaitOnRequestStatus();
-    return Axios.get(`http://localhost:3002/v1/beer/${id}${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
+    return Axios.get(`http://localhost:3002/v1/beer/${id}?expand=brewery,style`)
       .then((res) => res.data)
       .then((json) => dispatch(onFetchByIdReceived(json)));
   };
 };
 
-export const updateBeerById = (id: string, beer: Partial<Beer>): BeerActionTypes => {
+export const updateBeerById = (id: string, beer: Partial<BeerExpanded>): BeerActionTypes => {
   return {
     type: UPDATE_BEER_BY_ID,
     id,
@@ -128,11 +128,11 @@ export const incrementBeerQuantity = (id: string): ThunkAction<Promise<BeerActio
 
     const quantity = getBeerById(getState(), id)?.quantity;
 
-    if (quantity !== 0 && !quantity) {
+    if (quantity === undefined) {
       throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);
     }
 
-    return Axios.put(`http://localhost:3002/v1/beer/${id}`, { quantity: quantity + 1 })
+    return Axios.put(`http://localhost:3002/v1/beer/${id}`, { quantity: quantity + 1, historicQuantity: quantity + 1 })
       .then((res) => res.data)
       .then((json) => {
         return dispatch(updateBeerById(id, json));
@@ -146,7 +146,7 @@ export const decrementBeerQuantity = (id: string): ThunkAction<Promise<BeerActio
 
     const quantity = getBeerById(getState(), id)?.quantity;
 
-    if (quantity !== 0 && !quantity) {
+    if (quantity === undefined) {
       throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);
     }
 

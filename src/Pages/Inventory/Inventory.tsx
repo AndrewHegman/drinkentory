@@ -3,35 +3,34 @@ import { BasePage } from "../../Components/BasePage";
 import { IonList, IonSearchbar, IonIcon, IonAlert } from "@ionic/react";
 import { addCircleOutline, filterOutline } from "ionicons/icons";
 import { InventoryItem } from "../../Components/InventoryItem";
-import { QuantityChangeDirection, Domains, SearchParams } from "../../Utils";
+import { QuantityChangeDirection, SearchParams } from "../../Utils";
 import { useInventoryStyles } from "./Inventory.styles";
 import { Link } from "react-router-dom";
 import { InventoryFilterPopover } from "../../Components/Popovers/InventoryFilterPopover";
-import * as queryString from "query-string";
 import { connect, useDispatch, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
-import { Beer } from "../../Interfaces/Beer.types";
+import { Beer, BeerExpanded } from "../../Interfaces";
 
 import { decrementBeerQuantity, fetchAllBeer, incrementBeerQuantity } from "../../Redux/Store/Beer/Actions";
 import { getCurrentBeer } from "../../Redux/Store/Beer/Selectors";
 import { fetchAllBreweries } from "../../Redux/Store/Breweries/Actions";
+import { fetchAllStyles } from "../../Redux/Store/Styles/Actions";
 
 const mapStateToProps = (state: RootState) => {
   return {
-    isLoading: state.beer.isLoading && state.breweries.isLoading,
-    // beer: state.beer.inventory,
+    isLoading: state.beer.isLoading || state.breweries.isLoading || state.style.isLoading,
     currentBeer: getCurrentBeer(state),
+    domain: state.domain.domain,
   };
 };
 
 export interface IInventory extends PropsFromRedux {}
 
 const InventoryComponent: React.FC<IInventory> = (props) => {
-  const domain = queryString.parse(window.location.search)[SearchParams.Domain];
   const dispatch = useDispatch();
 
   const [searchBarText, setSearchBarText] = React.useState<string>("");
-  const [beers, setBeers] = React.useState<Beer[]>();
+  const [beers, setBeers] = React.useState<BeerExpanded[]>();
   const [showFilterPopover, setShowFilterPopover] = React.useState<boolean>(false);
   const [showAlert, setShowAlert] = React.useState<boolean>(false);
   const [alertText, setAlertText] = React.useState<string>("");
@@ -39,6 +38,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   React.useEffect(() => {
     dispatch(fetchAllBeer());
     dispatch(fetchAllBreweries());
+    dispatch(fetchAllStyles());
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -93,7 +93,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
                 key={beer._id}
                 onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)}
                 id={beer._id}
-                domain={(domain as Domains) || Domains.Beer} // this is done because domain can be an array--this should be fixed
+                domain={props.domain}
               />
             ))}
           {!beers && <div>loading</div>}

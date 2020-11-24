@@ -1,14 +1,6 @@
 import Axios from "axios";
 import { Brewery } from "../../../Interfaces/Brewery.types";
-import {
-  SET_NEW_BREWERY_NAME,
-  SET_NEW_BREWERY_COUNTRY,
-  SET_NEW_BREWERY_STATE,
-  SET_NEW_BREWERY_CITY,
-  WAIT_ON_BREWERIES_REQUEST,
-  BreweryActionTypes,
-  BreweryState,
-} from "./Types";
+import { SET_NEW_BREWERY_NAME, SET_NEW_BREWERY_COUNTRY, SET_NEW_BREWERY_STATE, SET_NEW_BREWERY_CITY, WAIT_ON_BREWERIES_REQUEST, BreweryActionTypes, BreweryState } from "./Types";
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
 
 export const setNewBreweryName = (name: string): BreweryActionTypes => {
@@ -50,16 +42,11 @@ const setWaitOnRequestStatus = (isLoading: boolean, fieldToUpdate?: keyof Brewer
 
 export const fetchAllBreweries = (expandFields?: [keyof Brewery]): ThunkAction<Promise<BreweryActionTypes>, {}, {}, BreweryActionTypes> => {
   return (dispatch) => {
-    setWaitOnRequestStatus(true);
+    dispatch(setWaitOnRequestStatus(true));
     return Axios.get(`http://localhost:3002/v1/brewery${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
       .then((res) => res.data)
       .then((json) => dispatch(setWaitOnRequestStatus(false, "breweries", json)));
   };
 };
 
-export type BreweryActionCallbacks =
-  | typeof setNewBreweryName
-  | typeof setNewBreweryCountry
-  | typeof setNewBreweryState
-  | typeof setNewBreweryCity
-  | typeof fetchAllBreweries;
+export type BreweryActionCallbacks = typeof setNewBreweryName | typeof setNewBreweryCountry | typeof setNewBreweryState | typeof setNewBreweryCity | typeof fetchAllBreweries;

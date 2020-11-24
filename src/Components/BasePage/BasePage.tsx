@@ -1,57 +1,65 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import {
-  IonPage,
-  IonToolbar,
-  IonSegmentButton,
-  IonLabel,
-  IonSegment,
-  IonContent,
-  IonHeader,
-  IonButtons,
-  IonIcon,
-  IonPopover
-} from "@ionic/react";
-import { Domains } from "../../Utils/Routes";
+import { IonPage, IonToolbar, IonSegmentButton, IonLabel, IonSegment, IonContent, IonHeader, IonButtons, IonIcon, IonPopover } from "@ionic/react";
+import { Domains } from "../../Interfaces";
 import { SettingsMenu } from "../SettingsMenu";
 import { menuOutline } from "ionicons/icons";
 import { useBasePageStyles } from "./BasePage.styles";
 import { SearchParams } from "../../Utils/Constants";
+import { RootState } from "../../Redux/Store/index";
+import { connect, ConnectedProps, useDispatch } from "react-redux";
+
 import * as queryString from "query-string";
+import { setDomain } from "../../Redux/Store/Domain/Actions";
 
 require("dotenv");
 
-export interface IBasePage {
+export interface IBasePageProps extends PropsFromRedux {
   toolbarHeaderContent?: React.ReactNode;
   headerContent?: React.ReactNode;
 }
 
-export const BasePage: React.FC<IBasePage> = (props) => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    domain: state.domain.domain,
+  };
+};
+
+const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (props) => {
+  const { headerContent, toolbarHeaderContent, domain } = props;
+
+  const dispatch = useDispatch();
   const history = useHistory();
-  const urlParams = queryString.parse(history.location.search);
   const isProd = process.env.REACT_APP_IS_PROD === "true";
 
-  // TODO: Force a default value if domain is invalid (not `beer` or `wine`)
-  const [domain, setDomain] = React.useState<string>(
-    (urlParams[SearchParams.Domain] as string) || Domains.Beer
-  );
   const [showSettingsPopover, setShowSettingsPopover] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     const urlParams = queryString.parse(history.location.search);
-    if (urlParams[SearchParams.Domain] !== domain) {
-      urlParams[SearchParams.Domain] = domain;
+    const normalizedDomainKeys = Object.keys(Domains).map((key) => key.toLowerCase());
+    const normalizedUrlParam = (urlParams[SearchParams.Domain] as string)?.toLowerCase();
+
+    if (normalizedDomainKeys.includes(normalizedUrlParam)) {
+      dispatch(setDomain(urlParams[SearchParams.Domain] as Domains));
+    } else {
+      urlParams[SearchParams.Domain] = Domains.Beer;
       history.push({
-        search: `?${queryString.stringify(urlParams)}`
+        search: `?${queryString.stringify(urlParams)}`,
+      });
+      dispatch(setDomain(Domains.Beer));
+    }
+  }, [window.location.search]);
+
+  const handleSegmentChange = (event: any) => {
+    const urlParams = queryString.parse(history.location.search);
+    if (urlParams[SearchParams.Domain] !== event.target.value) {
+      urlParams[SearchParams.Domain] = event.target.value;
+      history.push({
+        search: `?${queryString.stringify(urlParams)}`,
       });
     }
-  }, [history, domain]);
-
-  const handleChange = (value: any) => {
-    setDomain(value.detail.value);
+    dispatch(setDomain(event.target.value));
   };
-
-  const { headerContent, toolbarHeaderContent } = props;
 
   const classes = useBasePageStyles();
   return (
@@ -65,14 +73,10 @@ export const BasePage: React.FC<IBasePage> = (props) => {
         <IonToolbar>
           {!isProd && (
             <IonButtons slot="start">
-              <IonIcon
-                icon={menuOutline}
-                onClick={() => setShowSettingsPopover(true)}
-                className={classes.settingsPopoverToggle}
-              />
+              <IonIcon icon={menuOutline} onClick={() => setShowSettingsPopover(true)} className={classes.settingsPopoverToggle} />
             </IonButtons>
           )}
-          <IonSegment onIonChange={handleChange} value={domain}>
+          <IonSegment onClick={handleSegmentChange} value={domain}>
             <IonSegmentButton value={Domains.Beer} title={Domains.Beer}>
               <IonLabel>Beer</IonLabel>
             </IonSegmentButton>
@@ -88,3 +92,8 @@ export const BasePage: React.FC<IBasePage> = (props) => {
     </IonPage>
   );
 };
+
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const BasePage = connector(BasePageComponent);

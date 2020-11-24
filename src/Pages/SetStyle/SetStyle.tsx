@@ -2,10 +2,18 @@ import React from "react";
 import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { RouteComponentProps } from "react-router";
+import { RootState } from "../../Redux/Store/index";
+import { useSelector, useDispatch, connect, ConnectedProps } from "react-redux";
 
-export interface IAddNewItemModal extends RouteComponentProps {}
+export interface IAddNewItemModal extends RouteComponentProps, PropsFromRedux {}
 
-export const SetStyle: React.FC<IAddNewItemModal> = (props) => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    domain: state.domain.domain,
+  };
+};
+
+export const SetStyleComponent: React.FC<IAddNewItemModal> = (props) => {
   const [styles, setStyles] = React.useState<string[]>([]);
   const { createNewBreweryRoute } = routes;
 
@@ -14,10 +22,14 @@ export const SetStyle: React.FC<IAddNewItemModal> = (props) => {
     <>
       <BasePageWithSearchBar
         title="Choose a Style"
-        items={styles}
         pathname={createNewBreweryRoute.pathname}
         // {...props}
       />
     </>
   );
 };
+
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const SetStyle = connector(SetStyleComponent);

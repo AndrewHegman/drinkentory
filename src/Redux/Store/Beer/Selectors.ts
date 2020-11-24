@@ -14,11 +14,12 @@ export const getNewBeerQuantity = (state: RootState): number => state.beer.newBe
 
 export const getNewBeerHistoricQuantity = (state: RootState): number => state.beer.newBeer?.historicQuantity || 0;
 
-export const getAllBeer = (state: RootState): Beer[] => state.beer.inventory;
+export const getAllBeer = (state: RootState): BeerExpanded[] => state.beer.inventory;
 
-export const getCurrentBeer = (state: RootState): Beer[] => state.beer.inventory.filter((beer) => beer.quantity > 0);
+export const getCurrentBeer = (state: RootState): BeerExpanded[] => state.beer.inventory.filter((beer) => beer.quantity > 0);
 
-export const getBeerById = (state: RootState, id: string): Beer | undefined => state.beer.inventory.find((beer: Beer) => beer._id === id);
+export const getBeerById = (state: RootState, id: string): BeerExpanded | undefined =>
+  state.beer.inventory.find((beer: BeerExpanded) => beer._id === id);
 
 export const getExpandedBeerById = (state: RootState, id: string): BeerExpanded | undefined => {
   const beer = getBeerById(state, id);
@@ -26,10 +27,13 @@ export const getExpandedBeerById = (state: RootState, id: string): BeerExpanded 
     return undefined;
   }
 
-  const breweryId = beer?.brewery;
+  const breweryId = beer.brewery._id;
+  const styleId = beer.style._id;
+
   return {
-    ...beer!,
+    ...beer,
     brewery: state.breweries.breweries.find((brewery) => brewery._id === breweryId)!,
+    style: state.style.styles.find((style) => style._id === styleId)!,
   };
 };
 

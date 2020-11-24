@@ -14,7 +14,7 @@ export interface BeerExpanded {
   _id: string;
   name: string;
   brewery: Brewery;
-  style: string;
+  style: Style;
   quantity: number;
   historicQuantity: number;
 }

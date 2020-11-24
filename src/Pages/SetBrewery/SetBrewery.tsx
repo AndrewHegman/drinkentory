@@ -1,14 +1,19 @@
 import React from "react";
 import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
-import { SearchParams } from "../../Utils/Constants";
 import { actions } from "../../Redux";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
 
-export interface ISetBreweryProps {}
+export interface ISetBreweryProps extends PropsFromRedux {}
 
-export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    domain: state.domain.domain,
+  };
+};
+
+const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
   const [breweries, setBreweries] = React.useState<string[]>([]);
   const { createNewBreweryRoute, createNewItemRoute } = routes;
   const dispatch = useDispatch();
@@ -24,11 +29,15 @@ export const SetBrewery: React.FC<ISetBreweryProps> = (props) => {
   return (
     <BasePageWithSearchBar
       title="Choose a Brewery"
-      items={breweries}
       pathname={createNewItemRoute.pathname}
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname }}
-      onClick={onClick}
+      onNotFoundClick={onClick}
       initialSearchText={initialSearchText}
     />
   );
 };
+
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const SetBrewery = connector(SetBreweryComponent);

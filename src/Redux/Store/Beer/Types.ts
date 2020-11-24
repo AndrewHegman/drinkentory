@@ -1,4 +1,4 @@
-import { Beer } from "../../../Interfaces/Beer.types";
+import { Beer, BeerExpanded } from "../../../Interfaces/Beer.types";
 
 export const SET_NEW_BEER_ID = "SET_NEW_BEER_ID";
 export const SET_NEW_BEER_NAME = "SET_NEW_BEER_NAME";
@@ -18,7 +18,7 @@ export const FETCH_BY_ID_RECEIVED = "FETCH_BY_ID_RECEIVED";
 
 export interface BeerState {
   newBeer?: Beer;
-  inventory: Beer[];
+  inventory: BeerExpanded[];
   isLoading: boolean;
 }
 
@@ -58,18 +58,18 @@ interface WaitOnRequest {
 
 interface FetchAllBeerReceived {
   type: typeof FETCH_ALL_BEER_RECEIVED;
-  inventory: Beer[];
+  inventory: BeerExpanded[];
 }
 
 interface FetchByIdReceived {
   type: typeof FETCH_BY_ID_RECEIVED;
-  byId: Beer;
+  byId: BeerExpanded;
 }
 
 interface UpdateBeerById {
   type: typeof UPDATE_BEER_BY_ID;
   id: string;
-  beer: Partial<Beer>;
+  beer: Partial<BeerExpanded>;
 }
 
 export type BeerActionTypes =

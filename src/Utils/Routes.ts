@@ -8,11 +8,6 @@ import { CreateNewBrewery } from "../Pages/CreateNewBrewery";
 import { SetBreweryCountry } from "../Pages/SetBreweryCountry";
 import { SetStyle } from "../Pages/SetStyle";
 
-export enum Domains {
-  Beer = "beer",
-  Wine = "wine",
-}
-
 export interface IRoute {
   pathname: string;
   exact: boolean;

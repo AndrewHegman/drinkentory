@@ -1,15 +1,13 @@
 import React from "react";
-import { IonContent, IonToolbar, IonTitle, IonButtons, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
+import { IonContent, IonToolbar, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
 import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
 import { IonItemLink } from "../IonItemLink/IonItemLink";
 import { BasePageHeader } from "../BasePageHeader";
 
-// TODO: Add a selectRoute interface as well
 export interface IBasePageWithSearchBarProps {
   title: string;
-  items: string[];
   initialSearchText?: string;
-  onClick?: (searchText: string) => void;
+  onNotFoundClick?: (searchText: string) => void;
   pathname: string;
   notFoundRoute?: {
     pathname: string;
@@ -17,8 +15,7 @@ export interface IBasePageWithSearchBarProps {
 }
 
 export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (props) => {
-  const { pathname, notFoundRoute, title, items } = props;
-
+  const { pathname, notFoundRoute, title } = props;
   const [searchText, setSearchText] = React.useState<string>("");
   const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
   const classes = useBasePageWithSearchBarStyles();
@@ -45,14 +42,13 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
       </IonHeader>
       <IonContent className={classes.root}>
         <IonList>
-          {items.map((item) => (
-            <div>{item}</div>
-          ))}
+          {props.children}
+
           {showNotFound && (
             <IonItemLink
               to={{ pathname: notFoundRoute?.pathname }}
               onClick={() => {
-                props.onClick && props.onClick(searchText);
+                props.onNotFoundClick && props.onNotFoundClick(searchText);
               }}
             >
               Add&nbsp;<b>{searchText}?</b>

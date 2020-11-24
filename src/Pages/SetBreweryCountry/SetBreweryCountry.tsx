@@ -3,11 +3,18 @@ import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { actions } from "../../Redux";
 import { getNewBreweryCountry } from "../../Redux/Store/Breweries/Selectors";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch, connect, ConnectedProps } from "react-redux";
+import { RootState } from "../../Redux/Store/index";
 
-export interface IAddNewItemModal {}
+export interface IAddNewItemModal extends PropsFromRedux {}
 
-export const SetBreweryCountry: React.FC<IAddNewItemModal> = (props) => {
+const mapStateToProps = (state: RootState) => {
+  return {
+    domain: state.domain.domain,
+  };
+};
+
+export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) => {
   const [countries, setCountries] = React.useState<string[]>([]);
   const { createNewBreweryRoute } = routes;
   const dispatch = useDispatch();
@@ -19,14 +26,16 @@ export const SetBreweryCountry: React.FC<IAddNewItemModal> = (props) => {
   };
 
   return (
-    <>
-      <BasePageWithSearchBar
-        title="Choose a Country"
-        items={countries}
-        pathname={createNewBreweryRoute.pathname}
-        onClick={onClick}
-        initialSearchText={initialSearchText}
-      />
-    </>
+    <BasePageWithSearchBar
+      title="Choose a Country"
+      pathname={createNewBreweryRoute.pathname}
+      onNotFoundClick={onClick}
+      initialSearchText={initialSearchText}
+    />
   );
 };
+
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const SetBreweryCountry = connector(SetBreweryCountryComponent);

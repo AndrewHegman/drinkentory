@@ -2,12 +2,13 @@ import React from "react";
 import { IonItem, IonLabel, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
-import { Domains, QuantityChangeDirection } from "../../Utils";
+import { QuantityChangeDirection } from "../../Utils/";
+import { Domains } from "../../Interfaces";
 import { BeerExpanded } from "../../Interfaces/Beer.types";
 import { getExpandedBeerById } from "../../Redux/Store/Beer/Selectors";
 import { RootState } from "../../Redux/Store/index";
 import { connect } from "react-redux";
-
+import { ListItemBeer } from "../ListItem";
 interface IBaseInventoryItemProps {
   domain: Domains;
   id: string;
@@ -27,29 +28,12 @@ const InventoryItemComponent: React.FC<IBaseInventoryItemProps & { item: BeerExp
   const classes = useInventoryItemStyles();
 
   React.useEffect(() => {
-    if (domain === Domains.Beer) {
-      const beer = item;
+    if (item) {
       setContent(
-        <IonLabel>
-          <h1>{beer?.name}</h1>
-          <h3>{beer?.brewery.name}</h3>
-          <p>{beer?.style}</p>
-        </IonLabel>
+        // Based on `domain`, ListItem will automagically decide to use beer or wine
+        <ListItemBeer beer={item} />
       );
     }
-    // } else {
-    //   const { name, brewery, style } = data as Beer;
-    //   const breweryName = brewery instanceof Object ? brewery.name : brewery;
-    //   setContent(
-    //     <IonLabel>
-    //       <p>{(data as Wine).producer}</p>
-    //       <h1>{(data as Wine).name}</h1>
-    //       <h3>{`${(data as Wine).varietal} ${(data as Wine).vintage}`}</h3>
-    //       <p>{`${(data as Wine).region}, ${(data as Wine).country}`}</p>
-    //     </IonLabel>
-    //   );
-
-    // }
   }, [item]);
 
   return (
