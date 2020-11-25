@@ -5,15 +5,16 @@ import { CloseButton } from "../CloseButton/CloseButton";
 export interface IBasePageHeaderProps {
   title: string;
   pathname: string;
+  onClose?: () => void;
 }
 
 export const BasePageHeader: React.FC<IBasePageHeaderProps> = (props: IBasePageHeaderProps) => {
-  const { title, pathname } = props;
+  const { title, pathname, onClose } = props;
   return (
     <IonToolbar>
       <IonTitle>{title}</IonTitle>
       <IonButtons slot={"end"}>
-        <CloseButton pathname={pathname} />
+        <CloseButton pathname={pathname} onClick={onClose} />
       </IonButtons>
     </IonToolbar>
   );

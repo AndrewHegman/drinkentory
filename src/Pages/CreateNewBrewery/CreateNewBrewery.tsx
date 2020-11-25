@@ -27,7 +27,7 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps & { name: string
   }, [props.name]);
 
   return (
-    <BasePageWithInputCards title={"Create new Brewery"} pathname={ setBreweryRoute.pathname }>
+    <BasePageWithInputCards title={"Create new Brewery"} pathname={setBreweryRoute.pathname}>
       <EditableInputCard
         title={"Brewery"}
         onChange={(event) => setName(event.detail.value || "")}
@@ -36,9 +36,8 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps & { name: string
         }}
         value={name}
       />
-      <LinkInputCard title={"Country"} pathname={setBreweryCountryRoute.pathname} />
-      <LinkInputCard title={"City"} pathname={setBreweryCountryRoute.pathname} />
-      <div>foo</div>
+      <LinkInputCard title={"Country"} pathname={setBreweryCountryRoute.pathname} content={"Country"} />
+      <LinkInputCard title={"City"} pathname={setBreweryCountryRoute.pathname} content={"City"} />
     </BasePageWithInputCards>
   );
 };

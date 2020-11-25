@@ -3,38 +3,31 @@ import { IonItem, IonLabel, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
 import { QuantityChangeDirection } from "../../Utils/";
-import { Domains } from "../../Interfaces";
 import { BeerExpanded } from "../../Interfaces/Beer.types";
-import { getExpandedBeerById } from "../../Redux/Store/Beer/Selectors";
 import { RootState } from "../../Redux/Store/index";
-import { connect } from "react-redux";
 import { ListItemBeer } from "../ListItem";
+
 interface IBaseInventoryItemProps {
-  domain: Domains;
-  id: string;
+  beer: BeerExpanded;
   onQuantityChange: (dir: QuantityChangeDirection) => void;
 }
 
-const mapStateToProps = (state: RootState, props: IBaseInventoryItemProps) => {
+const mapStateToProps = (state: RootState) => {
   return {
-    item: getExpandedBeerById(state, props.id),
+    beer: state.beer.inventory,
+    isLoading: state.beer.isLoading,
   };
 };
 
-const InventoryItemComponent: React.FC<IBaseInventoryItemProps & { item: BeerExpanded | undefined }> = (props) => {
+export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
   const [content, setContent] = React.useState<React.ReactNode>();
-  const { onQuantityChange, domain, item } = props;
+  const { onQuantityChange, beer } = props;
 
   const classes = useInventoryItemStyles();
 
   React.useEffect(() => {
-    if (item) {
-      setContent(
-        // Based on `domain`, ListItem will automagically decide to use beer or wine
-        <ListItemBeer beer={item} />
-      );
-    }
-  }, [item]);
+    setContent(<ListItemBeer beer={beer} />);
+  }, [beer]);
 
   return (
     <IonItem>
@@ -47,7 +40,7 @@ const InventoryItemComponent: React.FC<IBaseInventoryItemProps & { item: BeerExp
           onQuantityChange(QuantityChangeDirection.Up);
         }}
       />
-      <IonText style={{ fontSize: "30px", paddingLeft: "5px", paddingRight: "5px" }}>{item?.quantity}</IonText>
+      <IonText style={{ fontSize: "30px", paddingLeft: "5px", paddingRight: "5px" }}>{beer.quantity}</IonText>
       <IonIcon
         icon={removeCircleOutline}
         className={classes.subtractButton}
@@ -59,5 +52,3 @@ const InventoryItemComponent: React.FC<IBaseInventoryItemProps & { item: BeerExp
     </IonItem>
   );
 };
-
-export const InventoryItem = connect(mapStateToProps)(InventoryItemComponent);

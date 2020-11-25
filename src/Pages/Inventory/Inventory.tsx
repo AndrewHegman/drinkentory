@@ -18,7 +18,7 @@ import { fetchAllStyles } from "../../Redux/Store/Styles/Actions";
 
 const mapStateToProps = (state: RootState) => {
   return {
-    isLoading: state.beer.isLoading || state.breweries.isLoading || state.style.isLoading,
+    isLoading: state.beer.isLoading,
     currentBeer: getCurrentBeer(state),
     domain: state.domain.domain,
   };
@@ -37,8 +37,6 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
 
   React.useEffect(() => {
     dispatch(fetchAllBeer());
-    dispatch(fetchAllBreweries());
-    dispatch(fetchAllStyles());
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -81,7 +79,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
       </Link>
     </div>
   );
-
+  console.log(beers);
   return (
     <>
       <BasePage headerContent={toolbarHeaderContent}>
@@ -89,12 +87,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
         <IonList>
           {beers &&
             beers.map((beer) => (
-              <InventoryItem
-                key={beer._id}
-                onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)}
-                id={beer._id}
-                domain={props.domain}
-              />
+              <InventoryItem key={beer._id} onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)} beer={beer} />
             ))}
           {!beers && <div>loading</div>}
         </IonList>

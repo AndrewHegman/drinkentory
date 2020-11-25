@@ -11,6 +11,7 @@ import { connect, ConnectedProps, useDispatch } from "react-redux";
 
 import * as queryString from "query-string";
 import { setDomain } from "../../Redux/Store/Domain/Actions";
+import { Console } from "console";
 
 require("dotenv");
 
@@ -34,10 +35,15 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
 
   const [showSettingsPopover, setShowSettingsPopover] = React.useState<boolean>(false);
 
+  /* Check if the domain is set and make sure that the domain is always valid. If not valid, default to Beer */
   React.useEffect(() => {
     const urlParams = queryString.parse(history.location.search);
     const normalizedDomainKeys = Object.keys(Domains).map((key) => key.toLowerCase());
     const normalizedUrlParam = (urlParams[SearchParams.Domain] as string)?.toLowerCase();
+
+    console.log(normalizedDomainKeys);
+    console.log(urlParams);
+    console.log(normalizedUrlParam);
 
     if (normalizedDomainKeys.includes(normalizedUrlParam)) {
       dispatch(setDomain(urlParams[SearchParams.Domain] as Domains));
@@ -50,6 +56,7 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
     }
   }, [window.location.search]);
 
+  /* Handle changing domain when segment button is clicked */
   const handleSegmentChange = (event: any) => {
     const urlParams = queryString.parse(history.location.search);
     if (urlParams[SearchParams.Domain] !== event.target.value) {

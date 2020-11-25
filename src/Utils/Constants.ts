@@ -6,4 +6,5 @@ export const greyFont = "rgb(66, 66, 66)";
 
 export enum SearchParams {
   Domain = "domain",
+  NewName = "name",
 }

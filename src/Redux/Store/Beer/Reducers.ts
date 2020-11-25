@@ -116,6 +116,11 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
               return beer;
             }
 
+            console.log({
+              ...beer,
+              ...action.beer,
+            });
+
             return {
               ...beer,
               ...action.beer,

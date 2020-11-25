@@ -4,12 +4,16 @@ import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { actions } from "../../Redux";
 import { useSelector, useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
+import { IonItemLink } from "../../Components/IonItemLink";
+import { ListItemBrewery } from "../../Components/ListItem";
 
 export interface ISetBreweryProps extends PropsFromRedux {}
 
 const mapStateToProps = (state: RootState) => {
   return {
+    breweries: state.breweries.breweries,
     domain: state.domain.domain,
+    isLoading: state.breweries.isLoading,
   };
 };
 
@@ -17,6 +21,10 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
   const [breweries, setBreweries] = React.useState<string[]>([]);
   const { createNewBreweryRoute, createNewItemRoute } = routes;
   const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(actions.breweries.fetchAllBreweries());
+  }, []);
 
   const useInitialSearchText = () => useSelector((state: RootState) => state.breweries.newBrewery?.name);
 
@@ -26,6 +34,24 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
 
   const initialSearchText = useInitialSearchText();
 
+  const getContent = () => {
+    if (props.isLoading) {
+      return "";
+    }
+    return props.breweries
+      .filter((_breweries) => _breweries.name.toLowerCase().includes(""))
+      .map((item) => (
+        <IonItemLink
+          to={{ pathname: createNewItemRoute.pathname }}
+          onClick={() => {
+            console.log(`Add ${item._id} to inventory`);
+          }}
+        >
+          <ListItemBrewery brewery={item} />
+        </IonItemLink>
+      ));
+  };
+
   return (
     <BasePageWithSearchBar
       title="Choose a Brewery"
@@ -33,7 +59,9 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname }}
       onNotFoundClick={onClick}
       initialSearchText={initialSearchText}
-    />
+    >
+      {getContent()}
+    </BasePageWithSearchBar>
   );
 };
 

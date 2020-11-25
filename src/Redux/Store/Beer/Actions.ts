@@ -81,9 +81,9 @@ const onFetchByIdReceived = (byId: BeerExpanded): BeerActionTypes => {
   };
 };
 
-export const fetchAllBeer = (): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
+export const fetchAllBeer = (): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
   return (dispatch) => {
-    setWaitOnRequestStatus();
+    dispatch(setWaitOnRequestStatus());
     return Axios.get("http://localhost:3002/v1/beer?expand=brewery,style")
       .then((res) => res.data)
       .then((json) => dispatch(onFetchAllBeerReceived(json)));
@@ -92,7 +92,7 @@ export const fetchAllBeer = (): ThunkAction<Promise<BeerActionTypes>, {}, {}, Be
 
 export const fetchBeerById = (id: string): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
   return (dispatch) => {
-    setWaitOnRequestStatus();
+    dispatch(setWaitOnRequestStatus());
     return Axios.get(`http://localhost:3002/v1/beer/${id}?expand=brewery,style`)
       .then((res) => res.data)
       .then((json) => dispatch(onFetchByIdReceived(json)));

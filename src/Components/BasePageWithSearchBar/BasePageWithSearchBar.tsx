@@ -7,20 +7,25 @@ import { BasePageHeader } from "../BasePageHeader";
 export interface IBasePageWithSearchBarProps {
   title: string;
   initialSearchText?: string;
-  onNotFoundClick?: (searchText: string) => void;
   pathname: string;
+  onSearchTextChange?: (searchText: string) => void;
+  onNotFoundClick?: (searchText: string) => void;
+  onClose?: () => void;
   notFoundRoute?: {
     pathname: string;
+    search?: string;
   };
 }
 
 export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (props) => {
-  const { pathname, notFoundRoute, title } = props;
+  const { pathname, notFoundRoute, title, onSearchTextChange, onClose } = props;
   const [searchText, setSearchText] = React.useState<string>("");
   const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
   const classes = useBasePageWithSearchBarStyles();
 
   React.useEffect(() => {
+    onSearchTextChange && onSearchTextChange(searchText);
+
     if (searchText !== "") {
       notFoundRoute && setShowNotFound(true);
     } else {
@@ -32,10 +37,15 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
     setSearchText(props.initialSearchText || "");
   }, [props.initialSearchText]);
 
+  const onCloseButtonClick = () => {
+    setSearchText("");
+    onClose && onClose();
+  };
+
   return (
     <IonPage>
       <IonHeader translucent>
-        <BasePageHeader title={title} pathname={pathname} />
+        <BasePageHeader title={title} pathname={pathname} onClose={onCloseButtonClick} />
         <IonToolbar>
           <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} value={searchText} />
         </IonToolbar>
@@ -46,7 +56,7 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
 
           {showNotFound && (
             <IonItemLink
-              to={{ pathname: notFoundRoute?.pathname }}
+              to={{ pathname: notFoundRoute?.pathname, search: notFoundRoute?.search }}
               onClick={() => {
                 props.onNotFoundClick && props.onNotFoundClick(searchText);
               }}

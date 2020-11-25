@@ -1,13 +1,15 @@
 import React from "react";
 import { routes } from "../../Utils/Routes";
+import { SearchParams } from "../../Utils/Constants";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
-import { fetchAllBeer } from "../../Redux/Store/Beer/Actions";
+import { actions } from "../../Redux/";
 import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
-import { Beer, BeerExpanded, Domains, Wine } from "../../Interfaces";
+import { BeerExpanded, Domains, Wine } from "../../Interfaces";
 import { IonItemLink } from "../../Components/IonItemLink";
 import { ListItemBeer } from "../../Components/ListItem";
-import { getExpandedBeerById } from "../../Redux/Store/Beer/Selectors";
+import { useHistory } from "react-router";
+import * as queryString from "query-string";
 
 export interface IAddNewItemModal extends PropsFromRedux {}
 
@@ -21,11 +23,15 @@ const mapStateToProps = (state: RootState) => {
 export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
   const [beer, setBeer] = React.useState<BeerExpanded[]>([]);
   const [wine, setWine] = React.useState<Wine[]>([]);
+  const [searchText, setSearchText] = React.useState<string>("");
+
+  const history = useHistory();
+
   const { inventoryRoute, createNewItemRoute } = routes;
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    dispatch(fetchAllBeer());
+    dispatch(actions.beer.fetchAllBeer());
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -39,36 +45,53 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
     }
   }, [props]);
 
+  const onSearchTextChange = (searchText: string) => {
+    setSearchText(searchText);
+  };
+
   const getContent = () => {
     if (props.domain === Domains.Beer) {
-      return beer.map((item) => (
-        <IonItemLink
-          to={{ pathname: inventoryRoute.pathname }}
-          onClick={() => {
-            console.log(`Add ${item._id} to inventory`);
-          }}
-        >
-          <ListItemBeer beer={item} />
-        </IonItemLink>
-      ));
+      return beer
+        .filter((_beer) => _beer.name.toLowerCase().includes(searchText.toLowerCase()))
+        .map((item) => (
+          <IonItemLink
+            to={{ pathname: inventoryRoute.pathname }}
+            onClick={() => {
+              console.log(`Add ${item._id} to inventory`);
+            }}
+          >
+            <ListItemBeer beer={item} />
+          </IonItemLink>
+        ));
     } else if (props.domain === Domains.Wine) {
-      return wine.map((item) => (
-        <IonItemLink
-          to={{ pathname: inventoryRoute.pathname }}
-          onClick={() => {
-            console.log(`Add ${item._id} to inventory`);
-          }}
-        />
-      ));
+      return wine
+        .filter((_wine) => _wine.name.toLowerCase().includes(searchText.toLowerCase()))
+        .map((item) => (
+          <IonItemLink
+            to={{ pathname: inventoryRoute.pathname }}
+            onClick={() => {
+              console.log(`Add ${item._id} to inventory`);
+            }}
+          />
+        ));
     }
+  };
+
+  const getSearchText = (text: string) => {
+    const urlParams = queryString.parse(history.location.search);
+    urlParams[SearchParams.NewName] = text;
+    return `?${queryString.stringify(urlParams)}`;
   };
 
   return (
     <BasePageWithSearchBar
       title="Choose a Beer"
       pathname={inventoryRoute.pathname}
+      onSearchTextChange={onSearchTextChange}
+      onNotFoundClick={(text) => dispatch(actions.beer.setNewBeerName(text))}
       notFoundRoute={{
         pathname: createNewItemRoute.pathname,
+        search: getSearchText(searchText),
       }}
     >
       {getContent()}

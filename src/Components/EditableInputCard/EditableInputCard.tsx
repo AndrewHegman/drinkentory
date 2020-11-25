@@ -1,7 +1,7 @@
 import React from "react";
 import { IonCard, IonCardHeader, IonCardTitle, IonInput, IonCardContent } from "@ionic/react";
 import { InputChangeEventDetail } from "@ionic/core";
-
+import { useEditableInputCardStyles } from "./EditableInputCard.styles";
 export interface IEditableInputCard {
   title: string;
   onChange: (event: CustomEvent<InputChangeEventDetail>) => void;
@@ -10,13 +10,15 @@ export interface IEditableInputCard {
 }
 
 export const EditableInputCard: React.FC<IEditableInputCard> = ({ title, onChange, onBlur, value }) => {
+  const classes = useEditableInputCardStyles();
+
   return (
     <IonCard>
       <IonCardHeader>
-        <IonCardTitle>{title}</IonCardTitle>
+        <IonCardTitle className={classes.header}>{title}</IonCardTitle>
       </IonCardHeader>
       <IonCardContent>
-        <IonInput onIonChange={onChange} onIonBlur={onBlur} value={value} />
+        <IonInput className={classes.input} onIonChange={onChange} onIonBlur={onBlur} value={value} debounce={200} />
       </IonCardContent>
     </IonCard>
   );
