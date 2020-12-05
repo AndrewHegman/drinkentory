@@ -20,6 +20,7 @@ const mapStateToProps = (state: RootState) => {
 const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
   const [searchText, setSearchText] = React.useState<string>("");
   const { createNewBreweryRoute, createNewItemRoute } = routes;
+  console.log(props);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -43,7 +44,7 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
       .filter((_breweries) => _breweries.name.toLowerCase().includes(searchText))
       .map((brewery) => (
         <IonItemLink
-          to={{ pathname: createNewItemRoute.pathname }}
+          to={{ pathname: createNewItemRoute.pathname, search: "" }}
           onClick={() => {
             console.log(`Add ${brewery._id} to inventory`);
           }}
