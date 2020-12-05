@@ -1,6 +1,13 @@
-import * as beer from "./Store/Beer/Actions";
-import * as breweries from "./Store/Breweries/Actions";
-import * as styles from "./Store/Styles/Actions";
-import * as domains from "./Store/Domain/Actions";
+import * as beerActions from "./Store/Beer/Actions";
+import * as breweriesActions from "./Store/Breweries/Actions";
+import * as stylesActions from "./Store/Styles/Actions";
+import * as domainsActions from "./Store/Domain/Actions";
+import * as geographyActions from "./Store/Geography/Actions";
 
-export const actions = { beer, breweries, styles, domains };
+import * as beerSelectors from "./Store/Beer/Selectors";
+import * as breweriesSelectors from "./Store/Breweries/Selectors";
+import * as geographySelectors from "./Store/Geography/Selectors";
+
+export const actions = { ...beerActions, ...breweriesActions, ...stylesActions, ...domainsActions, ...geographyActions };
+
+export const selectors = { ...beerSelectors, ...breweriesSelectors, ...geographySelectors };

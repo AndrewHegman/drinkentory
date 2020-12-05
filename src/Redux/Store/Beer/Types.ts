@@ -1,85 +1,99 @@
-import { Beer, BeerExpanded } from "../../../Interfaces/Beer.types";
+import { BeerDocument, BreweryDocument, StyleDocument } from "../../../Interfaces";
 
-export const SET_NEW_BEER_ID = "SET_NEW_BEER_ID";
-export const SET_NEW_BEER_NAME = "SET_NEW_BEER_NAME";
-export const SET_NEW_BEER_BREWERY = "SET_NEW_BEER_BREWERY";
-export const SET_NEW_BEER_STYLE = "SET_NEW_BEER_STYLE";
-export const SET_NEW_BEER_QUANTITY = "SET_NEW_BEER_QUANTITY";
-export const SET_NEW_BEER_HISTORIC_QUANTITY = "SET_NEW_BEER_HISTORIC_QUANTITY";
+export const actionTypes = {
+  SET_NEW_BEER_ID: "SET_NEW_BEER_ID",
+  SET_NEW_BEER_NAME: "SET_NEW_BEER_NAME",
+  SET_NEW_BEER_BREWERY: "SET_NEW_BEER_BREWERY",
+  SET_NEW_BEER_STYLE: "SET_NEW_BEER_STYLE",
+  SET_NEW_BEER_QUANTITY: "SET_NEW_BEER_QUANTITY",
+  SET_NEW_BEER_HISTORIC_QUANTITY: "SET_NEW_BEER_HISTORIC_QUANTITY",
 
-export const FETCH_CURRENT_BEER = "FETCH_CURRENT_BEER";
-export const FETCH_BEER_BY_ID = "FETCH_BEER_BY_ID";
+  FETCH_CURRENT_BEER: "FETCH_CURRENT_BEER",
+  FETCH_BEER_BY_ID: "FETCH_BEER_BY_ID",
 
-export const UPDATE_BEER_BY_ID = "UPDATE_BEER_BY_ID";
+  UPDATE_BEER_BY_ID: "UPDATE_BEER_BY_ID",
 
-export const WAIT_ON_BEER_REQUEST = "WAIT_ON_REQUEST";
-export const FETCH_ALL_BEER_RECEIVED = "FETCH_ALL_BEER_RECEIVED";
-export const FETCH_BY_ID_RECEIVED = "FETCH_BY_ID_RECEIVED";
+  WAIT_ON_BEER_REQUEST: "WAIT_ON_REQUEST",
+  FETCH_ALL_BEER_RECEIVED: "FETCH_ALL_BEER_RECEIVED",
+  FETCH_BY_ID_RECEIVED: "FETCH_BY_ID_RECEIVED",
+} as const;
 
 export interface BeerState {
-  newBeer?: Beer;
-  inventory: BeerExpanded[];
+  newBeer?: BeerDocument;
+  inventory: BeerDocument[];
   isLoading: boolean;
 }
 
-interface SetNewBeerIdAction {
-  type: typeof SET_NEW_BEER_ID;
-  id: string;
-}
+export const BeerActions = {
+  setNewBeerId: (id: string) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_ID,
+      id,
+    } as const),
 
-interface SetNewBeerNameAction {
-  type: typeof SET_NEW_BEER_NAME;
-  name: string;
-}
+  setNewBeerName: (name: string) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_NAME,
+      name,
+    } as const),
 
-interface SetNewBeerBreweryAction {
-  type: typeof SET_NEW_BEER_BREWERY;
-  brewery: string;
-}
+  setNewBeerBrewery: (brewery: BreweryDocument) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_BREWERY,
+      brewery,
+    } as const),
 
-interface SetNewBeerStyleAction {
-  type: typeof SET_NEW_BEER_STYLE;
-  style: string;
-}
+  setNewBeerStyle: (style: StyleDocument) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_STYLE,
+      style,
+    } as const),
 
-interface SetNewBeerQuantityAction {
-  type: typeof SET_NEW_BEER_QUANTITY;
-  quantity: number;
-}
+  setNewBeerQuantity: (quantity: number) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_QUANTITY,
+      quantity,
+    } as const),
 
-interface SetNewBeerHistoricQuantityAction {
-  type: typeof SET_NEW_BEER_HISTORIC_QUANTITY;
-  historicQuantity: number;
-}
+  setNewBeerHistoricQuantity: (historicQuantity: number) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_HISTORIC_QUANTITY,
+      historicQuantity,
+    } as const),
 
-interface WaitOnRequest {
-  type: typeof WAIT_ON_BEER_REQUEST;
-}
+  waitOnRequest: () =>
+    ({
+      type: actionTypes.WAIT_ON_BEER_REQUEST,
+    } as const),
 
-interface FetchAllBeerReceived {
-  type: typeof FETCH_ALL_BEER_RECEIVED;
-  inventory: BeerExpanded[];
-}
+  fetchAllBeerReceived: (inventory: BeerDocument[]) =>
+    ({
+      type: actionTypes.FETCH_ALL_BEER_RECEIVED,
+      inventory,
+    } as const),
 
-interface FetchByIdReceived {
-  type: typeof FETCH_BY_ID_RECEIVED;
-  byId: BeerExpanded;
-}
+  fetchByIdReceived: (byId: BeerDocument) =>
+    ({
+      type: actionTypes.FETCH_BY_ID_RECEIVED,
+      byId,
+    } as const),
 
-interface UpdateBeerById {
-  type: typeof UPDATE_BEER_BY_ID;
-  id: string;
-  beer: Partial<BeerExpanded>;
-}
+  updateBeerById: (id: string, beer: Partial<BeerDocument>) =>
+    ({
+      type: actionTypes.UPDATE_BEER_BY_ID,
+      id,
+      beer,
+    } as const),
+};
 
 export type BeerActionTypes =
-  | SetNewBeerIdAction
-  | SetNewBeerNameAction
-  | SetNewBeerBreweryAction
-  | SetNewBeerStyleAction
-  | SetNewBeerQuantityAction
-  | SetNewBeerHistoricQuantityAction
-  | WaitOnRequest
-  | UpdateBeerById
-  | FetchByIdReceived
-  | FetchAllBeerReceived;
+  | ReturnType<typeof BeerActions.setNewBeerId>
+  | ReturnType<typeof BeerActions.setNewBeerName>
+  | ReturnType<typeof BeerActions.setNewBeerBrewery>
+  | ReturnType<typeof BeerActions.setNewBeerStyle>
+  | ReturnType<typeof BeerActions.setNewBeerQuantity>
+  | ReturnType<typeof BeerActions.setNewBeerHistoricQuantity>
+  | ReturnType<typeof BeerActions.waitOnRequest>
+  | ReturnType<typeof BeerActions.updateBeerById>
+  | ReturnType<typeof BeerActions.fetchByIdReceived>
+  | ReturnType<typeof BeerActions.fetchAllBeerReceived>;

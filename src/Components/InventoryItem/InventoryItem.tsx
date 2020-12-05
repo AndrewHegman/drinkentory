@@ -3,12 +3,12 @@ import { IonItem, IonLabel, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
 import { QuantityChangeDirection } from "../../Utils/";
-import { BeerExpanded } from "../../Interfaces/Beer.types";
+import { BeerDocument } from "../../Interfaces/Beer.types";
 import { RootState } from "../../Redux/Store/index";
 import { ListItemBeer } from "../ListItem";
 
 interface IBaseInventoryItemProps {
-  beer: BeerExpanded;
+  beer: BeerDocument;
   onQuantityChange: (dir: QuantityChangeDirection) => void;
 }
 

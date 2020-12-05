@@ -1,24 +1,24 @@
-import { Style } from "../../../Interfaces/Style.types";
-import { StyleState, FETCH_ALL_STYLES, WAIT_ON_STYLES_REQUEST, StyleActionTypes } from "./Types";
+import { StyleDocument } from "../../../Interfaces";
+import { StyleState, actionTypes, StyleActionTypes } from "./Types";
 
 const initialState: StyleState = {
   isLoading: false,
   styles: [],
 };
 
-const initialNewStyle: Style = {
+const initialNewStyle: StyleDocument = {
   _id: "",
   name: "",
 };
 
 export const styleReducer = (state = initialState, action: StyleActionTypes): StyleState => {
   switch (action.type) {
-    case FETCH_ALL_STYLES:
+    case actionTypes.FETCH_ALL_STYLES:
       return {
         ...state,
         styles: action.styles,
       };
-    case WAIT_ON_STYLES_REQUEST:
+    case actionTypes.WAIT_ON_STYLES_REQUEST:
       if (action.fieldToUpdate) {
         return {
           ...state,

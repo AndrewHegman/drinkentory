@@ -1,14 +1,18 @@
 import { Domains } from "../../../Interfaces";
 
-export const SET_DOMAIN = "SET_DOMAIN";
+export const actionTypes = {
+  SET_DOMAIN: "SET_DOMAIN",
+} as const;
 
 export interface DomainState {
   domain: Domains;
 }
 
-interface SetDomain {
-  type: typeof SET_DOMAIN;
-  domain: Domains;
-}
+export const DomainActions = {
+  setDomain: (domain: Domains) => ({
+    type: actionTypes.SET_DOMAIN,
+    domain,
+  }),
+};
 
-export type DomainActionTypes = SetDomain;
+export type DomainActionTypes = ReturnType<typeof DomainActions.setDomain>;

@@ -1,24 +1,11 @@
-import {
-  SET_NEW_BEER_ID,
-  SET_NEW_BEER_NAME,
-  SET_NEW_BEER_BREWERY,
-  SET_NEW_BEER_STYLE,
-  SET_NEW_BEER_QUANTITY,
-  SET_NEW_BEER_HISTORIC_QUANTITY,
-  WAIT_ON_BEER_REQUEST,
-  UPDATE_BEER_BY_ID,
-  FETCH_BY_ID_RECEIVED,
-  FETCH_ALL_BEER_RECEIVED,
-  BeerActionTypes,
-  BeerState,
-} from "./Types";
-import { Beer } from "../../../Interfaces/Beer.types";
+import { actionTypes, BeerActionTypes, BeerState } from "./Types";
+import { BeerDocument, BreweryDocument, StyleDocument } from "../../../Interfaces";
 
-const initialNewBeerState: Beer = {
+const initialNewBeerState: BeerDocument = {
   _id: "",
   name: "",
-  brewery: "",
-  style: "",
+  brewery: {} as BreweryDocument,
+  style: {} as StyleDocument,
   quantity: 0,
   historicQuantity: 0,
 };
@@ -30,7 +17,7 @@ const initialState: BeerState = {
 
 export const beerReducer = (state = initialState, action: BeerActionTypes): BeerState => {
   switch (action.type) {
-    case SET_NEW_BEER_ID:
+    case actionTypes.SET_NEW_BEER_ID:
       return {
         ...state,
         newBeer: {
@@ -39,7 +26,7 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           _id: action.id,
         },
       };
-    case SET_NEW_BEER_NAME:
+    case actionTypes.SET_NEW_BEER_NAME:
       return {
         ...state,
         newBeer: {
@@ -48,7 +35,7 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           name: action.name,
         },
       };
-    case SET_NEW_BEER_BREWERY:
+    case actionTypes.SET_NEW_BEER_BREWERY:
       return {
         ...state,
         newBeer: {
@@ -57,7 +44,7 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           brewery: action.brewery,
         },
       };
-    case SET_NEW_BEER_STYLE:
+    case actionTypes.SET_NEW_BEER_STYLE:
       return {
         ...state,
         newBeer: {
@@ -66,7 +53,7 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
           style: action.style,
         },
       };
-    case SET_NEW_BEER_QUANTITY:
+    case actionTypes.SET_NEW_BEER_QUANTITY:
       return {
         ...state,
         newBeer: {
@@ -76,7 +63,7 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
         },
       };
 
-    case SET_NEW_BEER_HISTORIC_QUANTITY:
+    case actionTypes.SET_NEW_BEER_HISTORIC_QUANTITY:
       return {
         ...state,
         newBeer: {
@@ -86,27 +73,27 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
         },
       };
 
-    case WAIT_ON_BEER_REQUEST:
+    case actionTypes.WAIT_ON_BEER_REQUEST:
       return {
         ...state,
         isLoading: true,
       };
 
-    case FETCH_BY_ID_RECEIVED:
+    case actionTypes.FETCH_BY_ID_RECEIVED:
       return {
         ...state,
         isLoading: false,
         inventory: [...state.inventory, action.byId],
       };
 
-    case FETCH_ALL_BEER_RECEIVED:
+    case actionTypes.FETCH_ALL_BEER_RECEIVED:
       return {
         ...state,
         isLoading: false,
         inventory: action.inventory,
       };
 
-    case UPDATE_BEER_BY_ID:
+    case actionTypes.UPDATE_BEER_BY_ID:
       return {
         ...state,
         isLoading: false,

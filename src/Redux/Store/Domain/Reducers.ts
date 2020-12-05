@@ -1,7 +1,7 @@
 import { Domain } from "domain";
 import { DOMAttributes } from "react";
 import { Domains } from "../../../Interfaces";
-import { DomainActionTypes, DomainState, SET_DOMAIN } from "./Types";
+import { DomainActionTypes, DomainState, actionTypes } from "./Types";
 
 const initialState: DomainState = {
   domain: Domains.Beer,
@@ -9,7 +9,7 @@ const initialState: DomainState = {
 
 export const domainReducer = (state = initialState, action: DomainActionTypes): DomainState => {
   switch (action.type) {
-    case SET_DOMAIN:
+    case actionTypes.SET_DOMAIN:
       return {
         ...state,
         domain: action.domain,

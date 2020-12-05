@@ -10,8 +10,7 @@ import { RootState } from "../../Redux/Store/index";
 import { connect, ConnectedProps, useDispatch } from "react-redux";
 
 import * as queryString from "query-string";
-import { setDomain } from "../../Redux/Store/Domain/Actions";
-import { Console } from "console";
+import { actions } from "../../Redux";
 
 require("dotenv");
 
@@ -46,13 +45,13 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
     console.log(normalizedUrlParam);
 
     if (normalizedDomainKeys.includes(normalizedUrlParam)) {
-      dispatch(setDomain(urlParams[SearchParams.Domain] as Domains));
+      dispatch(actions.domain.setDomain(urlParams[SearchParams.Domain] as Domains));
     } else {
       urlParams[SearchParams.Domain] = Domains.Beer;
       history.push({
         search: `?${queryString.stringify(urlParams)}`,
       });
-      dispatch(setDomain(Domains.Beer));
+      dispatch(actions.domain.setDomain(Domains.Beer));
     }
   }, [window.location.search]);
 
@@ -65,7 +64,7 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
         search: `?${queryString.stringify(urlParams)}`,
       });
     }
-    dispatch(setDomain(event.target.value));
+    dispatch(actions.domain.setDomain(event.target.value));
   };
 
   const classes = useBasePageStyles();

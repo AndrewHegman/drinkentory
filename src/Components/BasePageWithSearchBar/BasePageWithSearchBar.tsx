@@ -9,8 +9,8 @@ export interface IBasePageWithSearchBarProps {
   initialSearchText?: string;
   pathname: string;
   onSearchTextChange?: (searchText: string) => void;
-  onNotFoundClick?: (searchText: string) => void;
   onClose?: () => void;
+  onNotFoundClick?: (searchText: string) => void;
   notFoundRoute?: {
     pathname: string;
     search?: string;

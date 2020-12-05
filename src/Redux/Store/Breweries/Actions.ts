@@ -1,52 +1,31 @@
 import Axios from "axios";
-import { Brewery } from "../../../Interfaces/Brewery.types";
-import { SET_NEW_BREWERY_NAME, SET_NEW_BREWERY_COUNTRY, SET_NEW_BREWERY_STATE, SET_NEW_BREWERY_CITY, WAIT_ON_BREWERIES_REQUEST, BreweryActionTypes, BreweryState } from "./Types";
+import { BreweryDocument, CountryDocument, StateDocument, CityDocument } from "../../../Interfaces";
+import { BreweryActions, BreweryActionTypes, BreweryState } from "./Types";
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
 
-export const setNewBreweryName = (name: string): BreweryActionTypes => {
-  return {
-    type: SET_NEW_BREWERY_NAME,
-    name,
-  };
-};
+export const breweries = {
+  setNewBreweryName: (name: string): BreweryActionTypes => {
+    return BreweryActions.setNewBreweryName(name);
+  },
 
-export const setNewBreweryCountry = (country: string): BreweryActionTypes => {
-  return {
-    type: SET_NEW_BREWERY_COUNTRY,
-    country,
-  };
-};
+  setNewBreweryCountry: (countryId: string): BreweryActionTypes => {
+    return BreweryActions.setNewBreweryCountry(countryId);
+  },
 
-export const setNewBreweryState = (state: string): BreweryActionTypes => {
-  return {
-    type: SET_NEW_BREWERY_STATE,
-    state,
-  };
-};
+  setNewBreweryState: (stateId: string): BreweryActionTypes => {
+    return BreweryActions.setNewBreweryState(stateId);
+  },
 
-export const setNewBreweryCity = (city: string): BreweryActionTypes => {
-  return {
-    type: SET_NEW_BREWERY_CITY,
-    city,
-  };
-};
+  setNewBreweryCity: (cityId: string): BreweryActionTypes => {
+    return BreweryActions.setNewBreweryCity(cityId);
+  },
 
-const setWaitOnRequestStatus = (isLoading: boolean, fieldToUpdate?: keyof BreweryState | keyof Brewery, payload?: any): BreweryActionTypes => {
-  return {
-    type: WAIT_ON_BREWERIES_REQUEST,
-    isLoading,
-    fieldToUpdate,
-    payload,
-  };
+  fetchAllBreweries: (expandFields?: [keyof BreweryDocument]): ThunkAction<Promise<BreweryActionTypes>, {}, {}, BreweryActionTypes> => {
+    return (dispatch) => {
+      dispatch(BreweryActions.waitOnRequest(true));
+      return Axios.get(`http://localhost:3002/v1/brewery${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
+        .then((res) => res.data)
+        .then((json) => dispatch(BreweryActions.waitOnRequest(false, "breweries", json)));
+    };
+  },
 };
-
-export const fetchAllBreweries = (expandFields?: [keyof Brewery]): ThunkAction<Promise<BreweryActionTypes>, {}, {}, BreweryActionTypes> => {
-  return (dispatch) => {
-    dispatch(setWaitOnRequestStatus(true));
-    return Axios.get(`http://localhost:3002/v1/brewery${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
-      .then((res) => res.data)
-      .then((json) => dispatch(setWaitOnRequestStatus(false, "breweries", json)));
-  };
-};
-
-export type BreweryActionCallbacks = typeof setNewBreweryName | typeof setNewBreweryCountry | typeof setNewBreweryState | typeof setNewBreweryCity | typeof fetchAllBreweries;

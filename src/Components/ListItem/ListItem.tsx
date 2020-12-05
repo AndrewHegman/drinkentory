@@ -1,9 +1,9 @@
 import React from "react";
 import { IonLabel } from "@ionic/react";
-import { BeerExpanded, Brewery, Domains, Wine } from "../../Interfaces";
+import { BeerDocument, BreweryDocument, Domains, WineDocument } from "../../Interfaces";
 
 interface IListItemBeerProps {
-  beer: BeerExpanded;
+  beer: BeerDocument;
 }
 
 export const ListItemBeer: React.FC<IListItemBeerProps> = (props) => {
@@ -19,7 +19,7 @@ export const ListItemBeer: React.FC<IListItemBeerProps> = (props) => {
 };
 
 export interface IListItemWineProps {
-  wine: Wine;
+  wine: WineDocument;
 }
 
 export const ListItmeWine: React.FC<IListItemWineProps> = (props) => {
@@ -35,7 +35,7 @@ export const ListItmeWine: React.FC<IListItemWineProps> = (props) => {
 };
 
 export interface IListItemBreweryProps {
-  brewery: Brewery;
+  brewery: BreweryDocument;
 }
 
 export const ListItemBrewery: React.FC<IListItemBreweryProps> = (props) => {
@@ -43,7 +43,20 @@ export const ListItemBrewery: React.FC<IListItemBreweryProps> = (props) => {
   return (
     <IonLabel>
       <h1>{brewery.name}</h1>
-      <h3>{`${brewery.city ? `${brewery.city}, ` : ""}${brewery.country}`} </h3>
+      <h3>{`${brewery.city ? `${brewery.city.name}, ` : ""}${brewery.country?.name}`} </h3>
+    </IonLabel>
+  );
+};
+
+export interface IListItemCountryProps {
+  country: string;
+}
+
+export const ListItemCountry: React.FC<IListItemCountryProps> = (props) => {
+  const { country } = props;
+  return (
+    <IonLabel>
+      <h1>{country}</h1>
     </IonLabel>
   );
 };

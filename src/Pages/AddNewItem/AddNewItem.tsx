@@ -5,7 +5,7 @@ import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { actions } from "../../Redux/";
 import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
-import { BeerExpanded, Domains, Wine } from "../../Interfaces";
+import { BeerDocument, Domains, WineDocument } from "../../Interfaces";
 import { IonItemLink } from "../../Components/IonItemLink";
 import { ListItemBeer } from "../../Components/ListItem";
 import { useHistory } from "react-router";
@@ -21,8 +21,8 @@ const mapStateToProps = (state: RootState) => {
 };
 
 export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
-  const [beer, setBeer] = React.useState<BeerExpanded[]>([]);
-  const [wine, setWine] = React.useState<Wine[]>([]);
+  const [beer, setBeer] = React.useState<BeerDocument[]>([]);
+  const [wine, setWine] = React.useState<WineDocument[]>([]);
   const [searchText, setSearchText] = React.useState<string>("");
 
   const history = useHistory();
@@ -44,10 +44,6 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
       setWine([]);
     }
   }, [props]);
-
-  const onSearchTextChange = (searchText: string) => {
-    setSearchText(searchText);
-  };
 
   const getContent = () => {
     if (props.domain === Domains.Beer) {
@@ -87,7 +83,7 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
     <BasePageWithSearchBar
       title="Choose a Beer"
       pathname={inventoryRoute.pathname}
-      onSearchTextChange={onSearchTextChange}
+      onSearchTextChange={(searchText) => setSearchText(searchText)}
       onNotFoundClick={(text) => dispatch(actions.beer.setNewBeerName(text))}
       notFoundRoute={{
         pathname: createNewItemRoute.pathname,

@@ -1,20 +1,19 @@
-import { Brewery } from "./Brewery.types";
-import { Style } from "./Style.types";
+import { BreweryDocument, StyleDocument } from ".";
 
-export interface Beer {
+// export interface Beer {
+//   _id: string;
+//   name: string;
+//   brewery: string;
+//   style: string;
+//   quantity: number;
+//   historicQuantity: number;
+// }
+
+export type BeerDocument = {
   _id: string;
   name: string;
-  brewery: string;
-  style: string;
+  brewery: BreweryDocument;
+  style: StyleDocument;
   quantity: number;
   historicQuantity: number;
-}
-
-export interface BeerExpanded {
-  _id: string;
-  name: string;
-  brewery: Brewery;
-  style: Style;
-  quantity: number;
-  historicQuantity: number;
-}
+};

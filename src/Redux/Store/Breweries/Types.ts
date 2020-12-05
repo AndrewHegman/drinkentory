@@ -1,62 +1,57 @@
-import { Brewery } from "../../../Interfaces/Brewery.types";
+import { CountryDocument, BreweryDocument, StateDocument, CityDocument, SetBreweryCountryDto, NewBrewery } from "../../../Interfaces";
 
-export const SET_NEW_BREWERY_NAME = "SET_NEW_BREWERY_NAME";
-export const SET_NEW_BREWERY_COUNTRY = "SET_NEW_BREWERY_COUNTRY";
-export const SET_NEW_BREWERY_STATE = "SET_NEW_BREWERY_STATE";
-export const SET_NEW_BREWERY_CITY = "SET_NEW_BREWERY_CITY";
-export const FETCH_ALL_BREWERIES = "FETCH_ALL_BREWERIES";
-
-export const WAIT_ON_BREWERIES_REQUEST = "WAIT_ON_BREWERIES_REQUEST";
-
-// export interface Brewery {
-//   name: string;
-//   country: string;
-//   state?: string;
-//   city?: string;
-// }
+export const actionTypes = {
+  SET_NEW_BREWERY_NAME: "SET_NEW_BREWERY_NAME",
+  SET_NEW_BREWERY_COUNTRY: "SET_NEW_BREWERY_COUNTRY",
+  SET_NEW_BREWERY_STATE: "SET_NEW_BREWERY_STATE",
+  SET_NEW_BREWERY_CITY: "SET_NEW_BREWERY_CITY",
+  FETCH_ALL_BREWERIES: "FETCH_ALL_BREWERIES",
+  WAIT_ON_BREWERIES_REQUEST: "WAIT_ON_BREWERIES_REQUEST",
+} as const;
 
 export interface BreweryState {
   isLoading: boolean;
-  newBrewery?: Brewery;
-  breweries: Brewery[];
+  newBrewery?: NewBrewery;
+  breweries: BreweryDocument[];
 }
 
-interface SetNewBreweryNameAction {
-  type: typeof SET_NEW_BREWERY_NAME;
-  name: string;
-}
+export const BreweryActions = {
+  setNewBreweryName: (name: string) =>
+    ({
+      type: actionTypes.SET_NEW_BREWERY_NAME,
+      name,
+    } as const),
 
-interface SetNewBreweryCountryAction {
-  type: typeof SET_NEW_BREWERY_COUNTRY;
-  country: string;
-}
+  setNewBreweryCountry: (countryId: string) =>
+    ({
+      type: actionTypes.SET_NEW_BREWERY_COUNTRY,
+      country: countryId,
+    } as const),
 
-interface SetNewBreweryStateAction {
-  type: typeof SET_NEW_BREWERY_STATE;
-  state: string;
-}
+  setNewBreweryState: (stateId: string) =>
+    ({
+      type: actionTypes.SET_NEW_BREWERY_STATE,
+      state: stateId,
+    } as const),
 
-interface SetNewBreweryCityAction {
-  type: typeof SET_NEW_BREWERY_CITY;
-  city: string;
-}
+  setNewBreweryCity: (cityId: string) =>
+    ({
+      type: actionTypes.SET_NEW_BREWERY_CITY,
+      city: cityId,
+    } as const),
 
-interface FetchAllBreweries {
-  type: typeof FETCH_ALL_BREWERIES;
-  breweries: Brewery[];
-}
-
-interface WaitOnRequest {
-  type: typeof WAIT_ON_BREWERIES_REQUEST;
-  isLoading: boolean;
-  fieldToUpdate?: keyof BreweryState | keyof Brewery;
-  payload?: any;
-}
+  waitOnRequest: (isLoading: boolean, fieldToUpdate?: keyof BreweryState | keyof BreweryDocument, payload?: any) =>
+    ({
+      type: actionTypes.WAIT_ON_BREWERIES_REQUEST,
+      isLoading,
+      fieldToUpdate,
+      payload,
+    } as const),
+};
 
 export type BreweryActionTypes =
-  | SetNewBreweryNameAction
-  | SetNewBreweryCountryAction
-  | SetNewBreweryStateAction
-  | SetNewBreweryCityAction
-  | FetchAllBreweries
-  | WaitOnRequest;
+  | ReturnType<typeof BreweryActions.setNewBreweryName>
+  | ReturnType<typeof BreweryActions.setNewBreweryCountry>
+  | ReturnType<typeof BreweryActions.setNewBreweryState>
+  | ReturnType<typeof BreweryActions.setNewBreweryCity>
+  | ReturnType<typeof BreweryActions.waitOnRequest>;

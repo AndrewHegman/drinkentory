@@ -1,4 +1,4 @@
-export interface Wine {
+export type WineDocument = {
   _id: string;
   name: string;
   producer: string;
@@ -8,4 +8,4 @@ export interface Wine {
   vintage: number;
   quantity: number;
   currentQuantity?: number;
-}
+};

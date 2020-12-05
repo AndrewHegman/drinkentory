@@ -18,7 +18,7 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
-  const [breweries, setBreweries] = React.useState<string[]>([]);
+  const [searchText, setSearchText] = React.useState<string>("");
   const { createNewBreweryRoute, createNewItemRoute } = routes;
   const dispatch = useDispatch();
 
@@ -38,16 +38,17 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
     if (props.isLoading) {
       return "";
     }
+    console.log(props.breweries);
     return props.breweries
-      .filter((_breweries) => _breweries.name.toLowerCase().includes(""))
-      .map((item) => (
+      .filter((_breweries) => _breweries.name.toLowerCase().includes(searchText))
+      .map((brewery) => (
         <IonItemLink
           to={{ pathname: createNewItemRoute.pathname }}
           onClick={() => {
-            console.log(`Add ${item._id} to inventory`);
+            console.log(`Add ${brewery._id} to inventory`);
           }}
         >
-          <ListItemBrewery brewery={item} />
+          <ListItemBrewery brewery={brewery} />
         </IonItemLink>
       ));
   };
@@ -59,6 +60,7 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname }}
       onNotFoundClick={onClick}
       initialSearchText={initialSearchText}
+      onSearchTextChange={(searchText: string) => setSearchText(searchText)}
     >
       {getContent()}
     </BasePageWithSearchBar>

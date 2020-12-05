@@ -9,17 +9,14 @@ import { Link } from "react-router-dom";
 import { InventoryFilterPopover } from "../../Components/Popovers/InventoryFilterPopover";
 import { connect, useDispatch, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
-import { Beer, BeerExpanded } from "../../Interfaces";
+import { BeerDocument } from "../../Interfaces";
 
-import { decrementBeerQuantity, fetchAllBeer, incrementBeerQuantity } from "../../Redux/Store/Beer/Actions";
-import { getCurrentBeer } from "../../Redux/Store/Beer/Selectors";
-import { fetchAllBreweries } from "../../Redux/Store/Breweries/Actions";
-import { fetchAllStyles } from "../../Redux/Store/Styles/Actions";
+import { actions, selectors } from "../../Redux";
 
 const mapStateToProps = (state: RootState) => {
   return {
     isLoading: state.beer.isLoading,
-    currentBeer: getCurrentBeer(state),
+    currentBeer: selectors.beer.getCurrentBeer(state),
     domain: state.domain.domain,
   };
 };
@@ -30,13 +27,13 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   const dispatch = useDispatch();
 
   const [searchBarText, setSearchBarText] = React.useState<string>("");
-  const [beers, setBeers] = React.useState<BeerExpanded[]>();
+  const [beers, setBeers] = React.useState<BeerDocument[]>();
   const [showFilterPopover, setShowFilterPopover] = React.useState<boolean>(false);
   const [showAlert, setShowAlert] = React.useState<boolean>(false);
   const [alertText, setAlertText] = React.useState<string>("");
 
   React.useEffect(() => {
-    dispatch(fetchAllBeer());
+    dispatch(actions.beer.fetchAllBeer());
   }, [dispatch]);
 
   React.useEffect(() => {
@@ -48,9 +45,9 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   const handleQuantityChange = (id: string, dir: QuantityChangeDirection) => {
     try {
       if (dir === QuantityChangeDirection.Up) {
-        dispatch(incrementBeerQuantity(id));
+        dispatch(actions.beer.incrementBeerQuantity(id));
       } else {
-        dispatch(decrementBeerQuantity(id));
+        dispatch(actions.beer.decrementBeerQuantity(id));
       }
     } catch (error) {
       setAlertText(error);
