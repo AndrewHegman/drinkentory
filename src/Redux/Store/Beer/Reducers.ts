@@ -1,13 +1,11 @@
 import { actionTypes, BeerActionTypes, BeerState } from "./Types";
-import { BeerDocument, BreweryDocument, StyleDocument } from "../../../Interfaces";
+import { BeerDocument, BreweryDocument, NewBeer, StyleDocument } from "../../../Interfaces";
 
-const initialNewBeerState: BeerDocument = {
-  _id: "",
+const initialNewBeerState: NewBeer = {
   name: "",
   brewery: {} as BreweryDocument,
   style: {} as StyleDocument,
   quantity: 0,
-  historicQuantity: 0,
 };
 
 const initialState: BeerState = {
@@ -17,15 +15,6 @@ const initialState: BeerState = {
 
 export const beerReducer = (state = initialState, action: BeerActionTypes): BeerState => {
   switch (action.type) {
-    case actionTypes.SET_NEW_BEER_ID:
-      return {
-        ...state,
-        newBeer: {
-          ...initialNewBeerState,
-          ...state.newBeer,
-          _id: action.id,
-        },
-      };
     case actionTypes.SET_NEW_BEER_NAME:
       return {
         ...state,
@@ -63,16 +52,6 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
         },
       };
 
-    case actionTypes.SET_NEW_BEER_HISTORIC_QUANTITY:
-      return {
-        ...state,
-        newBeer: {
-          ...initialNewBeerState,
-          ...state.newBeer,
-          historicQuantity: action.historicQuantity,
-        },
-      };
-
     case actionTypes.WAIT_ON_BEER_REQUEST:
       return {
         ...state,
@@ -102,11 +81,6 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
             if (beer._id !== action.id) {
               return beer;
             }
-
-            console.log({
-              ...beer,
-              ...action.beer,
-            });
 
             return {
               ...beer,

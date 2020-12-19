@@ -2,8 +2,6 @@ import { RootState } from "../index";
 import { BeerDocument, BreweryDocument, StyleDocument } from "../../../Interfaces";
 
 export const beer = {
-  getNewBeerId: (state: RootState): string => state.beer.newBeer?._id || "",
-
   getNewBeerName: (state: RootState): string => state.beer.newBeer?.name || "",
 
   getNewBeerBrewery: (state: RootState): string | BreweryDocument => state.beer.newBeer?.brewery || "",
@@ -11,8 +9,6 @@ export const beer = {
   getNewBeerStyle: (state: RootState): string | StyleDocument => state.beer.newBeer?.style || "",
 
   getNewBeerQuantity: (state: RootState): number => state.beer.newBeer?.quantity || 0,
-
-  getNewBeerHistoricQuantity: (state: RootState): number => state.beer.newBeer?.historicQuantity || 0,
 
   getAllBeer: (state: RootState): BeerDocument[] => state.beer.inventory,
 

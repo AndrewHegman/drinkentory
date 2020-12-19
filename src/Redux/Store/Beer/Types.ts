@@ -1,4 +1,4 @@
-import { BeerDocument, BreweryDocument, StyleDocument } from "../../../Interfaces";
+import { BeerDocument, BreweryDocument, NewBeer, StyleDocument } from "../../../Interfaces";
 
 export const actionTypes = {
   SET_NEW_BEER_ID: "SET_NEW_BEER_ID",
@@ -19,18 +19,12 @@ export const actionTypes = {
 } as const;
 
 export interface BeerState {
-  newBeer?: BeerDocument;
+  newBeer?: NewBeer;
   inventory: BeerDocument[];
   isLoading: boolean;
 }
 
 export const BeerActions = {
-  setNewBeerId: (id: string) =>
-    ({
-      type: actionTypes.SET_NEW_BEER_ID,
-      id,
-    } as const),
-
   setNewBeerName: (name: string) =>
     ({
       type: actionTypes.SET_NEW_BEER_NAME,
@@ -53,12 +47,6 @@ export const BeerActions = {
     ({
       type: actionTypes.SET_NEW_BEER_QUANTITY,
       quantity,
-    } as const),
-
-  setNewBeerHistoricQuantity: (historicQuantity: number) =>
-    ({
-      type: actionTypes.SET_NEW_BEER_HISTORIC_QUANTITY,
-      historicQuantity,
     } as const),
 
   waitOnRequest: () =>
@@ -87,12 +75,10 @@ export const BeerActions = {
 };
 
 export type BeerActionTypes =
-  | ReturnType<typeof BeerActions.setNewBeerId>
   | ReturnType<typeof BeerActions.setNewBeerName>
   | ReturnType<typeof BeerActions.setNewBeerBrewery>
   | ReturnType<typeof BeerActions.setNewBeerStyle>
   | ReturnType<typeof BeerActions.setNewBeerQuantity>
-  | ReturnType<typeof BeerActions.setNewBeerHistoricQuantity>
   | ReturnType<typeof BeerActions.waitOnRequest>
   | ReturnType<typeof BeerActions.updateBeerById>
   | ReturnType<typeof BeerActions.fetchByIdReceived>

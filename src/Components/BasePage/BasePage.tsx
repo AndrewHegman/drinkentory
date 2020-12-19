@@ -40,10 +40,6 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
     const normalizedDomainKeys = Object.keys(Domains).map((key) => key.toLowerCase());
     const normalizedUrlParam = (urlParams[SearchParams.Domain] as string)?.toLowerCase();
 
-    console.log(normalizedDomainKeys);
-    console.log(urlParams);
-    console.log(normalizedUrlParam);
-
     if (normalizedDomainKeys.includes(normalizedUrlParam)) {
       dispatch(actions.domain.setDomain(urlParams[SearchParams.Domain] as Domains));
     } else {

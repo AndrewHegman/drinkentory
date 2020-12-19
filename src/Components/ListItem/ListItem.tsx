@@ -40,10 +40,19 @@ export interface IListItemBreweryProps {
 
 export const ListItemBrewery: React.FC<IListItemBreweryProps> = (props) => {
   const { brewery } = props;
+  const getLocationString = () => {
+    if (brewery.city) {
+      return `${brewery.city.name}, ${brewery.state?.name}`;
+    } else if (brewery.state) {
+      return `${brewery.state.name}, ${brewery.country.name}`;
+    } else {
+      return `${brewery.country.name}`;
+    }
+  };
   return (
     <IonLabel>
       <h1>{brewery.name}</h1>
-      <h3>{`${brewery.city ? `${brewery.city.name}, ` : ""}${brewery.country?.name}`} </h3>
+      <h3>{getLocationString()} </h3>
     </IonLabel>
   );
 };
@@ -57,6 +66,20 @@ export const ListItemCountry: React.FC<IListItemCountryProps> = (props) => {
   return (
     <IonLabel>
       <h1>{country}</h1>
+    </IonLabel>
+  );
+};
+
+export interface IListItemLocation {
+  terms: { offset: number; value: string }[];
+}
+
+export const ListItemLocation: React.FC<IListItemLocation> = (props) => {
+  const { terms } = props;
+  return (
+    <IonLabel>
+      <h1>{`${terms[0].value}${terms.length > 2 ? `, ${terms[1].value}` : ""}`}</h1>
+      <h3>{terms[terms.length - 1].value}</h3>
     </IonLabel>
   );
 };

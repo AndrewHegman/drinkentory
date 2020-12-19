@@ -8,7 +8,7 @@ const initialState: BreweryState = {
 
 const initialNewBrewery: NewBrewery = {
   name: "",
-  country: "",
+  country: {} as CountryDocument,
 };
 
 export const breweryReducer = (state = initialState, action: BreweryActionTypes): BreweryState => {
@@ -60,6 +60,11 @@ export const breweryReducer = (state = initialState, action: BreweryActionTypes)
       return {
         ...state,
         isLoading: action.isLoading,
+      };
+    case actionTypes.RESET_NEW_BREWERY:
+      return {
+        ...state,
+        newBrewery: initialNewBrewery,
       };
     default:
       return state;

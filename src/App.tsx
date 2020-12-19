@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -30,6 +30,7 @@ export const App: React.FC<IAppProps> = (props: IAppProps) => {
         <IonRouterOutlet>
           <Route path="/inventory" component={BaseTabs} />
           <Route path="/statistics" component={BaseTabs} />
+          <Redirect exact from="/" to="/inventory" />
           {/* <Route path="*" component={NotFound} /> */}
         </IonRouterOutlet>
       </IonReactRouter>

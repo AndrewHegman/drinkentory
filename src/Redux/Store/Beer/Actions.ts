@@ -1,11 +1,9 @@
 import Axios from "axios";
 import { BeerActions, BeerActionTypes } from "./Types";
-import { BeerDocument } from "../../../Interfaces/Beer.types";
-import { beer as beerSelectors } from "./Selectors";
+import { selectors } from "../../";
 
-import { ThunkAction, ThunkDispatch } from "redux-thunk";
+import { ThunkAction } from "redux-thunk";
 import { RootState } from "../index";
-import { BreweryDocument, StyleDocument } from "../../../Interfaces";
 
 // const onFetchByIdReceived = (byId: BeerDocument): BeerActionTypes => {
 //   return {
@@ -30,28 +28,38 @@ import { BreweryDocument, StyleDocument } from "../../../Interfaces";
 // };
 
 export const beer = {
-  setNewBeerId: (id: string): BeerActionTypes => {
-    return BeerActions.setNewBeerId(id);
-  },
-
   setNewBeerName: (name: string): BeerActionTypes => {
     return BeerActions.setNewBeerName(name);
   },
 
-  setNewBeerBrewery: (brewery: BreweryDocument): BeerActionTypes => {
-    return BeerActions.setNewBeerBrewery(brewery);
+  setNewBeerBrewery: (breweryId: string): ThunkAction<BeerActionTypes, RootState, {}, BeerActionTypes> => {
+    return (dispatch, getState) => {
+      const state = getState();
+      const brewery = selectors.breweries.byId(state, breweryId);
+
+      if (!brewery) {
+        throw new Error(`Unable to find document in store for brewery with id ${breweryId}`);
+      }
+
+      return dispatch(BeerActions.setNewBeerBrewery(brewery));
+    };
   },
 
-  setNewBeerStyle: (style: StyleDocument): BeerActionTypes => {
-    return BeerActions.setNewBeerStyle(style);
+  setNewBeerStyle: (styleId: string): ThunkAction<BeerActionTypes, RootState, {}, BeerActionTypes> => {
+    return (dispatch, getState) => {
+      const state = getState();
+      const style = selectors.styles.byId(state, styleId);
+
+      if (!style) {
+        throw new Error(`Unable to find document in store for style with id ${styleId}`);
+      }
+
+      return dispatch(BeerActions.setNewBeerStyle(style));
+    };
   },
 
   setNewBeerQuantity: (quantity: number): BeerActionTypes => {
     return BeerActions.setNewBeerQuantity(quantity);
-  },
-
-  setNewBeerHistoricQuantity: (historicQuantity: number): BeerActionTypes => {
-    return BeerActions.setNewBeerHistoricQuantity(historicQuantity);
   },
 
   fetchAllBeer: (): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
@@ -72,26 +80,11 @@ export const beer = {
     };
   },
 
-  // Quantity actions
-  // const fetchIfNotFound:(id: string, state: BeerState) => {
-  //   const beer = state.inventory.find((beer) => beer._id === id);
-  //   if (beer) {
-  //     return Promise.resolve();
-  //   }
-  //   return fetchBeerById(id);
-  // };
-
-  // const getCurrentQuantity:(id: string, state: BeerState): number => {
-  //   fetchIfNotFound(id, state).then(() => {
-  //     return state.inventory.find((beer) => beer._id === id)!.quantity;
-  //   });
-  // };
-
   incrementBeerQuantity: (id: string): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnRequest());
 
-      const quantity = beerSelectors.getBeerById(getState(), id)?.quantity;
+      const quantity = selectors.beer.getBeerById(getState(), id)?.quantity;
 
       if (quantity === undefined) {
         throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);
@@ -109,7 +102,7 @@ export const beer = {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnRequest());
 
-      const quantity = beerSelectors.getBeerById(getState(), id)?.quantity;
+      const quantity = selectors.beer.getBeerById(getState(), id)?.quantity;
 
       if (quantity === undefined) {
         throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);

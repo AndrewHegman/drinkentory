@@ -8,13 +8,4 @@ export type BreweryDocument = {
   city?: CityDocument;
 };
 
-export type NewBrewery = {
-  name: string;
-  country: string;
-  state?: string;
-  city?: string;
-};
-
-export type SetBreweryCountryDto = {
-  _id: string;
-};
+export type NewBrewery = Omit<BreweryDocument, "_id">;

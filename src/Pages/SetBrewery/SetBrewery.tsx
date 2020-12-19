@@ -2,7 +2,7 @@ import React from "react";
 import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { actions } from "../../Redux";
-import { useSelector, useDispatch, connect, ConnectedProps } from "react-redux";
+import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
 import { IonItemLink } from "../../Components/IonItemLink";
 import { ListItemBrewery } from "../../Components/ListItem";
@@ -20,33 +20,27 @@ const mapStateToProps = (state: RootState) => {
 const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
   const [searchText, setSearchText] = React.useState<string>("");
   const { createNewBreweryRoute, createNewItemRoute } = routes;
-  console.log(props);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     dispatch(actions.breweries.fetchAllBreweries());
   }, []);
 
-  const useInitialSearchText = () => useSelector((state: RootState) => state.breweries.newBrewery?.name);
-
   const onClick = (searchText: string) => {
     dispatch(actions.breweries.setNewBreweryName(searchText));
   };
-
-  const initialSearchText = useInitialSearchText();
 
   const getContent = () => {
     if (props.isLoading) {
       return "";
     }
-    console.log(props.breweries);
     return props.breweries
       .filter((_breweries) => _breweries.name.toLowerCase().includes(searchText))
       .map((brewery) => (
         <IonItemLink
-          to={{ pathname: createNewItemRoute.pathname, search: "" }}
+          pathname={createNewItemRoute.pathname}
           onClick={() => {
-            console.log(`Add ${brewery._id} to inventory`);
+            dispatch(actions.beer.setNewBeerBrewery(brewery._id));
           }}
         >
           <ListItemBrewery brewery={brewery} />
@@ -60,7 +54,6 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
       pathname={createNewItemRoute.pathname}
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname }}
       onNotFoundClick={onClick}
-      initialSearchText={initialSearchText}
       onSearchTextChange={(searchText: string) => setSearchText(searchText)}
     >
       {getContent()}

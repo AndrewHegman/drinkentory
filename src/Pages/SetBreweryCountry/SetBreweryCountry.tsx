@@ -1,13 +1,15 @@
 import React from "react";
+import { AnyAction } from "redux";
 import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
-import { actions } from "../../Redux";
-import { useSelector, useDispatch, connect, ConnectedProps } from "react-redux";
+import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
-import { ListItemCountry } from "../../Components/ListItem";
+import { ListItemLocation } from "../../Components/ListItem";
 import { IonItemLink } from "../../Components/IonItemLink";
-import { selectors } from "../../Redux/";
-export interface IAddNewItemModal extends PropsFromRedux {}
+import { selectors, actions } from "../../Redux/";
+import { SkeletonLoading } from "../../Components/SkeletonLoading";
+import usePlacesAutocomplete, { Suggestion } from "use-places-autocomplete";
+import { ThunkDispatch } from "redux-thunk";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -16,47 +18,60 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
+export interface IAddNewItemModal extends PropsFromRedux {}
+
 export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) => {
-  const [searchText, setSearchText] = React.useState<string>("");
-
   const { createNewBreweryRoute } = routes;
-  const dispatch = useDispatch();
+  const dispatch: ThunkDispatch<RootState, any, AnyAction> = useDispatch();
 
-  const initialSearchText = useSelector(selectors.breweries.getNewBreweryCountry);
+  const placesAutocomplete = usePlacesAutocomplete({
+    requestOptions: {
+      types: ["(cities)"],
+    },
+    debounce: 0, // debounce handled in BasePageWithSearchBar by the IonSearchBar component
+  });
+
+  React.useEffect(() => {
+    dispatch(actions.geography.initializeGeocodingService());
+    dispatch(actions.geography.initializePlacesService());
+  }, []);
 
   React.useEffect(() => {
     dispatch(actions.geography.fetchAllCountries());
-  }, [dispatch, props.countries]);
+  }, [dispatch]);
 
-  const onClick = (countryId: string) => {
-    actions.breweries.setNewBreweryCountry(countryId);
+  const handleItemClick = (suggestion: Suggestion) => {
+    dispatch(actions.geography.getDetailsFromSuggestion(suggestion.terms[0].value, { placeId: suggestion.place_id })).then(() => {
+      dispatch(actions.breweries.setNewBreweryCity(suggestion.place_id));
+    });
   };
 
   const getContent = () => {
-    if (props.isLoading) {
-      return <></>;
+    const { suggestions } = placesAutocomplete;
+    if (props.isLoading || !placesAutocomplete.ready || suggestions.loading) {
+      return <SkeletonLoading length={8} />;
     }
-    return props.countries
-      .filter((_breweries) => _breweries.name.toLowerCase().includes(searchText))
-      .map((country) => (
-        <IonItemLink
-          to={{ pathname: createNewBreweryRoute.pathname }}
-          onClick={() => {
-            console.log(`Set ${country._id} as country`);
-            onClick(country._id);
-          }}
-        >
-          <ListItemCountry country={country.name} />
-        </IonItemLink>
-      ));
+
+    return suggestions.data.map((suggestion) => (
+      <IonItemLink
+        pathname={createNewBreweryRoute.pathname}
+        onClick={() => {
+          handleItemClick(suggestion);
+        }}
+        routerDirection={"back"}
+      >
+        <ListItemLocation terms={suggestion.terms} />
+      </IonItemLink>
+    ));
   };
 
   return (
     <BasePageWithSearchBar
-      title="Choose a Country"
+      title="Choose the Location"
       pathname={createNewBreweryRoute.pathname}
-      initialSearchText={initialSearchText}
-      onSearchTextChange={(searchText) => setSearchText(searchText)}
+      onSearchTextChange={(_searchText) => {
+        placesAutocomplete.setValue(_searchText, true);
+      }}
     >
       {getContent()}
     </BasePageWithSearchBar>

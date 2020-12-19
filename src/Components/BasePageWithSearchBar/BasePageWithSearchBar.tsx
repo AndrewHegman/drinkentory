@@ -20,22 +20,19 @@ export interface IBasePageWithSearchBarProps {
 export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (props) => {
   const { pathname, notFoundRoute, title, onSearchTextChange, onClose } = props;
   const [searchText, setSearchText] = React.useState<string>("");
+
   const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
+
   const classes = useBasePageWithSearchBarStyles();
 
   React.useEffect(() => {
     onSearchTextChange && onSearchTextChange(searchText);
-
     if (searchText !== "") {
       notFoundRoute && setShowNotFound(true);
     } else {
       setShowNotFound(false);
     }
   }, [searchText, notFoundRoute]);
-
-  React.useEffect(() => {
-    setSearchText(props.initialSearchText || "");
-  }, [props.initialSearchText]);
 
   const onCloseButtonClick = () => {
     setSearchText("");
@@ -47,7 +44,7 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
       <IonHeader translucent>
         <BasePageHeader title={title} pathname={pathname} onClose={onCloseButtonClick} />
         <IonToolbar>
-          <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} value={searchText} />
+          <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} debounce={350} />
         </IonToolbar>
       </IonHeader>
       <IonContent className={classes.root}>
@@ -56,7 +53,8 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
 
           {showNotFound && (
             <IonItemLink
-              to={{ pathname: notFoundRoute?.pathname, search: notFoundRoute?.search }}
+              pathname={notFoundRoute!.pathname}
+              search={notFoundRoute?.search}
               onClick={() => {
                 props.onNotFoundClick && props.onNotFoundClick(searchText);
               }}

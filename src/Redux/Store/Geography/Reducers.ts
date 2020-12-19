@@ -12,6 +12,11 @@ const initialState: GeographyState = {
   countries: [],
   states: [],
   cities: [],
+
+  isDetailsFromSuggestionLoading: false,
+
+  placesService: null as any,
+  geocoderService: null as any,
 };
 
 export const geographyReducer = (state = initialState, action: GeographyActionTypes): GeographyState => {
@@ -61,6 +66,29 @@ export const geographyReducer = (state = initialState, action: GeographyActionTy
       return {
         ...state,
         isCitiesLoading: true,
+      };
+    case actionTypes.INITIALIZE_PLACES_SERVICE:
+      return {
+        ...state,
+        placesService: action.service,
+      };
+    case actionTypes.INITIALIZE_GEOCODING_SERVICE:
+      return {
+        ...state,
+        geocoderService: action.service,
+      };
+    case actionTypes.WAIT_ON_GET_DETAILS_FROM_SUGGESTION:
+      return {
+        ...state,
+        isDetailsFromSuggestionLoading: true,
+      };
+    case actionTypes.GET_DETAILS_FROM_SUGGESTION_RECEIVED:
+      return {
+        ...state,
+        countries: [...state.countries, action.details.country],
+        states: [...state.states, action.details.state],
+        cities: [...state.cities, action.details.city],
+        isDetailsFromSuggestionLoading: false,
       };
     default:
       return state;

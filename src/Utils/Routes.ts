@@ -58,6 +58,18 @@ export const routes: { [key: string]: IRoute } = {
     component: SetBreweryCountry,
   },
 
+  setBreweryStateRoute: {
+    pathname: "/inventory/create/brewery/setstate",
+    exact: true,
+    component: SetBreweryCountry,
+  },
+
+  setBreweryCityRoute: {
+    pathname: "/inventory/create/brewery/setcity",
+    exact: true,
+    component: SetBreweryCountry,
+  },
+
   setStyleRoute: {
     pathname: "/inventory/create/setstyle",
     exact: true,

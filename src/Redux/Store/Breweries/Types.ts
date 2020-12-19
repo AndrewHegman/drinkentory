@@ -1,4 +1,4 @@
-import { CountryDocument, BreweryDocument, StateDocument, CityDocument, SetBreweryCountryDto, NewBrewery } from "../../../Interfaces";
+import { CountryDocument, BreweryDocument, StateDocument, CityDocument, NewBrewery } from "../../../Interfaces";
 
 export const actionTypes = {
   SET_NEW_BREWERY_NAME: "SET_NEW_BREWERY_NAME",
@@ -7,6 +7,7 @@ export const actionTypes = {
   SET_NEW_BREWERY_CITY: "SET_NEW_BREWERY_CITY",
   FETCH_ALL_BREWERIES: "FETCH_ALL_BREWERIES",
   WAIT_ON_BREWERIES_REQUEST: "WAIT_ON_BREWERIES_REQUEST",
+  RESET_NEW_BREWERY: "RESET_NEW_BREWERY",
 } as const;
 
 export interface BreweryState {
@@ -22,22 +23,22 @@ export const BreweryActions = {
       name,
     } as const),
 
-  setNewBreweryCountry: (countryId: string) =>
+  setNewBreweryCountry: (country: CountryDocument) =>
     ({
       type: actionTypes.SET_NEW_BREWERY_COUNTRY,
-      country: countryId,
+      country,
     } as const),
 
-  setNewBreweryState: (stateId: string) =>
+  setNewBreweryState: (state: StateDocument) =>
     ({
       type: actionTypes.SET_NEW_BREWERY_STATE,
-      state: stateId,
+      state: state,
     } as const),
 
-  setNewBreweryCity: (cityId: string) =>
+  setNewBreweryCity: (city: CityDocument) =>
     ({
       type: actionTypes.SET_NEW_BREWERY_CITY,
-      city: cityId,
+      city: city,
     } as const),
 
   waitOnRequest: (isLoading: boolean, fieldToUpdate?: keyof BreweryState | keyof BreweryDocument, payload?: any) =>
@@ -47,6 +48,11 @@ export const BreweryActions = {
       fieldToUpdate,
       payload,
     } as const),
+
+  resetNewBrewery: () =>
+    ({
+      type: actionTypes.RESET_NEW_BREWERY,
+    } as const),
 };
 
 export type BreweryActionTypes =
@@ -54,4 +60,5 @@ export type BreweryActionTypes =
   | ReturnType<typeof BreweryActions.setNewBreweryCountry>
   | ReturnType<typeof BreweryActions.setNewBreweryState>
   | ReturnType<typeof BreweryActions.setNewBreweryCity>
-  | ReturnType<typeof BreweryActions.waitOnRequest>;
+  | ReturnType<typeof BreweryActions.waitOnRequest>
+  | ReturnType<typeof BreweryActions.resetNewBrewery>;

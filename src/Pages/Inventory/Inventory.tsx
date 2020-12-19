@@ -76,7 +76,6 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
       </Link>
     </div>
   );
-  console.log(beers);
   return (
     <>
       <BasePage headerContent={toolbarHeaderContent}>

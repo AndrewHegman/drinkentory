@@ -17,3 +17,5 @@ export type BeerDocument = {
   quantity: number;
   historicQuantity: number;
 };
+
+export type NewBeer = Omit<BeerDocument, "_id" | "historicQuantity">;

@@ -1,34 +1,33 @@
 import React from "react";
 
 import { routes } from "../../Utils/Routes";
-import { SearchParams } from "../../Utils/Constants";
 import { BasePageWithInputCards } from "../../Components/BasePageWithInputCards/BasePageWithInputCards";
 import { EditableInputCard } from "../../Components/EditableInputCard/EditableInputCard";
 import { LinkInputCard } from "../../Components/LinkInputCard/LinkInputCard";
 import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
 import { actions } from "../../Redux";
-import { useHistory } from "react-router";
-import { parse } from "query-string";
+import { RouteComponentProps } from "react-router";
 
 const mapStateToProps = (state: RootState) => {
   return {
     name: state.beer.newBeer?.name || "",
+    brewery: state.beer.newBeer?.brewery,
   };
 };
 
-export interface CreateNewItemProps extends PropsFromRedux {}
+export interface CreateNewItemProps extends PropsFromRedux, RouteComponentProps {}
 
 const CreateNewItemComponent: React.FC<CreateNewItemProps> = (props) => {
   const { addNewItemRoute, setBreweryRoute, setStyleRoute } = routes;
-  const history = useHistory();
+
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!props.name) {
-      dispatch(actions.beer.setNewBeerName(parse(history.location.search)[SearchParams.NewName] as string));
+      props.history.push(addNewItemRoute);
     }
-  });
+  }, []);
 
   return (
     <BasePageWithInputCards title={"Create new Beer"} pathname={addNewItemRoute.pathname}>
@@ -40,7 +39,12 @@ const CreateNewItemComponent: React.FC<CreateNewItemProps> = (props) => {
         }}
         value={props.name}
       />
-      <LinkInputCard title={"Brewery"} pathname={setBreweryRoute.pathname} content={"Brewery"} />
+      <LinkInputCard
+        title={"Brewery"}
+        pathname={setBreweryRoute.pathname}
+        search={props.history.location.search}
+        content={props.brewery?.name || "Brewery"}
+      />
       <LinkInputCard title={"Style"} pathname={setStyleRoute.pathname} content={"Style"} />
     </BasePageWithInputCards>
   );
