@@ -14,7 +14,7 @@ import { ThunkDispatch } from "redux-thunk";
 const mapStateToProps = (state: RootState) => {
   return {
     isLoading: selectors.geography.isLoading(state),
-    countries: state.geography.countries,
+    places: state.geography.places,
   };
 };
 
@@ -34,16 +34,18 @@ export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) =>
   React.useEffect(() => {
     dispatch(actions.geography.initializeGeocodingService());
     dispatch(actions.geography.initializePlacesService());
-  }, []);
+  }, [dispatch]);
 
   React.useEffect(() => {
     dispatch(actions.geography.fetchAllCountries());
   }, [dispatch]);
 
   const handleItemClick = (suggestion: Suggestion) => {
-    dispatch(actions.geography.getDetailsFromSuggestion(suggestion.terms[0].value, { placeId: suggestion.place_id })).then(() => {
-      dispatch(actions.breweries.setNewBreweryCity(suggestion.place_id));
-    });
+    dispatch(
+      actions.geography.setNewBreweryLocationFromSuggestion(suggestion.terms[0].value, {
+        placeId: suggestion.place_id,
+      })
+    );
   };
 
   const getContent = () => {
@@ -51,7 +53,6 @@ export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) =>
     if (props.isLoading || !placesAutocomplete.ready || suggestions.loading) {
       return <SkeletonLoading length={8} />;
     }
-
     return suggestions.data.map((suggestion) => (
       <IonItemLink
         pathname={createNewBreweryRoute.pathname}
@@ -68,7 +69,7 @@ export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) =>
   return (
     <BasePageWithSearchBar
       title="Choose the Location"
-      pathname={createNewBreweryRoute.pathname}
+      onClosePathname={createNewBreweryRoute.pathname}
       onSearchTextChange={(_searchText) => {
         placesAutocomplete.setValue(_searchText, true);
       }}

@@ -7,11 +7,13 @@ import { LinkInputCard } from "../../Components/LinkInputCard/LinkInputCard";
 import { RootState } from "../../Redux/Store/index";
 import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { actions } from "../../Redux";
+import { IonLoading } from "@ionic/react";
 
 const mapStateToProps = (state: RootState) => {
   return {
     name: state.breweries.newBrewery?.name || "",
     newBrewery: state.breweries.newBrewery,
+    isNewBreweryLocationUpdating: state.breweries.updatingNewBreweryLocation,
   };
 };
 
@@ -22,15 +24,22 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
   const dispatch = useDispatch();
 
   const [name, setName] = React.useState<string>(props.name);
+  const [showLoadingSpinner, setShowLoadingSpinner] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     setName(props.name);
   }, [props.name]);
 
+  React.useEffect(() => {
+    setShowLoadingSpinner(props.isNewBreweryLocationUpdating);
+  }, [props.isNewBreweryLocationUpdating]);
+
   const getLocationPlaceholder = () => {
     const { newBrewery } = props;
-    if (!!newBrewery?.city) {
-      return `${newBrewery?.city ? `${newBrewery.city.name}, ${newBrewery.city.state?.name}` : newBrewery.country.name}`;
+    if (!!newBrewery?.place.name) {
+      return `${newBrewery.place.name}, ${
+        newBrewery.place.state ? newBrewery.place.state.name : newBrewery.place.country.name
+      }`;
     } else {
       return "Somewhere in the world";
     }
@@ -41,8 +50,25 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
     dispatch(actions.breweries.resetNewBrewery());
   };
 
+  const handleSubmit = () => {
+    // TODO: Should show a confirmation dialog here
+    if (props.newBrewery) {
+      dispatch(actions.geography.addNewPlace(props.newBrewery.place));
+    }
+    // dispatch(actions.breweries.createNewBrewery());
+    // dispatch(actions.beer.setNewBeerBrewery());
+  };
+
   return (
-    <BasePageWithInputCards title={"Create new Brewery"} pathname={setBreweryRoute.pathname} onClose={onClose}>
+    <BasePageWithInputCards
+      title={"Create new Brewery"}
+      onClosePathname={setBreweryRoute.pathname}
+      onClose={onClose}
+      showSubmit={true}
+      onSubmitClick={handleSubmit}
+      onSubmitPathname={routes.createNewItemRoute.pathname}
+    >
+      <IonLoading spinner="lines" message="Please wait..." isOpen={showLoadingSpinner} />
       <EditableInputCard
         title={"Brewery"}
         onChange={(event) => setName(event.detail.value || "")}

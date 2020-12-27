@@ -1,15 +1,31 @@
-import { CityDocument, CountryDocument, StateDocument } from "../../../Interfaces";
+import { CountryDocument, PlaceDocument, StateDocument } from "../../../Interfaces";
 import { RootState } from "../index";
 
 export const geography = {
-  isLoading: (state: RootState) => state.geography.isCitiesLoading || state.geography.isCountriesLoading || state.geography.isStatesLoading,
+  isLoading: (state: RootState) =>
+    state.geography.isCitiesLoading || state.geography.isCountriesLoading || state.geography.isStatesLoading,
+
   countryById: (state: RootState, id: string): CountryDocument | undefined => {
-    return state.geography.countries.find((country) => country._id === id);
+    return state.geography.places.find((place) => place.country?._id === id)?.country;
   },
   stateById: (state: RootState, id: string): StateDocument | undefined => {
-    return state.geography.states.find((state) => state._id === id);
+    return state.geography.places.find((place) => place.state?._id === id)?.state;
   },
-  cityById: (state: RootState, id: string): CityDocument | undefined => {
-    return state.geography.cities.find((city) => city._id === id);
+
+  placeById: (state: RootState, id: string): PlaceDocument | undefined => {
+    return state.geography.places.find((place) => place._id === id);
+  },
+
+  countries: (state: RootState): CountryDocument[] => {
+    return state.geography.places.map((place: PlaceDocument) => place.country || undefined) as CountryDocument[];
+  },
+
+  states: (state: RootState): StateDocument[] => {
+    return state.geography.places.map((place: PlaceDocument) => place.state || undefined) as StateDocument[];
+  },
+
+  // Just here for solidarity and consistency
+  places: (state: RootState): PlaceDocument[] => {
+    return state.geography.places;
   },
 };

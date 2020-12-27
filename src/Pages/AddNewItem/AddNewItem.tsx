@@ -13,7 +13,7 @@ export interface IAddNewItemModal extends PropsFromRedux {}
 const mapStateToProps = (state: RootState) => {
   return {
     beer: state.beer,
-    domain: state.domain.domain,
+    domain: state.domain.domain
   };
 };
 
@@ -71,11 +71,11 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
   return (
     <BasePageWithSearchBar
       title="Choose a Beer"
-      pathname={inventoryRoute.pathname}
+      onClosePathname={inventoryRoute.pathname}
       onSearchTextChange={(searchText) => setSearchText(searchText)}
       onNotFoundClick={(text) => dispatch(actions.beer.setNewBeerName(text))}
       notFoundRoute={{
-        pathname: createNewItemRoute.pathname,
+        pathname: createNewItemRoute.pathname
       }}
     >
       {getContent()}

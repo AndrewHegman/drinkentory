@@ -1,4 +1,5 @@
 import { CountryDocument, StateDocument, CityDocument } from ".";
+import { PlaceDocument } from "./Place.types";
 
 export type BreweryDocument = {
   _id: string;
@@ -8,4 +9,7 @@ export type BreweryDocument = {
   city?: CityDocument;
 };
 
-export type NewBrewery = Omit<BreweryDocument, "_id">;
+export type NewBrewery = {
+  name: string;
+  place: PlaceDocument;
+};

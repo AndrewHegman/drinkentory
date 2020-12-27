@@ -1,14 +1,16 @@
-import { BreweryDocument, CountryDocument, NewBrewery } from "../../../Interfaces";
+import { BreweryDocument, CountryDocument, NewBrewery, PlaceDocument } from "../../../Interfaces";
 import { BreweryState, BreweryActionTypes, actionTypes } from "./Types";
+
+const initialNewBrewery: NewBrewery = {
+  name: "",
+  place: {} as PlaceDocument,
+};
 
 const initialState: BreweryState = {
   isLoading: false,
   breweries: [],
-};
-
-const initialNewBrewery: NewBrewery = {
-  name: "",
-  country: {} as CountryDocument,
+  updatingNewBreweryLocation: false,
+  newBrewery: initialNewBrewery,
 };
 
 export const breweryReducer = (state = initialState, action: BreweryActionTypes): BreweryState => {
@@ -22,31 +24,40 @@ export const breweryReducer = (state = initialState, action: BreweryActionTypes)
           name: action.name,
         },
       };
-    case actionTypes.SET_NEW_BREWERY_COUNTRY:
+    // case actionTypes.SET_NEW_BREWERY_COUNTRY:
+    //   return {
+    //     ...state,
+    //     newBrewery: {
+    //       ...initialNewBrewery,
+    //       ...state.newBrewery,
+    //       country: action.country
+    //     }
+    //   };
+    // case actionTypes.SET_NEW_BREWERY_STATE:
+    //   return {
+    //     ...state,
+    //     newBrewery: {
+    //       ...initialNewBrewery,
+    //       ...state.newBrewery,
+    //       state: action.state
+    //     }
+    //   };
+    // case actionTypes.SET_NEW_BREWERY_CITY:
+    //   return {
+    //     ...state,
+    //     newBrewery: {
+    //       ...initialNewBrewery,
+    //       ...state.newBrewery,
+    //       city: action.city
+    //     }
+    //   };
+    case actionTypes.SET_NEW_BREWERY_PLACE:
       return {
         ...state,
         newBrewery: {
           ...initialNewBrewery,
           ...state.newBrewery,
-          country: action.country,
-        },
-      };
-    case actionTypes.SET_NEW_BREWERY_STATE:
-      return {
-        ...state,
-        newBrewery: {
-          ...initialNewBrewery,
-          ...state.newBrewery,
-          state: action.state,
-        },
-      };
-    case actionTypes.SET_NEW_BREWERY_CITY:
-      return {
-        ...state,
-        newBrewery: {
-          ...initialNewBrewery,
-          ...state.newBrewery,
-          city: action.city,
+          place: action.place,
         },
       };
     case actionTypes.WAIT_ON_BREWERIES_REQUEST:
@@ -65,6 +76,21 @@ export const breweryReducer = (state = initialState, action: BreweryActionTypes)
       return {
         ...state,
         newBrewery: initialNewBrewery,
+      };
+    case actionTypes.UPDATING_NEW_BREWERY_LOCATION_FINISHED:
+      return {
+        ...state,
+        updatingNewBreweryLocation: false,
+        newBrewery: {
+          ...initialNewBrewery,
+          ...state.newBrewery,
+          place: action.place,
+        },
+      };
+    case actionTypes.WAIT_ON_UPDATING_NEW_BREWERY_LOCATION:
+      return {
+        ...state,
+        updatingNewBreweryLocation: true,
       };
     default:
       return state;

@@ -8,6 +8,7 @@ import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
 import { actions } from "../../Redux";
 import { RouteComponentProps } from "react-router";
+import { IonAlert } from "@ionic/react";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -27,10 +28,14 @@ const CreateNewItemComponent: React.FC<CreateNewItemProps> = (props) => {
     if (!props.name) {
       props.history.push(addNewItemRoute);
     }
-  }, []);
+  }, [addNewItemRoute, props.history, props.name]);
 
   return (
-    <BasePageWithInputCards title={"Create new Beer"} pathname={addNewItemRoute.pathname}>
+    <BasePageWithInputCards
+      title={"Create new Beer"}
+      onClosePathname={addNewItemRoute.pathname}
+      showSubmit={true}
+    >
       <EditableInputCard
         title={"Beer"}
         onChange={(event) => dispatch(actions.beer.setNewBeerName(event.detail.value || ""))}

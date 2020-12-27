@@ -1,4 +1,4 @@
-import { BreweryDocument } from "../../../Interfaces";
+import { BreweryDocument, PlaceDocument } from "../../../Interfaces";
 import Axios from "axios";
 import { BreweryActions, BreweryActionTypes, BreweryState } from "./Types";
 import { ThunkAction } from "redux-thunk";
@@ -10,43 +10,45 @@ export const breweries = {
     return BreweryActions.setNewBreweryName(name);
   },
 
-  setNewBreweryCountry: (countryId: string): ThunkAction<BreweryActionTypes, RootState, {}, BreweryActionTypes> => {
+  // setNewBreweryCountry: (countryId: string): ThunkAction<BreweryActionTypes, RootState, {}, BreweryActionTypes> => {
+  //   return (dispatch, getState) => {
+  //     const state = getState();
+  //     const country = selectors.geography.countryById(state, countryId);
+
+  //     if (!country) {
+  //       throw new Error(`Unable to find document in store for country with id ${countryId}`);
+  //     }
+  //     return dispatch(BreweryActions.setNewBreweryCountry(country));
+  //   };
+  // },
+
+  // setNewBreweryState: (stateId: string): ThunkAction<BreweryActionTypes, RootState, {}, BreweryActionTypes> => {
+  //   return (dispatch, getState) => {
+  //     const state = getState();
+  //     const _state = selectors.geography.stateById(state, stateId);
+
+  //     if (!_state) {
+  //       throw new Error(`Unable to find document in store for state with id ${stateId}`);
+  //     }
+  //     return dispatch(BreweryActions.setNewBreweryState(_state));
+  //   };
+  // },
+
+  setNewBreweryPlace: (placeId: string): ThunkAction<BreweryActionTypes, RootState, {}, BreweryActionTypes> => {
     return (dispatch, getState) => {
       const state = getState();
-      const country = selectors.geography.countryById(state, countryId);
+      const place = selectors.geography.placeById(state, placeId);
 
-      if (!country) {
-        throw new Error(`Unable to find document in store for country with id ${countryId}`);
+      if (!place) {
+        throw new Error(`Unable to find document in store for place with id ${placeId}`);
       }
-      return dispatch(BreweryActions.setNewBreweryCountry(country));
+      return dispatch(BreweryActions.setNewBreweryPlace(place));
     };
   },
 
-  setNewBreweryState: (stateId: string): ThunkAction<BreweryActionTypes, RootState, {}, BreweryActionTypes> => {
-    return (dispatch, getState) => {
-      const state = getState();
-      const _state = selectors.geography.stateById(state, stateId);
-
-      if (!_state) {
-        throw new Error(`Unable to find document in store for state with id ${stateId}`);
-      }
-      return dispatch(BreweryActions.setNewBreweryState(_state));
-    };
-  },
-
-  setNewBreweryCity: (cityId: string): ThunkAction<BreweryActionTypes, RootState, {}, BreweryActionTypes> => {
-    return (dispatch, getState) => {
-      const state = getState();
-      const city = selectors.geography.cityById(state, cityId);
-
-      if (!city) {
-        throw new Error(`Unable to find document in store for city with id ${cityId}`);
-      }
-      return dispatch(BreweryActions.setNewBreweryCity(city));
-    };
-  },
-
-  fetchAllBreweries: (expandFields?: [keyof BreweryDocument]): ThunkAction<Promise<BreweryActionTypes>, {}, {}, BreweryActionTypes> => {
+  fetchAllBreweries: (
+    expandFields?: [keyof BreweryDocument]
+  ): ThunkAction<Promise<BreweryActionTypes>, {}, {}, BreweryActionTypes> => {
     return (dispatch) => {
       dispatch(BreweryActions.waitOnRequest(true));
       return Axios.get(`http://localhost:3002/v1/brewery${expandFields ? `?expand=${expandFields.join(",")}` : ""}`)
@@ -57,5 +59,34 @@ export const breweries = {
 
   resetNewBrewery: () => {
     return BreweryActions.resetNewBrewery();
+  },
+
+  waitOnUpdatingNewBreweryLocation: (): BreweryActionTypes => {
+    return BreweryActions.waitOnUpdatingNewBreweryLocation();
+  },
+
+  // updatingNewBreweryLocationFinished: (): BreweryActionTypes => {
+  //   return BreweryActions.updatingNewBreweryLocationFinished({} as PlaceDocument);
+  // },
+
+  createNewBrewery: (): ThunkAction<Promise<BreweryActionTypes>, RootState, {}, BreweryActionTypes> => {
+    return (dispatch, getState) => {
+      const { newBrewery } = getState().breweries;
+
+      if (!newBrewery) {
+        throw new Error("newBrewery is not defined in the store. Not creating a new brewery");
+      }
+
+      dispatch(BreweryActions.waitOnCreateNewBrewery());
+
+      // create country if it doesn't exist
+      return Axios.post(`http://localhost:3002/v1/country`, {
+        name: newBrewery.name,
+        placesId: "1234",
+      }).then((res) => {
+        console.log(res);
+        return dispatch(BreweryActions.createNewBreweryFinished());
+      });
+    };
   },
 };

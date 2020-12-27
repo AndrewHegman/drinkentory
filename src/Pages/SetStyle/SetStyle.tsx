@@ -9,7 +9,7 @@ export interface IAddNewItemModal extends RouteComponentProps, PropsFromRedux {}
 
 const mapStateToProps = (state: RootState) => {
   return {
-    domain: state.domain.domain,
+    domain: state.domain.domain
   };
 };
 
@@ -22,7 +22,7 @@ export const SetStyleComponent: React.FC<IAddNewItemModal> = (props) => {
     <>
       <BasePageWithSearchBar
         title="Choose a Style"
-        pathname={createNewBreweryRoute.pathname}
+        onClosePathname={createNewBreweryRoute.pathname}
         // {...props}
       />
     </>

@@ -13,7 +13,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     breweries: state.breweries.breweries,
     domain: state.domain.domain,
-    isLoading: state.breweries.isLoading,
+    isLoading: state.breweries.isLoading
   };
 };
 
@@ -51,7 +51,7 @@ const SetBreweryComponent: React.FC<ISetBreweryProps> = (props) => {
   return (
     <BasePageWithSearchBar
       title="Choose a Brewery"
-      pathname={createNewItemRoute.pathname}
+      onClosePathname={createNewItemRoute.pathname}
       notFoundRoute={{ pathname: createNewBreweryRoute.pathname }}
       onNotFoundClick={onClick}
       onSearchTextChange={(searchText: string) => setSearchText(searchText)}

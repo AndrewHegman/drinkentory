@@ -1,17 +1,26 @@
-import { CityDocument, CountryDocument, StateDocument } from "../../../Interfaces";
+import { PlaceDocument, CityDocument, CountryDocument, StateDocument } from "../../../Interfaces";
+import { ActionType } from "../../Common";
 
 export const actionTypes = {
   WAIT_ON_COUNTRIES_REQUEST: "WAIT_ON_COUNTRIES_REQUEST",
   WAIT_ON_STATES_REQUEST: "WAIT_ON_STATES_REQUEST",
   WAIT_ON_CITIES_REQUEST: "WAIT_ON_CITIES_REQUEST",
 
-  WAIT_ON_CREATE_CITY: "WAIT_ON_CREATE_CITY",
-
   FETCH_COUNTRIES_RECEIVED: "FETCH_COUNTRIES_RECEIVED",
   FETCH_STATES_RECEIVED: "FETCH_STATES_RECEIVED",
   FETCH_CITIES_RECEIVED: "FETCH_CITIES_RECEIVED",
 
+  WAIT_ON_ADD_COUNTRY: "WAIT_ON_ADD_COUNTRY",
+  ADD_COUNTRY_FINISHED: "ADD_COUNTRY_FINISHED",
+
+  WAIT_ON_ADD_STATE: "WAIT_ON_ADD_STATE",
+  ADD_STATE_FINISHED: "ADD_STATE_FINISHED",
+
+  WAIT_ON_CREATE_CITY: "WAIT_ON_CREATE_CITY",
   CREATE_CITY_FINISHED: "CREATE_CITY_FINISHED",
+
+  WAIT_ON_ADD_PLACE: "WAIT_ON_ADD_PLACE",
+  ADD_PLACE_FINISHED: "ADD_PLACE_FINISHED",
 
   INITIALIZE_PLACES_SERVICE: "INITIALIZE_PLACES_SERVICE",
   INITIALIZE_GEOCODING_SERVICE: "INITIALIZE_GEOCODING_SERVICE",
@@ -24,6 +33,7 @@ type LocationDetails = {
   state: StateDocument;
   city: CityDocument;
 };
+
 export interface GeographyState {
   isCountriesLoading: boolean;
   isStatesLoading: boolean;
@@ -33,14 +43,14 @@ export interface GeographyState {
   // isStatesOld: boolean;
   // isCitiesOld: boolean;
 
-  countries: CountryDocument[];
-  states: StateDocument[];
-  cities: CityDocument[];
+  places: PlaceDocument[];
 
   isDetailsFromSuggestionLoading: boolean;
 
   placesService: google.maps.places.PlacesService;
   geocoderService: google.maps.Geocoder;
+
+  isWaitingOnRequest: boolean;
 }
 
 export const GeographyActions = {
@@ -71,13 +81,6 @@ export const GeographyActions = {
       type: actionTypes.FETCH_CITIES_RECEIVED,
       data: cities,
     } as const),
-  waitOnCreateCity: () =>
-    ({
-      type: actionTypes.WAIT_ON_CREATE_CITY,
-    } as const),
-  createCityFinished: () => ({
-    type: actionTypes.CREATE_CITY_FINISHED,
-  }),
 
   initializePlacesService: (service: google.maps.places.PlacesService) =>
     ({
@@ -90,27 +93,58 @@ export const GeographyActions = {
       service,
     } as const),
 
-  waitOnGetDetailsFromSuggestion: () => ({
-    type: actionTypes.WAIT_ON_GET_DETAILS_FROM_SUGGESTION,
-  }),
+  waitOnGetDetailsFromSuggestion: () =>
+    ({
+      type: actionTypes.WAIT_ON_GET_DETAILS_FROM_SUGGESTION,
+    } as const),
 
-  getDetailsFromSuggestionReceived: (details: LocationDetails) => ({
-    type: actionTypes.GET_DETAILS_FROM_SUGGESTION_RECEIVED,
-    details,
-  }),
+  getDetailsFromSuggestionReceived: (details: LocationDetails) =>
+    ({
+      type: actionTypes.GET_DETAILS_FROM_SUGGESTION_RECEIVED,
+      details,
+    } as const),
+
+  waitOnAddCountry: () =>
+    ({
+      type: actionTypes.WAIT_ON_ADD_COUNTRY,
+    } as const),
+
+  addCountryFinished: (country: CountryDocument) =>
+    ({
+      type: actionTypes.ADD_COUNTRY_FINISHED,
+      country,
+    } as const),
+
+  waitOnAddState: () =>
+    ({
+      type: actionTypes.WAIT_ON_ADD_STATE,
+    } as const),
+
+  addStateFinished: (state: StateDocument) =>
+    ({
+      type: actionTypes.ADD_STATE_FINISHED,
+      state,
+    } as const),
+
+  waitOnAddCity: () =>
+    ({
+      type: actionTypes.WAIT_ON_CREATE_CITY,
+    } as const),
+  addCityFinished: (city: CityDocument) =>
+    ({
+      type: actionTypes.CREATE_CITY_FINISHED,
+      city,
+    } as const),
+
+  waitOnAddPlace: () =>
+    ({
+      type: actionTypes.WAIT_ON_ADD_PLACE,
+    } as const),
+
+  addPlaceFinished: () =>
+    ({
+      type: actionTypes.ADD_PLACE_FINISHED,
+    } as const),
 };
 
-export type GeographyActionTypes =
-  | ReturnType<typeof GeographyActions.waitOnCountriesRequest>
-  | ReturnType<typeof GeographyActions.waitOnStatesRequest>
-  | ReturnType<typeof GeographyActions.waitOnCitiesRequest>
-  | ReturnType<typeof GeographyActions.fetchCountriesReceived>
-  | ReturnType<typeof GeographyActions.fetchStatesReceived>
-  | ReturnType<typeof GeographyActions.fetchCitiesReceived>
-  | ReturnType<typeof GeographyActions.waitOnCreateCity>
-  | ReturnType<typeof GeographyActions.createCityFinished>
-  | ReturnType<typeof GeographyActions.initializePlacesService>
-  | ReturnType<typeof GeographyActions.initializePlacesService>
-  | ReturnType<typeof GeographyActions.initializeGeocodingService>
-  | ReturnType<typeof GeographyActions.waitOnGetDetailsFromSuggestion>
-  | ReturnType<typeof GeographyActions.getDetailsFromSuggestionReceived>;
+export type GeographyActionTypes = ActionType<typeof GeographyActions>;

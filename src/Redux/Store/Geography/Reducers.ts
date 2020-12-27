@@ -9,14 +9,14 @@ const initialState: GeographyState = {
   // isStatesOld: true,
   // isCitiesOld: true,
 
-  countries: [],
-  states: [],
-  cities: [],
+  places: [],
 
   isDetailsFromSuggestionLoading: false,
 
   placesService: null as any,
   geocoderService: null as any,
+
+  isWaitingOnRequest: false,
 };
 
 export const geographyReducer = (state = initialState, action: GeographyActionTypes): GeographyState => {
@@ -41,27 +41,24 @@ export const geographyReducer = (state = initialState, action: GeographyActionTy
         ...state,
         isCountriesLoading: false,
         // isCountriesOld: false,
-        countries: action.data,
       };
     case actionTypes.FETCH_STATES_RECEIVED:
       return {
         ...state,
         isStatesLoading: false,
         // isStatesOld: false,
-        states: action.data,
       };
     case actionTypes.FETCH_CITIES_RECEIVED:
       return {
         ...state,
         isCitiesLoading: false,
         // isCitiesOld: false,
-        cities: action.data,
       };
-    case actionTypes.CREATE_CITY_FINISHED:
-      return {
-        ...state,
-        cities: [],
-      };
+    // case actionTypes.CREATE_CITY_FINISHED:
+    //   return {
+    //     ...state,
+    //     cities: [],
+    //   };
     case actionTypes.WAIT_ON_CREATE_CITY:
       return {
         ...state,
@@ -82,13 +79,24 @@ export const geographyReducer = (state = initialState, action: GeographyActionTy
         ...state,
         isDetailsFromSuggestionLoading: true,
       };
-    case actionTypes.GET_DETAILS_FROM_SUGGESTION_RECEIVED:
+    // Switching to using the places interface means this is no longer relevant...I think
+    // case actionTypes.GET_DETAILS_FROM_SUGGESTION_RECEIVED:
+    //   return {
+    //     ...state,
+    //     countries: [...state.countries, action.details.country],
+    //     states: [...state.states, action.details.state],
+    //     cities: [...state.cities, action.details.city],
+    //     isDetailsFromSuggestionLoading: false
+    //   };
+    case actionTypes.WAIT_ON_ADD_COUNTRY:
       return {
         ...state,
-        countries: [...state.countries, action.details.country],
-        states: [...state.states, action.details.state],
-        cities: [...state.cities, action.details.city],
-        isDetailsFromSuggestionLoading: false,
+        isWaitingOnRequest: true,
+      };
+    case actionTypes.ADD_COUNTRY_FINISHED:
+      return {
+        ...state,
+        isWaitingOnRequest: false,
       };
     default:
       return state;

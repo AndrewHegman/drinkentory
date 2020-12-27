@@ -6,7 +6,4 @@ export type CityDocument = {
   state: StateDocument;
 };
 
-export type CreateCityDto = {
-  name: string;
-  state: string;
-};
+export type AddCityDto = CityDocument;

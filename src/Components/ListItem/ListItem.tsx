@@ -76,6 +76,7 @@ export interface IListItemLocation {
 
 export const ListItemLocation: React.FC<IListItemLocation> = (props) => {
   const { terms } = props;
+  console.log(props);
   return (
     <IonLabel>
       <h1>{`${terms[0].value}${terms.length > 2 ? `, ${terms[1].value}` : ""}`}</h1>
