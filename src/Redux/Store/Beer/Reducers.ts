@@ -1,16 +1,20 @@
 import { actionTypes, BeerActionTypes, BeerState } from "./Types";
-import { BeerDocument, BreweryDocument, NewBeer, StyleDocument } from "../../../Interfaces";
+import { BreweryDocument, NewBeer, StyleDocument, Container } from "../../../Interfaces";
 
 const initialNewBeerState: NewBeer = {
   name: "",
   brewery: {} as BreweryDocument,
   style: {} as StyleDocument,
+  container: Container.Can,
   quantity: 0,
 };
 
 const initialState: BeerState = {
   inventory: [],
-  isLoading: false,
+  isWaitingOnFetch: false,
+  newBeer: initialNewBeerState,
+  isWaitingOnBeerUpdate: false,
+  isWaitingOnAddNewBeer: false,
 };
 
 export const beerReducer = (state = initialState, action: BeerActionTypes): BeerState => {
@@ -19,63 +23,77 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
       return {
         ...state,
         newBeer: {
-          ...initialNewBeerState,
           ...state.newBeer,
           name: action.name,
         },
       };
+
     case actionTypes.SET_NEW_BEER_BREWERY:
       return {
         ...state,
         newBeer: {
-          ...initialNewBeerState,
           ...state.newBeer,
           brewery: action.brewery,
         },
       };
+
     case actionTypes.SET_NEW_BEER_STYLE:
       return {
         ...state,
         newBeer: {
-          ...initialNewBeerState,
           ...state.newBeer,
           style: action.style,
         },
       };
+
+    case actionTypes.SET_NEW_BEER_CONTAINER:
+      return {
+        ...state,
+        newBeer: {
+          ...state.newBeer,
+          container: action.container,
+        },
+      };
+
     case actionTypes.SET_NEW_BEER_QUANTITY:
       return {
         ...state,
         newBeer: {
-          ...initialNewBeerState,
           ...state.newBeer,
           quantity: action.quantity,
         },
       };
 
-    case actionTypes.WAIT_ON_BEER_REQUEST:
+    case actionTypes.WAIT_ON_BEER_FETCH:
       return {
         ...state,
-        isLoading: true,
+        isWaitingOnFetch: true,
       };
 
     case actionTypes.FETCH_BY_ID_RECEIVED:
       return {
         ...state,
-        isLoading: false,
+        isWaitingOnFetch: false,
         inventory: [...state.inventory, action.byId],
       };
 
     case actionTypes.FETCH_ALL_BEER_RECEIVED:
       return {
         ...state,
-        isLoading: false,
+        isWaitingOnFetch: false,
         inventory: action.inventory,
       };
 
-    case actionTypes.UPDATE_BEER_BY_ID:
+    case actionTypes.WAIT_ON_UPDATE_BEER:
       return {
         ...state,
-        isLoading: false,
+        isWaitingOnBeerUpdate: true,
+      };
+
+    case actionTypes.UPDATE_BEER_FINISHED:
+      return {
+        ...state,
+        isWaitingOnBeerUpdate: false,
         inventory: [
           ...state.inventory.map((beer) => {
             if (beer._id !== action.id) {
@@ -88,6 +106,19 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
             };
           }),
         ],
+      };
+
+    case actionTypes.WAIT_ON_ADD_NEW_BEER:
+      return {
+        ...state,
+        isWaitingOnAddNewBeer: true,
+      };
+
+    case actionTypes.ADD_NEW_BEER_FINISHED:
+      return {
+        ...state,
+        isWaitingOnAddNewBeer: false,
+        inventory: [...state.inventory, action.newBeer],
       };
 
     default:

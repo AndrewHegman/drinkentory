@@ -1,69 +1,20 @@
 import { GeographyState, actionTypes, GeographyActionTypes } from "./Types";
+import { PlaceDocument } from "../../../Interfaces";
 
 const initialState: GeographyState = {
-  isCountriesLoading: false,
-  isStatesLoading: false,
-  isCitiesLoading: false,
-
-  // isCountriesOld: true,
-  // isStatesOld: true,
-  // isCitiesOld: true,
-
   places: [],
+  newPlace: {} as PlaceDocument,
 
   isDetailsFromSuggestionLoading: false,
 
   placesService: null as any,
   geocoderService: null as any,
 
-  isWaitingOnRequest: false,
+  isLoadingPlaces: false,
 };
 
 export const geographyReducer = (state = initialState, action: GeographyActionTypes): GeographyState => {
   switch (action.type) {
-    case actionTypes.WAIT_ON_COUNTRIES_REQUEST:
-      return {
-        ...state,
-        isCountriesLoading: true,
-      };
-    case actionTypes.WAIT_ON_STATES_REQUEST:
-      return {
-        ...state,
-        isStatesLoading: true,
-      };
-    case actionTypes.WAIT_ON_CITIES_REQUEST:
-      return {
-        ...state,
-        isCitiesLoading: true,
-      };
-    case actionTypes.FETCH_COUNTRIES_RECEIVED:
-      return {
-        ...state,
-        isCountriesLoading: false,
-        // isCountriesOld: false,
-      };
-    case actionTypes.FETCH_STATES_RECEIVED:
-      return {
-        ...state,
-        isStatesLoading: false,
-        // isStatesOld: false,
-      };
-    case actionTypes.FETCH_CITIES_RECEIVED:
-      return {
-        ...state,
-        isCitiesLoading: false,
-        // isCitiesOld: false,
-      };
-    // case actionTypes.CREATE_CITY_FINISHED:
-    //   return {
-    //     ...state,
-    //     cities: [],
-    //   };
-    case actionTypes.WAIT_ON_CREATE_CITY:
-      return {
-        ...state,
-        isCitiesLoading: true,
-      };
     case actionTypes.INITIALIZE_PLACES_SERVICE:
       return {
         ...state,
@@ -74,30 +25,34 @@ export const geographyReducer = (state = initialState, action: GeographyActionTy
         ...state,
         geocoderService: action.service,
       };
-    case actionTypes.WAIT_ON_GET_DETAILS_FROM_SUGGESTION:
+    case actionTypes.WAIT_ON_FETCH_ALL_PLACES:
+      return {
+        ...state,
+        isLoadingPlaces: true,
+      };
+    case actionTypes.FETCH_ALL_PLACES_FINISHED:
+      return {
+        ...state,
+        isLoadingPlaces: false,
+        places: [...action.places],
+      };
+    case actionTypes.WAIT_ON_GET_PLACE_FROM_SUGGESTION:
       return {
         ...state,
         isDetailsFromSuggestionLoading: true,
       };
-    // Switching to using the places interface means this is no longer relevant...I think
-    // case actionTypes.GET_DETAILS_FROM_SUGGESTION_RECEIVED:
-    //   return {
-    //     ...state,
-    //     countries: [...state.countries, action.details.country],
-    //     states: [...state.states, action.details.state],
-    //     cities: [...state.cities, action.details.city],
-    //     isDetailsFromSuggestionLoading: false
-    //   };
-    case actionTypes.WAIT_ON_ADD_COUNTRY:
+
+    case actionTypes.GET_PLACE_FROM_SUGGESTION_FINISHED:
       return {
         ...state,
-        isWaitingOnRequest: true,
+        newPlace: action.place,
       };
-    case actionTypes.ADD_COUNTRY_FINISHED:
+    case actionTypes.ADD_PLACE_FINISHED:
       return {
         ...state,
-        isWaitingOnRequest: false,
+        places: [...state.places, action.place],
       };
+
     default:
       return state;
   }

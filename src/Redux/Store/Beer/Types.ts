@@ -1,27 +1,31 @@
-import { BeerDocument, BreweryDocument, NewBeer, StyleDocument } from "../../../Interfaces";
+import { BeerDocument, BreweryDocument, Container, NewBeer, StyleDocument } from "../../../Interfaces";
+import { ActionType } from "../../Common";
 
 export const actionTypes = {
-  SET_NEW_BEER_ID: "SET_NEW_BEER_ID",
   SET_NEW_BEER_NAME: "SET_NEW_BEER_NAME",
   SET_NEW_BEER_BREWERY: "SET_NEW_BEER_BREWERY",
   SET_NEW_BEER_STYLE: "SET_NEW_BEER_STYLE",
+  SET_NEW_BEER_CONTAINER: "SET_NEW_BEER_CONTAINER",
   SET_NEW_BEER_QUANTITY: "SET_NEW_BEER_QUANTITY",
-  SET_NEW_BEER_HISTORIC_QUANTITY: "SET_NEW_BEER_HISTORIC_QUANTITY",
 
-  FETCH_CURRENT_BEER: "FETCH_CURRENT_BEER",
-  FETCH_BEER_BY_ID: "FETCH_BEER_BY_ID",
+  WAIT_ON_BEER_FETCH: "WAIT_ON_BEER_FETCH",
 
-  UPDATE_BEER_BY_ID: "UPDATE_BEER_BY_ID",
-
-  WAIT_ON_BEER_REQUEST: "WAIT_ON_REQUEST",
   FETCH_ALL_BEER_RECEIVED: "FETCH_ALL_BEER_RECEIVED",
   FETCH_BY_ID_RECEIVED: "FETCH_BY_ID_RECEIVED",
+
+  WAIT_ON_UPDATE_BEER: "WAIT_ON_UPDATE_BEER",
+  UPDATE_BEER_FINISHED: "UPDATE_BEER_FINISHED",
+
+  WAIT_ON_ADD_NEW_BEER: "WAIT_ON_ADD_NEW_BEER",
+  ADD_NEW_BEER_FINISHED: "ADD_NEW_BEER_FINISHED",
 } as const;
 
 export interface BeerState {
-  newBeer?: NewBeer;
+  newBeer: NewBeer;
   inventory: BeerDocument[];
-  isLoading: boolean;
+  isWaitingOnFetch: boolean;
+  isWaitingOnBeerUpdate: boolean;
+  isWaitingOnAddNewBeer: boolean;
 }
 
 export const BeerActions = {
@@ -43,15 +47,21 @@ export const BeerActions = {
       style,
     } as const),
 
+  setNewBeerContainer: (container: Container) =>
+    ({
+      type: actionTypes.SET_NEW_BEER_CONTAINER,
+      container,
+    } as const),
+
   setNewBeerQuantity: (quantity: number) =>
     ({
       type: actionTypes.SET_NEW_BEER_QUANTITY,
       quantity,
     } as const),
 
-  waitOnRequest: () =>
+  waitOnFetch: () =>
     ({
-      type: actionTypes.WAIT_ON_BEER_REQUEST,
+      type: actionTypes.WAIT_ON_BEER_FETCH,
     } as const),
 
   fetchAllBeerReceived: (inventory: BeerDocument[]) =>
@@ -66,20 +76,28 @@ export const BeerActions = {
       byId,
     } as const),
 
-  updateBeerById: (id: string, beer: Partial<BeerDocument>) =>
+  waitOnUpdateBeer: () =>
     ({
-      type: actionTypes.UPDATE_BEER_BY_ID,
+      type: actionTypes.WAIT_ON_UPDATE_BEER,
+    } as const),
+
+  updateBeerFinished: (id: string, beer: Partial<BeerDocument>) =>
+    ({
+      type: actionTypes.UPDATE_BEER_FINISHED,
       id,
       beer,
     } as const),
+
+  waitOnAddNewBeer: () =>
+    ({
+      type: actionTypes.WAIT_ON_ADD_NEW_BEER,
+    } as const),
+
+  addNewBeerFinished: (newBeer: BeerDocument) =>
+    ({
+      type: actionTypes.ADD_NEW_BEER_FINISHED,
+      newBeer,
+    } as const),
 };
 
-export type BeerActionTypes =
-  | ReturnType<typeof BeerActions.setNewBeerName>
-  | ReturnType<typeof BeerActions.setNewBeerBrewery>
-  | ReturnType<typeof BeerActions.setNewBeerStyle>
-  | ReturnType<typeof BeerActions.setNewBeerQuantity>
-  | ReturnType<typeof BeerActions.waitOnRequest>
-  | ReturnType<typeof BeerActions.updateBeerById>
-  | ReturnType<typeof BeerActions.fetchByIdReceived>
-  | ReturnType<typeof BeerActions.fetchAllBeerReceived>;
+export type BeerActionTypes = ActionType<typeof BeerActions>;

@@ -8,7 +8,7 @@ import { combineReducers } from "redux";
 export const rootReducer = combineReducers({
   breweries: breweryReducer,
   beer: beerReducer,
-  style: styleReducer,
+  styles: styleReducer,
   domain: domainReducer,
   geography: geographyReducer,
   common: commonReducer,

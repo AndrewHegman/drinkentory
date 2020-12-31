@@ -5,5 +5,4 @@ export * from "./Domain.types";
 export * from "./Wine.types";
 export * from "./Country.types";
 export * from "./State.types";
-export * from "./City.types";
 export * from "./Place.types";

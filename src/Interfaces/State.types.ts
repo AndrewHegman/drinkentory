@@ -1,11 +1,7 @@
-import { CountryDocument } from ".";
-import { ObjectId } from "mongodb";
+import { CountryDocument } from "./Country.types";
 
 export type StateDocument = {
-  _id: string;
   name: string;
   country: CountryDocument;
   placesId: string;
 };
-
-export type AddStateDto = Omit<StateDocument, "_id">;

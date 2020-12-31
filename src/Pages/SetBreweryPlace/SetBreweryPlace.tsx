@@ -1,29 +1,35 @@
 import React from "react";
 import { AnyAction } from "redux";
-import { routes } from "../../Utils/Routes";
+import { routes } from "../../Utils";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
 import { ListItemLocation } from "../../Components/ListItem";
-import { IonItemLink } from "../../Components/IonItemLink";
-import { selectors, actions } from "../../Redux/";
+import { ClickableIonItem } from "../../Components/ClickableIonItem";
+import { selectors, actions } from "../../Redux";
 import { SkeletonLoading } from "../../Components/SkeletonLoading";
 import usePlacesAutocomplete, { Suggestion } from "use-places-autocomplete";
 import { ThunkDispatch } from "redux-thunk";
+import { PlaceDocument } from "../../Interfaces";
 
 const mapStateToProps = (state: RootState) => {
   return {
     isLoading: selectors.geography.isLoading(state),
     places: state.geography.places,
+    placesService: state.geography.placesService,
+    geocoderService: state.geography.geocoderService,
+    getPlaceByPlaceId: (id: string) => {
+      console.log(state);
+      return selectors.geography.placeByPlaceId(state, id);
+    },
   };
 };
 
 export interface IAddNewItemModal extends PropsFromRedux {}
 
-export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) => {
+export const SetBreweryPlaceComponent: React.FC<IAddNewItemModal> = (props) => {
   const { createNewBreweryRoute } = routes;
   const dispatch: ThunkDispatch<RootState, any, AnyAction> = useDispatch();
-
   const placesAutocomplete = usePlacesAutocomplete({
     requestOptions: {
       types: ["(cities)"],
@@ -36,16 +42,21 @@ export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) =>
     dispatch(actions.geography.initializePlacesService());
   }, [dispatch]);
 
-  React.useEffect(() => {
-    dispatch(actions.geography.fetchAllCountries());
-  }, [dispatch]);
-
   const handleItemClick = (suggestion: Suggestion) => {
-    dispatch(
-      actions.geography.setNewBreweryLocationFromSuggestion(suggestion.terms[0].value, {
-        placeId: suggestion.place_id,
-      })
-    );
+    const setNewBreweryPlace = (place: PlaceDocument) => {
+      dispatch(actions.breweries.setNewBreweryPlace(place));
+    };
+
+    const place = props.getPlaceByPlaceId(suggestion.place_id);
+    if (!place) {
+      dispatch(actions.breweries.waitOnUpdatingNewBreweryLocation());
+      dispatch(actions.geography.getPlaceFromSuggestion(suggestion.terms[0].value, { placeId: suggestion.place_id })).then((place) => {
+        setNewBreweryPlace(place.place);
+        dispatch(actions.breweries.updatingNewBreweryLocationFinished());
+      });
+    } else {
+      setNewBreweryPlace(place);
+    }
   };
 
   const getContent = () => {
@@ -54,15 +65,16 @@ export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) =>
       return <SkeletonLoading length={8} />;
     }
     return suggestions.data.map((suggestion) => (
-      <IonItemLink
+      <ClickableIonItem
         pathname={createNewBreweryRoute.pathname}
         onClick={() => {
           handleItemClick(suggestion);
+          return true;
         }}
         routerDirection={"back"}
       >
         <ListItemLocation terms={suggestion.terms} />
-      </IonItemLink>
+      </ClickableIonItem>
     ));
   };
 
@@ -82,4 +94,4 @@ export const SetBreweryCountryComponent: React.FC<IAddNewItemModal> = (props) =>
 const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const SetBreweryCountry = connector(SetBreweryCountryComponent);
+export const SetBreweryPlace = connector(SetBreweryPlaceComponent);

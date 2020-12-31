@@ -1,34 +1,50 @@
-import { StyleDocument } from "../../../Interfaces";
+import { AddStyleDto } from "../../../Interfaces";
 import { StyleState, actionTypes, StyleActionTypes } from "./Types";
 
-const initialState: StyleState = {
-  isLoading: false,
-  styles: [],
+const initialNewStyle: AddStyleDto = {
+  name: "",
+  baseStyle: "",
 };
 
-const initialNewStyle: StyleDocument = {
-  _id: "",
-  name: "",
+const initialState: StyleState = {
+  isLoadingStyles: false,
+  isWaitingOnNewStyle: false,
+  styles: [],
+  newStyle: initialNewStyle,
 };
 
 export const styleReducer = (state = initialState, action: StyleActionTypes): StyleState => {
   switch (action.type) {
-    case actionTypes.FETCH_ALL_STYLES:
+    case actionTypes.WAIT_ON_FETCH_ALL_STYLES:
       return {
         ...state,
+        isLoadingStyles: true,
+      };
+    case actionTypes.FETCH_ALL_STYLES_FINISHED:
+      return {
+        ...state,
+        isLoadingStyles: false,
         styles: action.styles,
       };
-    case actionTypes.WAIT_ON_STYLES_REQUEST:
-      if (action.fieldToUpdate) {
-        return {
-          ...state,
-          isLoading: action.isLoading,
-          [action.fieldToUpdate]: action.payload,
-        };
-      }
+    case actionTypes.WAIT_ON_ADD_NEW_STYLE:
       return {
         ...state,
-        isLoading: action.isLoading,
+        isWaitingOnNewStyle: true,
+      };
+    case actionTypes.ADD_NEW_STYLE_FINISHED:
+      console.log(action.style);
+      return {
+        ...state,
+        isWaitingOnNewStyle: false,
+        styles: [...state.styles, action.style],
+      };
+    case actionTypes.SET_NEW_STYLE_NAME:
+      return {
+        ...state,
+        newStyle: {
+          ...state.newStyle,
+          name: action.name,
+        },
       };
     default:
       return state;

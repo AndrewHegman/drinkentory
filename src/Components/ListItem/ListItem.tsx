@@ -1,6 +1,6 @@
 import React from "react";
 import { IonLabel } from "@ionic/react";
-import { BeerDocument, BreweryDocument, Domains, WineDocument } from "../../Interfaces";
+import { BeerDocument, BreweryDocument, WineDocument } from "../../Interfaces";
 
 interface IListItemBeerProps {
   beer: BeerDocument;
@@ -41,12 +41,15 @@ export interface IListItemBreweryProps {
 export const ListItemBrewery: React.FC<IListItemBreweryProps> = (props) => {
   const { brewery } = props;
   const getLocationString = () => {
-    if (brewery.city) {
-      return `${brewery.city.name}, ${brewery.state?.name}`;
-    } else if (brewery.state) {
-      return `${brewery.state.name}, ${brewery.country.name}`;
+    const { place } = brewery;
+    if (place) {
+      if (place.state) {
+        return `${place.name}, ${place.state?.name}`;
+      } else if (place.state) {
+        return `${place.name}, ${place.country.name}`;
+      }
     } else {
-      return `${brewery.country.name}`;
+      return "##Database error##";
     }
   };
   return (
@@ -76,11 +79,23 @@ export interface IListItemLocation {
 
 export const ListItemLocation: React.FC<IListItemLocation> = (props) => {
   const { terms } = props;
-  console.log(props);
   return (
     <IonLabel>
       <h1>{`${terms[0].value}${terms.length > 2 ? `, ${terms[1].value}` : ""}`}</h1>
       <h3>{terms[terms.length - 1].value}</h3>
+    </IonLabel>
+  );
+};
+
+export interface IListItemStyle {
+  name: string;
+}
+
+export const ListItemStyle: React.FC<IListItemStyle> = (props) => {
+  const { name } = props;
+  return (
+    <IonLabel>
+      <h1>{name}</h1>
     </IonLabel>
   );
 };

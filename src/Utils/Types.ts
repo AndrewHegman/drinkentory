@@ -9,6 +9,8 @@ export enum QuantityChangeDirection {
   Down = 1,
 }
 
+export type Never<T> = { [K in keyof T]?: never };
+
 // export type BeerItem = {
 //   name: string;
 //   brewery: string;

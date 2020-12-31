@@ -1,6 +1,18 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { IonPage, IonToolbar, IonSegmentButton, IonLabel, IonSegment, IonContent, IonHeader, IonButtons, IonIcon, IonPopover } from "@ionic/react";
+import { useHistory } from "react-router";
+import {
+  IonPage,
+  IonToolbar,
+  IonSegmentButton,
+  IonLabel,
+  IonSegment,
+  IonContent,
+  IonHeader,
+  IonButtons,
+  IonIcon,
+  IonPopover,
+  IonLoading,
+} from "@ionic/react";
 import { Domains } from "../../Interfaces";
 import { SettingsMenu } from "../SettingsMenu";
 import { menuOutline } from "ionicons/icons";
@@ -11,10 +23,15 @@ import { connect, ConnectedProps, useDispatch } from "react-redux";
 
 import * as queryString from "query-string";
 import { actions } from "../../Redux";
+import { features } from "../../Utils";
 
 require("dotenv");
 
 export interface IBasePageProps extends PropsFromRedux {
+  loadingSpinnerProps?: {
+    show: boolean;
+    message: string;
+  };
   toolbarHeaderContent?: React.ReactNode;
   headerContent?: React.ReactNode;
 }
@@ -26,7 +43,7 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (props) => {
-  const { headerContent, toolbarHeaderContent, domain } = props;
+  const { headerContent, toolbarHeaderContent, domain, loadingSpinnerProps } = props;
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -49,7 +66,7 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
       });
       dispatch(actions.domain.setDomain(Domains.Beer));
     }
-  }, [window.location.search]);
+  }, [dispatch, history]);
 
   /* Handle changing domain when segment button is clicked */
   const handleSegmentChange = (event: any) => {
@@ -78,7 +95,7 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
               <IonIcon icon={menuOutline} onClick={() => setShowSettingsPopover(true)} className={classes.settingsPopoverToggle} />
             </IonButtons>
           )}
-          <IonSegment onClick={handleSegmentChange} value={domain}>
+          <IonSegment onClick={handleSegmentChange} value={domain} disabled={!features.domainSwitching}>
             <IonSegmentButton value={Domains.Beer} title={Domains.Beer}>
               <IonLabel>Beer</IonLabel>
             </IonSegmentButton>
@@ -90,7 +107,10 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
         </IonToolbar>
         {headerContent}
       </IonHeader>
-      <IonContent fullscreen={true}>{props.children}</IonContent>
+      <IonContent fullscreen={true}>
+        {loadingSpinnerProps && <IonLoading spinner="lines" message={loadingSpinnerProps.message} isOpen={loadingSpinnerProps.show} />}
+        {props.children}
+      </IonContent>
     </IonPage>
   );
 };

@@ -1,20 +1,16 @@
 import Axios, { AxiosError } from "axios";
-import { GeographyActionTypes, actionTypes, GeographyActions } from "./Types";
+import { GeographyActionTypes, GeographyActions } from "./Types";
 import { CommonActions, CommonActionTypes } from "../Common/Types";
 import { formatErrorMessage } from "../../Common";
 import { ThunkAction } from "redux-thunk";
-import { AddCityDto, AddCountryDto, CountryDocument, AddStateDto, AddPlaceDto } from "../../../Interfaces";
+import { PlaceDocument } from "../../../Interfaces";
 import { RootState } from "../index";
-import { BreweryActions, BreweryActionTypes } from "../Breweries/Types";
 import { ObjectId } from "mongodb";
-import { count } from "console";
+import { selectors } from "../..";
 
 const usShortName = "US";
 
-const getPlaceId = (
-  geocoderService: google.maps.Geocoder,
-  geocoderRequest: google.maps.GeocoderRequest
-): Promise<string> => {
+const getPlaceId = (geocoderService: google.maps.Geocoder, geocoderRequest: google.maps.GeocoderRequest): Promise<string> => {
   return new Promise((resolve, reject) => {
     geocoderService.geocode(geocoderRequest, (result, status) => {
       if (status === google.maps.GeocoderStatus.OK) {
@@ -27,127 +23,53 @@ const getPlaceId = (
 };
 
 export const geography = {
+  fetchAllPlaces: (): ThunkAction<Promise<GeographyActionTypes>, RootState, {}, GeographyActionTypes> => {
+    return (dispatch, getState) => {
+      const { places } = getState().geography;
+      if (places.length > 0) {
+        return Promise.resolve(dispatch(GeographyActions.fetchAllPlacesFinished(places)));
+      }
+      dispatch(GeographyActions.waitOnFetchAllPlaces());
+      return Axios.get("http://localhost:3002/v1/place").then((res) => dispatch(GeographyActions.fetchAllPlacesFinished(res.data)));
+    };
+  },
+
   initializePlacesService: (): ThunkAction<GeographyActionTypes, RootState, {}, GeographyActionTypes> => {
     return (dispatch, getState) => {
       const state = getState();
 
       return dispatch(
-        GeographyActions.initializePlacesService(
-          state.geography.placesService || new google.maps.places.PlacesService(document.createElement("div"))
-        )
+        GeographyActions.initializePlacesService(state.geography.placesService || new google.maps.places.PlacesService(document.createElement("div")))
       );
     };
   },
   initializeGeocodingService: (): ThunkAction<GeographyActionTypes, RootState, {}, GeographyActionTypes> => {
     return (dispatch, getState) => {
       const state = getState();
-      return dispatch(
-        GeographyActions.initializeGeocodingService(state.geography.geocoderService || new google.maps.Geocoder())
-      );
+      return dispatch(GeographyActions.initializeGeocodingService(state.geography.geocoderService || new google.maps.Geocoder()));
     };
   },
 
-  fetchAllCountries: (): ThunkAction<
-    Promise<GeographyActionTypes | CommonActionTypes>,
-    {},
-    {},
-    GeographyActionTypes | CommonActionTypes
-  > => {
-    return (dispatch) => {
-      dispatch(GeographyActions.waitOnCountriesRequest());
-      return Axios.get("http://localhost:3002/v1/country")
-        .then((res) => dispatch(GeographyActions.fetchCountriesReceived(res.data)))
-        .catch((res) => {
-          return dispatch(CommonActions.setNetworkError(`Error code`));
-        });
-    };
-  },
-
-  fetchAllStates: (): ThunkAction<Promise<GeographyActionTypes>, {}, {}, GeographyActionTypes> => {
-    return (dispatch) => {
-      dispatch(GeographyActions.waitOnStatesRequest());
-      return Axios.get("http://localhost:3002/v1/state").then((res) =>
-        dispatch(GeographyActions.fetchStatesReceived(res.data))
-      );
-    };
-  },
-
-  fetchAllCities: (): ThunkAction<Promise<GeographyActionTypes>, {}, {}, GeographyActionTypes> => {
-    return (dispatch) => {
-      dispatch(GeographyActions.waitOnCitiesRequest());
-      return Axios.get("http://localhost:3002/v1/city").then((res) =>
-        dispatch(GeographyActions.fetchCitiesReceived(res.data))
-      );
-    };
-  },
-
-  addNewCity: (
-    city: AddCityDto
-  ): ThunkAction<Promise<GeographyActionTypes | CommonActionTypes>, {}, {}, GeographyActionTypes | CommonActionTypes> => {
-    return (dispatch) => {
-      dispatch(GeographyActions.waitOnAddCity());
-      return Axios.post("http://localhost:3002/v1/city", city)
-        .then((res) => dispatch(GeographyActions.addCityFinished(res.data)))
-        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
-    };
-  },
-
-  addNewState: (
-    state: AddStateDto
-  ): ThunkAction<Promise<GeographyActionTypes | CommonActionTypes>, {}, {}, GeographyActionTypes | CommonActionTypes> => {
-    return (dispatch) => {
-      dispatch(GeographyActions.waitOnAddState());
-      return Axios.post("http://localhost:3002/v1/state", state)
-        .then((res) => dispatch(GeographyActions.addStateFinished(res.data)))
-        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
-    };
-  },
-
-  addNewCountry: (
-    newCountry: AddCountryDto
-  ): ThunkAction<
-    Promise<GeographyActionTypes | CommonActionTypes>,
-    RootState,
-    {},
-    GeographyActionTypes | CommonActionTypes
-  > => {
-    return (dispatch) => {
-      dispatch(GeographyActions.waitOnAddCountry());
-      return Axios.post("http://localhost:3002/v1/country", newCountry)
-        .then((res) => dispatch(GeographyActions.addCountryFinished(res.data)))
-        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
-    };
-  },
-
-  addNewPlace: function (
-    place: AddPlaceDto
-  ): ThunkAction<
-    Promise<GeographyActionTypes | CommonActionTypes>,
-    RootState,
-    {},
-    GeographyActionTypes | CommonActionTypes
-  > {
+  addNewPlace: (
+    place: PlaceDocument
+  ): ThunkAction<Promise<GeographyActionTypes | CommonActionTypes | void>, RootState, {}, GeographyActionTypes | CommonActionTypes> => {
     return (dispatch, getState) => {
-      // TODO: Check if place already exists before adding--duplicates are handled by the backend, but it would be better performance to not do unnecessary requests
-      dispatch(GeographyActions.waitOnAddPlace());
-      const promises = [dispatch(this.addNewCountry(place.country))];
-      if (place.state) {
-        promises.push(dispatch(this.addNewState(place.state)));
+      const _place = selectors.geography.placeByPlaceId(getState(), place.placesId);
+      console.log(_place);
+      if (_place) {
+        return Promise.resolve();
       }
-      // if (place) {
-      //   promises.push(dispatch(this.addNewPlace(place)));
-      // }
-
-      return Promise.all(promises).then(() => {
-        return dispatch(GeographyActions.addPlaceFinished());
-      });
+      dispatch(GeographyActions.waitOnAddPlace());
+      return Axios.post("http://localhost:3002/v1/place", place)
+        .then((res) => dispatch(GeographyActions.addPlaceFinished(res.data)))
+        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 
-  setNewBreweryLocationFromSuggestion: (
+  getPlaceFromSuggestion: (
     name: string,
     suggestion: google.maps.places.PlaceDetailsRequest
-  ): ThunkAction<Promise<BreweryActionTypes>, RootState, {}, BreweryActionTypes> => {
+  ): ThunkAction<Promise<ReturnType<typeof GeographyActions.getPlaceFromSuggestionFinished>>, RootState, {}, GeographyActionTypes> => {
     return (dispatch, getStore) => {
       const store = getStore();
       if (!store.geography.placesService) {
@@ -158,14 +80,17 @@ export const geography = {
         return Promise.reject("Geocoder service is not initialized. Did you forget to initialize it?");
       }
 
-      dispatch(BreweryActions.waitOnUpdatingNewBreweryLocation());
+      const place = selectors.geography.placeByPlaceId(store, suggestion.placeId);
+      if (place) {
+        return Promise.resolve(dispatch(GeographyActions.getPlaceFromSuggestionFinished(place)));
+      }
+
+      dispatch(GeographyActions.waitOnGetPlaceFromSuggestion());
       return new Promise((resolve, reject) => {
         return store.geography.placesService.getDetails(suggestion, (_result, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             const country = _result.address_components?.find((component) => component.types.includes("country"));
-            const locality = _result.address_components?.find((component) =>
-              component.types.includes("administrative_area_level_1")
-            );
+            const locality = _result.address_components?.find((component) => component.types.includes("administrative_area_level_1"));
 
             if (!country) {
               reject(`Unable to find a 'country' value for provided suggestion`);
@@ -185,7 +110,6 @@ export const geography = {
             ];
 
             Promise.all(promises).then((results) => {
-              console.log(results[0]);
               const countryDocument = {
                 name: country!.long_name, // we reject if no country is found
                 placesId: results[0],
@@ -200,10 +124,10 @@ export const geography = {
                       name: locality?.long_name || "",
                     }
                   : undefined;
-
               resolve(
                 dispatch(
-                  BreweryActions.updatingNewBreweryLocationFinished({
+                  GeographyActions.getPlaceFromSuggestionFinished({
+                    _id: new ObjectId().toHexString(),
                     name,
                     placesId: suggestion.placeId,
                     country: countryDocument,

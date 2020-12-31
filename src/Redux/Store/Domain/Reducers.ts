@@ -1,5 +1,3 @@
-import { Domain } from "domain";
-import { DOMAttributes } from "react";
 import { Domains } from "../../../Interfaces";
 import { DomainActionTypes, DomainState, actionTypes } from "./Types";
 

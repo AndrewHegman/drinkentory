@@ -1,52 +1,44 @@
 import React from "react";
-import { IonContent, IonToolbar, IonHeader, IonSearchbar, IonList, IonPage, IonButton } from "@ionic/react";
+import { IonContent, IonToolbar, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
 import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
-import { IonItemLink } from "../IonItemLink/IonItemLink";
+import { ClickableIonItem } from "../ClickableIonItem/ClickableIonItem";
 import { BasePageHeader } from "../BasePageHeader";
+import { Never } from "../../Utils";
 
-export interface IBasePageWithSearchBarProps {
+type BaseProps = {
   title: string;
   onClosePathname: string;
 
-  initialSearchText?: string;
   onSearchTextChange?: (searchText: string) => void;
   onClose?: () => void;
-  onNotFoundClick?: (searchText: string) => void;
+};
 
-  notFoundRoute?: {
+type NotFoundLinkProps = {
+  onNotFoundClick?: (searchText: string) => void;
+  showNotFound: boolean;
+  notFoundRoute: {
     pathname: string;
     search?: string;
   };
-}
+  notFoundRouteDirection?: "root" | "none" | "forward" | "back";
+};
 
-export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (props) => {
-  const { onClosePathname, notFoundRoute, title, onSearchTextChange, onClose } = props;
+export type BasePageWithSearchBarProps = BaseProps & (NotFoundLinkProps | Never<NotFoundLinkProps>);
+
+export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (props) => {
+  const { onClosePathname, notFoundRoute, title, showNotFound, onClose, onSearchTextChange, notFoundRouteDirection } = props;
   const [searchText, setSearchText] = React.useState<string>("");
-
-  const [showNotFound, setShowNotFound] = React.useState<boolean>(false);
 
   const classes = useBasePageWithSearchBarStyles();
 
-  // React.useEffect(() => {
-  //   if(props.showSubmit && !props.onSubmitClick) {
-  //     console.warn('If "showSubmit" prop is "true", the "onSubmitClick" callback must defined')
-  //   }
-  // }, [props.showSubmit])
-
   React.useEffect(() => {
     onSearchTextChange && onSearchTextChange(searchText);
-    if (searchText !== "") {
-      notFoundRoute && setShowNotFound(true);
-    } else {
-      setShowNotFound(false);
-    }
-  }, [searchText, notFoundRoute]);
+  }, [searchText]);
 
   const onCloseButtonClick = () => {
     setSearchText("");
     onClose && onClose();
   };
-
   return (
     <IonPage>
       <IonHeader translucent>
@@ -60,15 +52,17 @@ export const BasePageWithSearchBar: React.FC<IBasePageWithSearchBarProps> = (pro
           {props.children}
 
           {showNotFound && (
-            <IonItemLink
+            <ClickableIonItem
               pathname={notFoundRoute!.pathname}
               search={notFoundRoute?.search}
+              routerDirection={notFoundRouteDirection}
               onClick={() => {
                 props.onNotFoundClick && props.onNotFoundClick(searchText);
+                return true;
               }}
             >
               Add&nbsp;<b>{searchText}?</b>
-            </IonItemLink>
+            </ClickableIonItem>
           )}
         </IonList>
       </IonContent>

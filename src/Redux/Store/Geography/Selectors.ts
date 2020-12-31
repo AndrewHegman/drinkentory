@@ -2,18 +2,21 @@ import { CountryDocument, PlaceDocument, StateDocument } from "../../../Interfac
 import { RootState } from "../index";
 
 export const geography = {
-  isLoading: (state: RootState) =>
-    state.geography.isCitiesLoading || state.geography.isCountriesLoading || state.geography.isStatesLoading,
+  isLoading: (state: RootState) => state.geography.isLoadingPlaces,
 
   countryById: (state: RootState, id: string): CountryDocument | undefined => {
-    return state.geography.places.find((place) => place.country?._id === id)?.country;
+    return state.geography.places.find((place) => place.country?.placesId === id)?.country;
   },
   stateById: (state: RootState, id: string): StateDocument | undefined => {
-    return state.geography.places.find((place) => place.state?._id === id)?.state;
+    return state.geography.places.find((place) => place.state?.placesId === id)?.state;
   },
 
   placeById: (state: RootState, id: string): PlaceDocument | undefined => {
     return state.geography.places.find((place) => place._id === id);
+  },
+
+  placeByPlaceId: (state: RootState, id: string): PlaceDocument | undefined => {
+    return state.geography.places.find((place) => place.placesId === id);
   },
 
   countries: (state: RootState): CountryDocument[] => {

@@ -9,20 +9,19 @@ import { useDispatch, connect, ConnectedProps } from "react-redux";
 import { AnyAction } from "redux";
 import { actions } from "../../Redux";
 import { ThunkDispatch } from "redux-thunk";
-import { useIonRouter } from "@ionic/react";
+import { useIonRouter } from "@ionic/react/";
 
 const mapStateToProps = (state: RootState) => {
   return {
-    name: state.breweries.newBrewery.name,
-    newBrewery: state.breweries.newBrewery,
-    isNewBreweryLocationUpdating: state.breweries.updatingNewBreweryLocation,
+    name: state.styles.newStyle.name || "",
+    newStyle: state.styles.newStyle,
   };
 };
 
-export interface CreateNewBreweryProps extends PropsFromRedux {}
+export interface ICreateNewStyleProps extends PropsFromRedux {}
 
-const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
-  const { setBreweryRoute, setBreweryPlaceRoute } = routes;
+const CreateNewStyleComponent: React.FC<ICreateNewStyleProps> = (props) => {
+  const { setBaseStyleRoute, createNewItemRoute, setStyleRoute } = routes;
   const dispatch: ThunkDispatch<RootState, any, AnyAction> = useDispatch();
   const ionRouter = useIonRouter();
 
@@ -37,12 +36,12 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
   }, [props.name]);
 
   const getLocationPlaceholder = () => {
-    const { newBrewery } = props;
+    const { newStyle } = props;
 
-    if (Object.keys(newBrewery.place).length > 0) {
-      return `${newBrewery.place.name}, ${newBrewery.place.state ? newBrewery.place.state.name : newBrewery.place.country.name}`;
+    if (Object.keys(newStyle).length > 0) {
+      return `${newStyle.name}`;
     } else {
-      return "Somewhere in the world";
+      return "Chocolate Vanilla Milkshake IPA with Bananas";
     }
   };
 
@@ -52,38 +51,38 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
   };
 
   const handleSubmit = () => {
+    const { newStyle } = props;
     // TODO (2): Should show a confirmation dialog here
-    if (Object.keys(props.newBrewery.place).length > 0) {
+
+    if (newStyle.name && newStyle.baseStyle) {
       ionRouter.push(`${routes.createNewItemRoute.pathname}${ionRouter.routeInfo.search}`);
-      dispatch(actions.geography.addNewPlace(props.newBrewery.place)).then((res) => {
-        dispatch(actions.breweries.createNewBrewery()).then((res) => {
-          dispatch(actions.beer.setNewBeerBrewery(res.brewery._id));
-        });
+      dispatch(actions.styles.addNewStyleWithBaseStyle(newStyle)).then((res) => {
+        console.log(res);
       });
     }
   };
 
   return (
     <BasePageWithInputCards
-      title={"Create new Brewery"}
-      onClosePathname={setBreweryRoute.pathname}
+      title={"Create new Style"}
+      onClosePathname={setStyleRoute.pathname}
       onClose={onClose}
       showSubmit={true}
       onSubmitClick={handleSubmit}
       loadingSpinnerProps={{
-        show: props.isNewBreweryLocationUpdating,
+        show: false,
         message: "Please wait...",
       }}
     >
       <EditableInputCard
-        title={"Brewery"}
+        title={"Style"}
         onChange={(event) => setName(event.detail.value || "")}
         onBlur={() => {
-          dispatch(actions.breweries.setNewBreweryName(name));
+          dispatch(actions.styles.setNewStyleName(name));
         }}
         value={name}
       />
-      <LinkInputCard title={"Location"} pathname={setBreweryPlaceRoute.pathname} content={getLocationPlaceholder()} />
+      <LinkInputCard title={"Base Style"} pathname={setBaseStyleRoute.pathname} content={getLocationPlaceholder()} />
     </BasePageWithInputCards>
   );
 };
@@ -91,4 +90,4 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
 const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const CreateNewBrewery = connect(mapStateToProps)(CreateNewBreweryComponent);
+export const CreateNewStyle = connect(mapStateToProps)(CreateNewStyleComponent);

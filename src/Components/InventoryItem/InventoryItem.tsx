@@ -1,23 +1,15 @@
 import React from "react";
-import { IonItem, IonLabel, IonIcon, IonText } from "@ionic/react";
+import { IonItem, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
 import { QuantityChangeDirection } from "../../Utils/";
 import { BeerDocument } from "../../Interfaces/Beer.types";
-import { RootState } from "../../Redux/Store/index";
 import { ListItemBeer } from "../ListItem";
 
 interface IBaseInventoryItemProps {
   beer: BeerDocument;
   onQuantityChange: (dir: QuantityChangeDirection) => void;
 }
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    beer: state.beer.inventory,
-    isLoading: state.beer.isLoading,
-  };
-};
 
 export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
   const [content, setContent] = React.useState<React.ReactNode>();

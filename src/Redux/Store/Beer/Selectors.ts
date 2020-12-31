@@ -28,7 +28,7 @@ export const beer = {
     return {
       ...beer,
       brewery: state.breweries.breweries.find((brewery) => brewery._id === breweryId)!,
-      style: state.style.styles.find((style) => style._id === styleId)!,
+      style: state.styles.styles.find((style) => style._id === styleId)!,
     };
   },
 };

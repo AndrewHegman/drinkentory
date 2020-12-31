@@ -1,27 +1,12 @@
-import { AddStateDto, StateDocument } from "./State.types";
-import { AddCountryDto, CountryDocument } from "./Country.types";
+import { StateDocument } from "./State.types";
+import { CountryDocument } from "./Country.types";
 
-type PlaceDocumentBase = {
+export type PlaceDocument = {
   _id: string;
-  placesId: string;
   name: string;
+  placesId: string;
+  country: CountryDocument;
+  state?: StateDocument;
 };
 
-interface PlaceDocumentWithState extends PlaceDocumentBase {
-  country: CountryDocument;
-  state: StateDocument;
-}
-
-interface PlaceDocumentWithCountry extends PlaceDocumentBase {
-  country: CountryDocument;
-  state?: never;
-}
-
-export type PlaceDocument = PlaceDocumentWithCountry | PlaceDocumentWithState;
-
-export type AddPlaceDto = {
-  placesId: string;
-  name: string;
-  country: AddCountryDto | CountryDocument;
-  state?: AddStateDto | StateDocument;
-};
+export type AddPlaceDto = Omit<PlaceDocument, "_id">;

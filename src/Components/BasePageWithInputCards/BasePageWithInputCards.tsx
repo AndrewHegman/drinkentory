@@ -1,29 +1,24 @@
 import React from "react";
-import { IonContent, IonPage, IonButton } from "@ionic/react";
+import { IonContent, IonPage, IonButton, IonLoading } from "@ionic/react";
 import { BasePageHeader } from "../BasePageHeader";
 import { useBasePageWithInputCardsStyles } from "./BasePageWithInputCards.styles";
 import { useHistory } from "react-router";
-import { NetworkErrorAlert } from "../NetworkErrorAlert";
+import { NetworkErrorAlert } from "../Alerts";
 
 export interface IBasePageWithInputCardsProps {
   title: string;
   onClosePathname: string;
   showSubmit: boolean;
   onClose?: () => void;
+  loadingSpinnerProps?: {
+    show: boolean;
+    message: string;
+  };
   onSubmitClick?: () => void;
-  onSubmitPathname?: string;
-  onSubmitSearch?: string;
 }
 
 export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (props) => {
-  const {
-    onClosePathname,
-    onSubmitClick,
-    onSubmitPathname,
-    onSubmitSearch,
-    title,
-    onClose,
-  } = props;
+  const { onClosePathname, onSubmitClick, title, onClose, loadingSpinnerProps } = props;
 
   const classes = useBasePageWithInputCardsStyles();
   const history = useHistory();
@@ -38,16 +33,12 @@ export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (p
     <IonPage>
       <BasePageHeader title={title} onClosePathname={onClosePathname} onClose={onClose} />
       <IonContent className={classes.root}>
+        {loadingSpinnerProps && <IonLoading spinner="lines" message={loadingSpinnerProps.message} isOpen={loadingSpinnerProps.show} />}
+
         <NetworkErrorAlert />
 
         {props.children}
-        <IonButton
-          className={classes.submit}
-          expand="block"
-          onClick={onSubmitClick}
-          routerDirection={"back"}
-          routerLink={`${onSubmitPathname}${onSubmitSearch || history.location.search}`}
-        >
+        <IonButton className={classes.submit} expand="block" onClick={onSubmitClick}>
           Submit
         </IonButton>
       </IonContent>

@@ -5,8 +5,10 @@ import { AddNewItem } from "../Pages/AddNewItem";
 import { CreateNewItem } from "../Pages/CreateNewItem";
 import { SetBrewery } from "../Pages/SetBrewery";
 import { CreateNewBrewery } from "../Pages/CreateNewBrewery";
-import { SetBreweryCountry } from "../Pages/SetBreweryCountry";
+import { SetBreweryPlace } from "../Pages/SetBreweryPlace";
 import { SetStyle } from "../Pages/SetStyle";
+import { CreateNewStyle } from "../Pages/CreateNewStyle";
+import { SetBaseStyle } from "../Pages/SetBaseStyle";
 
 export interface IRoute {
   pathname: string;
@@ -52,27 +54,27 @@ export const routes: { [key: string]: IRoute } = {
     component: CreateNewBrewery,
   },
 
-  setBreweryCountryRoute: {
-    pathname: "/inventory/create/brewery/setcountry",
+  setBreweryPlaceRoute: {
+    pathname: "/inventory/create/brewery/setplace",
     exact: true,
-    component: SetBreweryCountry,
-  },
-
-  setBreweryStateRoute: {
-    pathname: "/inventory/create/brewery/setstate",
-    exact: true,
-    component: SetBreweryCountry,
-  },
-
-  setBreweryCityRoute: {
-    pathname: "/inventory/create/brewery/setcity",
-    exact: true,
-    component: SetBreweryCountry,
+    component: SetBreweryPlace,
   },
 
   setStyleRoute: {
     pathname: "/inventory/create/setstyle",
     exact: true,
     component: SetStyle,
+  },
+
+  createNewStyleRoute: {
+    pathname: "/inventory/create/style",
+    exact: true,
+    component: CreateNewStyle,
+  },
+
+  setBaseStyleRoute: {
+    pathname: "/inventory/create/style/setbasestyle",
+    exact: true,
+    component: SetBaseStyle,
   },
 };
