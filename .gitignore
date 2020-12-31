@@ -24,3 +24,5 @@ yarn-error.log*
 
 _cacache/*
 _logs/*
+
+.env
