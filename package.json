@@ -35,11 +35,13 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "serve": "^11.3.2",
     "typescript": "^4.0.3",
     "use-places-autocomplete": "^1.6.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "serve -s build",
+    "start:dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache",
