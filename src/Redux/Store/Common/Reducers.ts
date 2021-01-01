@@ -3,6 +3,7 @@ import { CommonState, CommonActionTypes, actionTypes } from "./Types";
 const initialState: CommonState = {
   isNetworkError: false,
   networkErrorMessage: "",
+  serverAddress: "",
 };
 
 export const commonReducer = (state = initialState, action: CommonActionTypes): CommonState => {
@@ -18,6 +19,11 @@ export const commonReducer = (state = initialState, action: CommonActionTypes): 
         ...state,
         isNetworkError: false,
         networkErrorMessage: "",
+      };
+    case actionTypes.SET_SERVER_ADDRESS:
+      return {
+        ...state,
+        serverAddress: action.serverAddress,
       };
     default:
       return state;

@@ -54,9 +54,10 @@ export const beer = {
   > => {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnAddNewBeer());
-      const { newBeer } = getState().beer;
+      const { beer, common } = getState();
+      const { newBeer } = beer;
 
-      return Axios.post(`http://localhost:3002/v1/beer`, {
+      return Axios.post(`${common.serverAddress}/v1/beer`, {
         name: newBeer.name,
         brewery: newBeer.brewery._id,
         style: newBeer.style._id,
@@ -70,16 +71,19 @@ export const beer = {
   },
 
   fetchAllBeer: (): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+      const { serverAddress } = getState().common;
+
       dispatch(BeerActions.waitOnFetch());
-      return Axios.get("http://localhost:3002/v1/beer?expand=brewery,style").then((res) => dispatch(BeerActions.fetchAllBeerReceived(res.data)));
+      return Axios.get(`${serverAddress}/v1/beer`).then((res) => dispatch(BeerActions.fetchAllBeerReceived(res.data)));
     };
   },
 
-  fetchBeerById: (id: string): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
-    return (dispatch) => {
+  fetchBeerById: (id: string): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
+    return (dispatch, getState) => {
       dispatch(BeerActions.waitOnFetch());
-      return Axios.get(`http://localhost:3002/v1/beer/${id}?expand=brewery,style`)
+      const { serverAddress } = getState().common;
+      return Axios.get(`${serverAddress}/v1/beer/${id}?expand=brewery,style`)
         .then((res) => res.data)
         .then((json) => dispatch(BeerActions.fetchByIdReceived(json)));
     };
@@ -96,8 +100,9 @@ export const beer = {
       }
 
       const { quantity, historicQuantity } = beer;
+      const { serverAddress } = getState().common;
 
-      return Axios.put(`http://localhost:3002/v1/beer/${id}`, {
+      return Axios.put(`${serverAddress}/v1/beer/${id}`, {
         quantity: quantity + (changeAmt ? changeAmt : 1),
         historicQuantity: historicQuantity + (changeAmt ? changeAmt : 1),
       }).then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)));
@@ -113,8 +118,9 @@ export const beer = {
       if (quantity === undefined) {
         throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);
       }
+      const { serverAddress } = getState().common;
 
-      return Axios.put(`http://localhost:3002/v1/beer/${id}`, { quantity: quantity - (changeAmt ? changeAmt : 1) })
+      return Axios.put(`${serverAddress}/v1/beer/${id}`, { quantity: quantity - (changeAmt ? changeAmt : 1) })
         .then((res) => res.data)
         .then((json) => {
           return dispatch(BeerActions.updateBeerFinished(id, json));
@@ -122,10 +128,12 @@ export const beer = {
     };
   },
 
-  updateBeerQuantity: (id: string, quantity: number): ThunkAction<Promise<BeerActionTypes>, {}, {}, BeerActionTypes> => {
-    return (dispatch) => {
+  updateBeerQuantity: (id: string, quantity: number): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
+    return (dispatch, getState) => {
       dispatch(BeerActions.waitOnUpdateBeer());
-      return Axios.put(`http://localhost:3002/v1/beer/${id}`, { quantity })
+      const { serverAddress } = getState().common;
+
+      return Axios.put(`${serverAddress}/v1/beer/${id}`, { quantity })
         .then((res) => res.data)
         .then((json) => {
           return dispatch(BeerActions.updateBeerFinished(id, json));

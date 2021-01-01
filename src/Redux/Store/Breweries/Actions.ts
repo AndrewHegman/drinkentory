@@ -15,10 +15,11 @@ export const breweries = {
     };
   },
 
-  fetchAllBreweries: (): ThunkAction<Promise<BreweryActionTypes>, {}, {}, BreweryActionTypes> => {
-    return (dispatch) => {
+  fetchAllBreweries: (): ThunkAction<Promise<BreweryActionTypes>, RootState, {}, BreweryActionTypes> => {
+    return (dispatch, getState) => {
       dispatch(BreweryActions.waitOnFetchAllBreweries());
-      return Axios.get("http://localhost:3002/v1/brewery").then((res) => dispatch(BreweryActions.fetchAllBreweriesFinished(res.data)));
+      const { serverAddress } = getState().common;
+      return Axios.get(`${serverAddress}/v1/brewery`).then((res) => dispatch(BreweryActions.fetchAllBreweriesFinished(res.data)));
     };
   },
 
@@ -36,14 +37,16 @@ export const breweries = {
 
   createNewBrewery: (): ThunkAction<Promise<ReturnType<typeof BreweryActions.createNewBreweryFinished>>, RootState, {}, BreweryActionTypes> => {
     return (dispatch, getState) => {
-      const { newBrewery } = getState().breweries;
-
+      const { breweries, common } = getState();
+      const { newBrewery } = breweries;
       if (!newBrewery) {
         throw new Error("newBrewery is not defined in the store. Not creating a new brewery");
       }
 
       dispatch(BreweryActions.waitOnCreateNewBrewery());
-      return Axios.post(`http://localhost:3002/v1/brewery`, {
+      const { serverAddress } = common;
+
+      return Axios.post(`${serverAddress}/v1/brewery`, {
         name: newBrewery.name,
         place: newBrewery.place._id,
       }).then((res) => {

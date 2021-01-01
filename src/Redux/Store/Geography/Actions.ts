@@ -25,12 +25,14 @@ const getPlaceId = (geocoderService: google.maps.Geocoder, geocoderRequest: goog
 export const geography = {
   fetchAllPlaces: (): ThunkAction<Promise<GeographyActionTypes>, RootState, {}, GeographyActionTypes> => {
     return (dispatch, getState) => {
-      const { places } = getState().geography;
+      const { geography, common } = getState();
+      const { places } = geography;
+
       if (places.length > 0) {
         return Promise.resolve(dispatch(GeographyActions.fetchAllPlacesFinished(places)));
       }
       dispatch(GeographyActions.waitOnFetchAllPlaces());
-      return Axios.get("http://localhost:3002/v1/place").then((res) => dispatch(GeographyActions.fetchAllPlacesFinished(res.data)));
+      return Axios.get(`${common.serverAddress}/v1/place`).then((res) => dispatch(GeographyActions.fetchAllPlacesFinished(res.data)));
     };
   },
 
@@ -55,12 +57,12 @@ export const geography = {
   ): ThunkAction<Promise<GeographyActionTypes | CommonActionTypes | void>, RootState, {}, GeographyActionTypes | CommonActionTypes> => {
     return (dispatch, getState) => {
       const _place = selectors.geography.placeByPlaceId(getState(), place.placesId);
-      console.log(_place);
       if (_place) {
         return Promise.resolve();
       }
       dispatch(GeographyActions.waitOnAddPlace());
-      return Axios.post("http://localhost:3002/v1/place", place)
+      const { serverAddress } = getState().common;
+      return Axios.post(`${serverAddress}/v1/place`, place)
         .then((res) => dispatch(GeographyActions.addPlaceFinished(res.data)))
         .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };

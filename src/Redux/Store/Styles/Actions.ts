@@ -13,17 +13,20 @@ export const styles = {
       return dispatch(StyleActions.setNewStyleName(name));
     };
   },
-  fetchAllStyles: (): ThunkAction<Promise<StyleActionTypes>, {}, {}, StyleActionTypes> => {
-    return (dispatch) => {
+  fetchAllStyles: (): ThunkAction<Promise<StyleActionTypes>, RootState, {}, StyleActionTypes> => {
+    return (dispatch, getState) => {
       dispatch(StyleActions.waitOnFetchAllStyles());
-      return Axios.get(`http://localhost:3002/v1/style`).then((res) => dispatch(StyleActions.fetchAllStylesFinished(res.data)));
+      const { serverAddress } = getState().common;
+      return Axios.get(`${serverAddress}/v1/style`).then((res) => dispatch(StyleActions.fetchAllStylesFinished(res.data)));
     };
   },
 
   addNewStyleWithBaseStyle: (style: AddStyleDto): ThunkAction<Promise<StyleActionTypes>, RootState, {}, StyleActionTypes> => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
       dispatch(StyleActions.waitOnAddNewStyle());
-      return Axios.post("http://localhost:3002/v1/style", {
+      const { serverAddress } = getState().common;
+
+      return Axios.post(`${serverAddress}/v1/style`, {
         name: style.name,
         baseStyle: style.baseStyle,
       }).then((res) => dispatch(StyleActions.addNewStyleFinished(res.data)));
@@ -38,9 +41,11 @@ export const styles = {
     {},
     StyleActionTypes | CommonActionTypes
   > => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
       dispatch(StyleActions.waitOnAddNewStyle());
-      return Axios.post("http://localhost:3002/v1/style", {
+      const { serverAddress } = getState().common;
+
+      return Axios.post(`${serverAddress}/v1/style`, {
         name,
       })
         .then((res) => dispatch(StyleActions.addNewStyleFinished(res.data)))

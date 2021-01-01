@@ -41,7 +41,7 @@ export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (prop
   };
   return (
     <IonPage>
-      <IonHeader translucent>
+      <IonHeader>
         <BasePageHeader title={title} onClosePathname={onClosePathname} onClose={onCloseButtonClick} />
         <IonToolbar>
           <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} debounce={350} />

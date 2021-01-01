@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 export const useInventoryStyles = makeStyles({
   headerContentContainer: {
     display: "flex",
+    backgroundColor: "white",
   },
   searchbar: {
     flex: "1 1 auto",
