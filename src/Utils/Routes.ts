@@ -1,6 +1,5 @@
 import React from "react";
 import { Inventory } from "../Pages/Inventory";
-import { NotFound } from "../Pages/NotFound";
 import { AddNewItem } from "../Pages/AddNewItem";
 import { CreateNewItem } from "../Pages/CreateNewItem";
 import { SetBrewery } from "../Pages/SetBrewery";

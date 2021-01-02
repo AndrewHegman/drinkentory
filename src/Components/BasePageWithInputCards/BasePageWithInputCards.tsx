@@ -2,7 +2,6 @@ import React from "react";
 import { IonContent, IonPage, IonButton, IonLoading } from "@ionic/react";
 import { BasePageHeader } from "../BasePageHeader";
 import { useBasePageWithInputCardsStyles } from "./BasePageWithInputCards.styles";
-import { useHistory } from "react-router";
 import { NetworkErrorAlert } from "../Alerts";
 
 export interface IBasePageWithInputCardsProps {
@@ -21,7 +20,6 @@ export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (p
   const { onClosePathname, onSubmitClick, title, onClose, loadingSpinnerProps } = props;
 
   const classes = useBasePageWithInputCardsStyles();
-  const history = useHistory();
 
   React.useEffect(() => {
     if (props.showSubmit && !props.onSubmitClick) {

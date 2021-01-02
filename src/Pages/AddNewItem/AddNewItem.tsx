@@ -77,7 +77,7 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
           <ClickableIonItem
             pathname={inventoryRoute.pathname}
             onClick={() => {
-              console.log(`Add ${item._id} to inventory`);
+              // console.log(`Add ${item._id} to inventory`);
             }}
           />
         ));

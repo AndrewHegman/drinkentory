@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/styles";
 
-export const useBasePageStyles = makeStyles({
+export const useRootPageStyles = makeStyles({
   root: {
     display: "flex",
   },

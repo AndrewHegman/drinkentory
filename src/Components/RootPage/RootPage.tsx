@@ -16,7 +16,7 @@ import {
 import { Domains } from "../../Interfaces";
 import { SettingsMenu } from "../SettingsMenu";
 import { menuOutline } from "ionicons/icons";
-import { useBasePageStyles } from "./BasePage.styles";
+import { useRootPageStyles } from "./RootPage.styles";
 import { SearchParams } from "../../Utils/Constants";
 import { RootState } from "../../Redux/Store/index";
 import { connect, ConnectedProps, useDispatch } from "react-redux";
@@ -27,7 +27,7 @@ import { features } from "../../Utils";
 
 require("dotenv");
 
-export interface IBasePageProps extends PropsFromRedux {
+export interface IRootPageProps extends PropsFromRedux {
   loadingSpinnerProps?: {
     show: boolean;
     message: string;
@@ -42,7 +42,7 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (props) => {
+const RootPageComponent: React.FC<React.PropsWithChildren<IRootPageProps>> = (props) => {
   const { headerContent, toolbarHeaderContent, domain, loadingSpinnerProps } = props;
 
   const dispatch = useDispatch();
@@ -80,7 +80,7 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
     dispatch(actions.domain.setDomain(event.target.value));
   };
 
-  const classes = useBasePageStyles();
+  const classes = useRootPageStyles();
   return (
     <IonPage>
       {!isProd && (
@@ -118,4 +118,4 @@ const BasePageComponent: React.FC<React.PropsWithChildren<IBasePageProps>> = (pr
 const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export const BasePage = connector(BasePageComponent);
+export const RootPage = connector(RootPageComponent);

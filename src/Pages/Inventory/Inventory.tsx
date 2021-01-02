@@ -1,5 +1,5 @@
 import React from "react";
-import { BasePage } from "../../Components/BasePage";
+import { RootPage } from "../../Components/RootPage";
 import { IonList, IonSearchbar, IonIcon, IonAlert } from "@ionic/react";
 import { addCircleOutline, filterOutline } from "ionicons/icons";
 import { InventoryItem } from "../../Components/InventoryItem";
@@ -12,13 +12,16 @@ import { RootState } from "../../Redux/Store/index";
 import { BeerDocument } from "../../Interfaces";
 import { features } from "../../Utils";
 import { actions, selectors } from "../../Redux";
+import { NetworkErrorAlert } from "../../Components/Alerts";
+import { SkeletonLoading } from "../../Components/SkeletonLoading";
 
 const mapStateToProps = (state: RootState) => {
   return {
-    isLoading: state.beer.isWaitingOnFetch,
     currentBeer: selectors.beer.getCurrentBeer(state),
     domain: state.domain.domain,
+    isWaitingOnAddNewBeer: state.beer.isWaitingOnAddNewBeer,
     isWaitingOnBeerUpdate: state.beer.isWaitingOnBeerUpdate,
+    isWaitingOnBeerFetch: state.beer.isWaitingOnFetch,
   };
 };
 
@@ -28,15 +31,16 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   const dispatch = useDispatch();
 
   // TODO (2): Get search bar working
-  const [searchBarText, setSearchBarText] = React.useState<string>("");
   const [beers, setBeers] = React.useState<BeerDocument[]>();
+  const [searchbarText, setSearchbarText] = React.useState<string>("");
   const [showFilterPopover, setShowFilterPopover] = React.useState<boolean>(false);
-  const [showAlert, setShowAlert] = React.useState<boolean>(false);
-  const [alertText, setAlertText] = React.useState<string>("");
   const [showLoadingAlert, setShowLoadingAlert] = React.useState<boolean>(false);
+  const [loadingAlertMessage, setLoadingAlertMessage] = React.useState<string>("");
 
-  const loadingAlertTimeout = React.useRef<NodeJS.Timeout>();
-  const { isLoading, currentBeer, isWaitingOnBeerUpdate } = props;
+  const waitingOnUpdateTimeout = React.useRef<NodeJS.Timeout>();
+  const waitingOnFetchTimeout = React.useRef<NodeJS.Timeout>();
+
+  const { currentBeer, isWaitingOnBeerUpdate, isWaitingOnBeerFetch } = props;
 
   React.useEffect(() => {
     dispatch(actions.beer.fetchAllBeer());
@@ -44,34 +48,42 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
 
   React.useEffect(() => {
     // TODO (1): Populate fields if they aren't already expanded
-    if (!isLoading) {
+    if (!isWaitingOnBeerFetch) {
       setBeers(currentBeer);
     }
-  }, [isLoading, currentBeer]);
+  }, [isWaitingOnBeerFetch, currentBeer]);
 
   React.useEffect(() => {
     // We should only show loading spinner if the network request is taking a little while
     // Otherwise the loading spinner flashes on the screen
     if (isWaitingOnBeerUpdate) {
-      loadingAlertTimeout.current = setTimeout(() => {
+      waitingOnUpdateTimeout.current = setTimeout(() => {
+        setLoadingAlertMessage("Please wait...");
         setShowLoadingAlert(true);
       }, 100);
     } else {
       setShowLoadingAlert(false);
-      loadingAlertTimeout.current && clearTimeout(loadingAlertTimeout.current);
+      waitingOnUpdateTimeout.current && clearTimeout(waitingOnUpdateTimeout.current);
     }
   }, [isWaitingOnBeerUpdate]);
 
+  React.useEffect(() => {
+    if (isWaitingOnBeerFetch) {
+      waitingOnFetchTimeout.current = setTimeout(() => {
+        setLoadingAlertMessage("Loading current inventory...this may take some time");
+        setShowLoadingAlert(true);
+      }, 100);
+    } else {
+      setShowLoadingAlert(false);
+      waitingOnFetchTimeout.current && clearTimeout(waitingOnFetchTimeout.current);
+    }
+  }, [isWaitingOnBeerFetch]);
+
   const handleQuantityChange = (id: string, dir: QuantityChangeDirection) => {
-    try {
-      if (dir === QuantityChangeDirection.Up) {
-        dispatch(actions.beer.incrementBeerQuantity(id));
-      } else {
-        dispatch(actions.beer.decrementBeerQuantity(id));
-      }
-    } catch (error) {
-      setAlertText(error);
-      setShowAlert(true);
+    if (dir === QuantityChangeDirection.Up) {
+      dispatch(actions.beer.incrementBeerQuantity(id));
+    } else {
+      dispatch(actions.beer.decrementBeerQuantity(id));
     }
   };
 
@@ -79,12 +91,29 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
     setShowFilterPopover(false);
   };
 
-  const classes = useInventoryStyles();
+  const getContent = () => {
+    if (beers) {
+      const lowerSearchString = searchbarText.toLowerCase();
+      return beers
+        .filter(
+          (beer) =>
+            beer.name.toLowerCase().includes(lowerSearchString) ||
+            beer.style.name.toLowerCase().includes(lowerSearchString) ||
+            beer.brewery.name.toLowerCase().includes(lowerSearchString)
+        )
+        .map((beer) => (
+          <InventoryItem key={beer._id} onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)} beer={beer} />
+        ));
+    } else {
+      return <SkeletonLoading length={8} />;
+    }
+  };
 
+  const classes = useInventoryStyles();
   const toolbarHeaderContent = (
     <div className={classes.headerContentContainer}>
       {features.inventoryFilters && <IonIcon icon={filterOutline} className={classes.filterIcon} onClick={() => setShowFilterPopover(true)} />}
-      <IonSearchbar onIonChange={(event) => console.log(event.detail.value)} disabled={!features.inventorySearchbar}></IonSearchbar>
+      <IonSearchbar onIonChange={(event) => setSearchbarText(event.detail.value || "")} disabled={!features.inventorySearchbar}></IonSearchbar>
       <Link
         to={{
           pathname: "/inventory/add",
@@ -99,16 +128,10 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
 
   return (
     <>
-      <BasePage headerContent={toolbarHeaderContent} loadingSpinnerProps={{ show: showLoadingAlert, message: "Updating beer..." }}>
-        <IonAlert isOpen={showAlert} buttons={["Ok"]} message={alertText} onDidDismiss={() => setShowAlert(false)} />
-        <IonList>
-          {beers &&
-            beers.map((beer) => (
-              <InventoryItem key={beer._id} onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)} beer={beer} />
-            ))}
-          {!beers && <div>loading</div>}
-        </IonList>
-      </BasePage>
+      <RootPage headerContent={toolbarHeaderContent} loadingSpinnerProps={{ show: showLoadingAlert, message: loadingAlertMessage }}>
+        <NetworkErrorAlert />
+        <IonList>{getContent()}</IonList>
+      </RootPage>
       <InventoryFilterPopover isOpen={showFilterPopover} onClose={() => closeFilterPopover()} />
     </>
   );

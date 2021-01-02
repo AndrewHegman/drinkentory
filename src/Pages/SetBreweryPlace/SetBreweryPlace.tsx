@@ -18,10 +18,7 @@ const mapStateToProps = (state: RootState) => {
     places: state.geography.places,
     placesService: state.geography.placesService,
     geocoderService: state.geography.geocoderService,
-    getPlaceByPlaceId: (id: string) => {
-      console.log(state);
-      return selectors.geography.placeByPlaceId(state, id);
-    },
+    getPlaceByPlaceId: (id: string) => selectors.geography.placeByPlaceId(state, id),
   };
 };
 
