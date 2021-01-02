@@ -6,7 +6,7 @@ const initialNewStyle: AddStyleDto = {
   baseStyle: "",
 };
 
-const initialState: StyleState = {
+export const initialState: StyleState = {
   isLoadingStyles: false,
   isWaitingOnNewStyle: false,
   styles: [],
