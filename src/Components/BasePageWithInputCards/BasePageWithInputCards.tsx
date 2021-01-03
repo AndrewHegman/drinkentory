@@ -17,15 +17,9 @@ export interface IBasePageWithInputCardsProps {
 }
 
 export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (props) => {
-  const { onClosePathname, onSubmitClick, title, onClose, loadingSpinnerProps } = props;
+  const { onClosePathname, onSubmitClick, title, onClose, loadingSpinnerProps, showSubmit } = props;
 
   const classes = useBasePageWithInputCardsStyles();
-
-  React.useEffect(() => {
-    if (props.showSubmit && !props.onSubmitClick) {
-      console.warn('If "showSubmit" prop is "true", the "onSubmitClick" callback must defined');
-    }
-  }, [props.showSubmit, props.onSubmitClick]);
 
   return (
     <IonPage>
@@ -36,9 +30,12 @@ export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (p
         <NetworkErrorAlert />
 
         {props.children}
-        <IonButton className={classes.submit} expand="block" onClick={onSubmitClick}>
-          Submit
-        </IonButton>
+
+        {showSubmit && (
+          <IonButton className={classes.submit} expand="block" onClick={onSubmitClick}>
+            Submit
+          </IonButton>
+        )}
       </IonContent>
     </IonPage>
   );
