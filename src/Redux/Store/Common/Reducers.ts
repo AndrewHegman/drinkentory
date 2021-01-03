@@ -11,9 +11,9 @@ const isLocalhost = Boolean(
 );
 
 export const initialState: CommonState = {
-  isNetworkError: true,
+  isNetworkError: false,
   networkErrorMessage: "",
-  serverAddress: isLocalhost ? ServerAddress.Localhost : ServerAddress.Production,
+  serverAddress: isLocalhost ? "http://localhost:3002" : ServerAddress.Production,
 };
 
 export const commonReducer = (state = initialState, action: CommonActionTypes): CommonState => {

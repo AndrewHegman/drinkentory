@@ -55,7 +55,7 @@ const CreateNewStyleComponent: React.FC<ICreateNewStyleProps> = (props) => {
     // TODO (2): Should show a confirmation dialog here
 
     if (newStyle.name && newStyle.baseStyle) {
-      ionRouter.push(`${routes.createNewItemRoute.pathname}${ionRouter.routeInfo.search}`);
+      ionRouter.push(`${routes.createNewItemRoute.pathname}${window.location.search}`);
       dispatch(actions.styles.addNewStyleWithBaseStyle(newStyle));
     }
   };

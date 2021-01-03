@@ -54,7 +54,7 @@ const CreateNewBreweryComponent: React.FC<CreateNewBreweryProps> = (props) => {
   const handleSubmit = () => {
     // TODO (2): Should show a confirmation dialog here
     if (Object.keys(props.newBrewery.place).length > 0) {
-      ionRouter.push(`${routes.createNewItemRoute.pathname}${ionRouter.routeInfo.search}`);
+      ionRouter.push(`${routes.createNewItemRoute.pathname}${window.location.search}`);
       dispatch(actions.geography.addNewPlace(props.newBrewery.place)).then((res) => {
         dispatch(actions.breweries.createNewBrewery()).then((res) => {
           dispatch(actions.beer.setNewBeerBrewery(res.brewery._id));

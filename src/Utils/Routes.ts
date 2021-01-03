@@ -8,7 +8,8 @@ import { SetBreweryPlace } from "../Pages/SetBreweryPlace";
 import { SetStyle } from "../Pages/SetStyle";
 import { CreateNewStyle } from "../Pages/CreateNewStyle";
 import { SetBaseStyle } from "../Pages/SetBaseStyle";
-
+import { Statistics } from "../Pages/Statistics";
+import { EditMoreInfo } from "../Pages/EditMoreInfo";
 export interface IRoute {
   pathname: string;
   exact: boolean;
@@ -25,7 +26,7 @@ export const routes: { [key: string]: IRoute } = {
 
   statisticsRoute: {
     pathname: "/statistics",
-    exact: false,
+    exact: true,
     component: Inventory,
   },
 
@@ -75,5 +76,11 @@ export const routes: { [key: string]: IRoute } = {
     pathname: "/inventory/create/style/setbasestyle",
     exact: true,
     component: SetBaseStyle,
+  },
+
+  editMoreInfo: {
+    pathname: "/editinfo",
+    exact: true,
+    component: EditMoreInfo,
   },
 };
