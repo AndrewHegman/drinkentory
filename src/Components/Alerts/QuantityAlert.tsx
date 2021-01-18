@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 
-import { IonAlert, IonicSafeString } from "@ionic/react";
+import { AlertButton, IonAlert, IonicSafeString } from "@ionic/react";
 
 export interface IQuantityAlertProps {
   onSubmit: (quantity: string) => boolean;
@@ -18,7 +18,7 @@ export const QuantityAlert: React.FC<IQuantityAlertProps> = (props) => {
     }
   }, [props.errorMessage]);
 
-  const getButtons = () => {
+  const getButtons = (): AlertButton[] => {
     return [
       {
         text: "Add!",

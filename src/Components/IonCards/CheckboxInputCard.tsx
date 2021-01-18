@@ -1,9 +1,8 @@
 import React from "react";
 import { IonCard, IonCardHeader, IonCardTitle, IonChip, IonCardContent } from "@ionic/react";
 import { InputChangeEventDetail } from "@ionic/core";
-import { useCheckboxInputCardStyles } from "./CheckboxInputCard.styles";
 import { useCommonIonCardStyles } from "./CommonIonCard.styles";
-import { Container, containerKeys } from "../../Interfaces";
+import { containerKeys } from "../../Interfaces";
 
 export interface ICheckboxInputCard {
   title: string;
@@ -12,10 +11,9 @@ export interface ICheckboxInputCard {
   onBlur?: (event: CustomEvent<FocusEvent>) => void;
 }
 
-export const CheckboxInputCard: React.FC<ICheckboxInputCard> = ({ title, onChange, onBlur, value }) => {
+export const CheckboxInputCard: React.FC<ICheckboxInputCard> = ({ title }) => {
   const [selectedChip, setSelectedChip] = React.useState<string>("");
 
-  const classes = useCheckboxInputCardStyles();
   const commonClasses = useCommonIonCardStyles();
   return (
     <IonCard>

@@ -1,7 +1,7 @@
 import { ThunkAction } from "redux-thunk";
 import { RootState } from "../index";
 import { CommonActions, CommonActionTypes } from "./Types";
-import { ServerAddress } from "../../../Utils";
+import { ServerAddress } from "../../../Interfaces";
 
 export const common = {
   setNetworkError: (message: string): ThunkAction<CommonActionTypes, RootState, {}, CommonActionTypes> => {

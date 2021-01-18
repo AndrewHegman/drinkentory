@@ -14,7 +14,7 @@ export const features = {
 
   // TODO (2)
   // Allow the user to search the current inventory
-  inventorySearchbar: false || devModeOverride,
+  inventorySearchbar: true || devModeOverride,
 
   // TODO (3)
   // Allow the user to switch between beer and wine domain

@@ -1,7 +1,7 @@
 import { GeographyState, actionTypes, GeographyActionTypes } from "./Types";
 import { PlaceDocument } from "../../../Interfaces";
 
-const initialState: GeographyState = {
+export const initialState: GeographyState = {
   places: [],
   newPlace: {} as PlaceDocument,
 

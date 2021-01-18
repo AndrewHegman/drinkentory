@@ -1,4 +1,4 @@
-import { ServerAddress } from "../../../Utils";
+import { ServerAddress } from "../../../Interfaces";
 import { ActionType } from "../../Common";
 
 export const actionTypes = {

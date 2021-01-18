@@ -21,7 +21,7 @@ const mapStateToProps = (state: RootState) => {
 export interface ICreateNewStyleProps extends PropsFromRedux {}
 
 const CreateNewStyleComponent: React.FC<ICreateNewStyleProps> = (props) => {
-  const { setBaseStyleRoute, createNewItemRoute, setStyleRoute } = routes;
+  const { setBaseStyleRoute, setStyleRoute } = routes;
   const dispatch: ThunkDispatch<RootState, any, AnyAction> = useDispatch();
   const ionRouter = useIonRouter();
 
@@ -55,10 +55,8 @@ const CreateNewStyleComponent: React.FC<ICreateNewStyleProps> = (props) => {
     // TODO (2): Should show a confirmation dialog here
 
     if (newStyle.name && newStyle.baseStyle) {
-      ionRouter.push(`${routes.createNewItemRoute.pathname}${ionRouter.routeInfo.search}`);
-      dispatch(actions.styles.addNewStyleWithBaseStyle(newStyle)).then((res) => {
-        console.log(res);
-      });
+      ionRouter.push(`${routes.createNewItemRoute.pathname}${window.location.search}`);
+      dispatch(actions.styles.addNewStyleWithBaseStyle(newStyle));
     }
   };
 

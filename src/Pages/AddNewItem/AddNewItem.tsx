@@ -77,7 +77,7 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
           <ClickableIonItem
             pathname={inventoryRoute.pathname}
             onClick={() => {
-              console.log(`Add ${item._id} to inventory`);
+              // console.log(`Add ${item._id} to inventory`);
             }}
           />
         ));
@@ -99,9 +99,9 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
     <BasePageWithSearchBar
       title="Choose a Beer"
       onClosePathname={inventoryRoute.pathname}
-      onSearchTextChange={(searchText) => setSearchText(searchText)}
+      onSearchTextChange={(searchText: string) => setSearchText(searchText)}
       showNotFound={showNotFound}
-      onNotFoundClick={(text) => dispatch(actions.beer.setNewBeerName(text))}
+      onNotFoundClick={(text: string) => dispatch(actions.beer.setNewBeerName(text))}
       notFoundRoute={{
         pathname: createNewItemRoute.pathname,
       }}

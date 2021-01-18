@@ -17,17 +17,22 @@ const mapStateToProps = (state: RootState) => {
 
 const NetworkErrorAlertComponent: React.FC<INetworkErrorAlertProps> = (props) => {
   const dispatch = useDispatch();
+  const alertRef = React.useRef<HTMLIonAlertElement>(null);
 
   const getButtons = () => {
     if (process.env.REACT_APP_IS_PROD === "true") {
       return [
         {
           text: "Ok!",
-          handler: () => console.log("clicked OK"),
+          handler: () => dispatch(common.clearNetworkError()),
         },
         {
           text: "More Info",
-          handler: () => console.log("clicked more info"),
+          handler: () => {
+            if (alertRef.current) {
+              alertRef.current.message = props.networkErrorMessage;
+            }
+          },
         },
       ];
     } else {
@@ -47,7 +52,7 @@ const NetworkErrorAlertComponent: React.FC<INetworkErrorAlertProps> = (props) =>
       return props.networkErrorMessage;
     }
   };
-  return <IonAlert isOpen={props.isNetworkError} buttons={getButtons()} message={getMessage()} />;
+  return <IonAlert isOpen={props.isNetworkError} buttons={getButtons()} message={getMessage()} ref={alertRef} />;
 };
 
 const connector = connect(mapStateToProps);

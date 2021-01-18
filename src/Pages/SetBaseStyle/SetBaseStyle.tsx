@@ -3,8 +3,8 @@ import { routes } from "../../Utils/Routes";
 import { BasePageWithSearchBar } from "../../Components/BasePageWithSearchBar";
 import { RouteComponentProps } from "react-router";
 import { RootState } from "../../Redux/Store/index";
-import { useDispatch, connect, ConnectedProps } from "react-redux";
-import { actions, selectors } from "../../Redux";
+import { connect, ConnectedProps } from "react-redux";
+import { selectors } from "../../Redux";
 
 export interface IAddNewItemModal extends RouteComponentProps, PropsFromRedux {}
 
@@ -19,15 +19,11 @@ export const SetBaseStyleComponent: React.FC<IAddNewItemModal> = (props) => {
   const [searchText, setSearchText] = React.useState<string>("");
 
   const { createNewStyleRoute } = routes;
-  // const dispatch = useDispatch();
-
-  // React.useEffect(() => {
-  //   dispatch(actions.styles.fetchAllStyles());
-  // }, [dispatch]);
 
   React.useEffect(() => {});
 
-  console.log(props.baseStyles);
+  // Just using a console log to hide warnings of unused variable
+  console.log(searchText);
 
   return (
     <>

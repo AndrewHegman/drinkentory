@@ -33,7 +33,7 @@ export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (prop
 
   React.useEffect(() => {
     onSearchTextChange && onSearchTextChange(searchText);
-  }, [searchText]);
+  }, [searchText, onSearchTextChange]);
 
   const onCloseButtonClick = () => {
     setSearchText("");

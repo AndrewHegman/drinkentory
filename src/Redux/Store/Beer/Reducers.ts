@@ -9,7 +9,7 @@ const initialNewBeerState: NewBeer = {
   quantity: 0,
 };
 
-const initialState: BeerState = {
+export const initialState: BeerState = {
   inventory: [],
   isWaitingOnFetch: false,
   newBeer: initialNewBeerState,

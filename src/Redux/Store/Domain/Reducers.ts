@@ -1,7 +1,7 @@
 import { Domains } from "../../../Interfaces";
 import { DomainActionTypes, DomainState, actionTypes } from "./Types";
 
-const initialState: DomainState = {
+export const initialState: DomainState = {
   domain: Domains.Beer,
 };
 
