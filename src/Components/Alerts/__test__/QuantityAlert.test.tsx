@@ -58,7 +58,7 @@ fdescribe("QuantityAlert", () => {
     let input: AlertInput[];
     beforeEach(() => {
       wrapper = render();
-      input = wrapper.find(IonAlert).props().inputs;
+      input = wrapper.find(IonAlert).props().inputs!;
     });
 
     it("should only have 1 input", () => {
