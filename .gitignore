@@ -26,3 +26,4 @@ _cacache/*
 _logs/*
 
 .env
+.eslintcache
