@@ -1,18 +1,18 @@
 import React from "react";
-import { IonContent, IonHeader, IonList, IonPage } from "@ionic/react";
+import { IonHeader, IonPage } from "@ionic/react";
 import { BasePageHeader } from "../BasePageHeader";
-import { useBasePageTextEditorStyles } from "./BasePageTextEditor.styles";
+import { SubmitButton } from "../SubmitButton";
+import { BasePageContent } from "../BasePageContent";
 
 export interface IBasePageTextEditorProps {
   title: string;
   onClosePathname: string;
-
+  onSubmit: () => void;
   onClose?: () => void;
 }
 
 export const BasePageTextEditor: React.FC<IBasePageTextEditorProps> = (props) => {
-  const { onClosePathname, title, onClose } = props;
-  const classes = useBasePageTextEditorStyles();
+  const { onClosePathname, title, onClose, onSubmit } = props;
 
   const onCloseButtonClick = () => {
     onClose && onClose();
@@ -22,9 +22,9 @@ export const BasePageTextEditor: React.FC<IBasePageTextEditorProps> = (props) =>
       <IonHeader>
         <BasePageHeader title={title} onClosePathname={onClosePathname} onClose={onCloseButtonClick} />
       </IonHeader>
-      <IonContent className={classes.root}>
-        <IonList>{props.children}</IonList>
-      </IonContent>
+      <BasePageContent>
+        <SubmitButton onSubmit={onSubmit} />
+      </BasePageContent>
     </IonPage>
   );
 };

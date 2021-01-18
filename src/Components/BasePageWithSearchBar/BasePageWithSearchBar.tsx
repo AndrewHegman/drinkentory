@@ -1,9 +1,10 @@
 import React from "react";
-import { IonContent, IonToolbar, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
+import { IonToolbar, IonHeader, IonSearchbar, IonList, IonPage } from "@ionic/react";
 import { useBasePageWithSearchBarStyles } from "./BasePageWithSearchBar.styles";
 import { ClickableIonItem } from "../ClickableIonItem/ClickableIonItem";
 import { BasePageHeader } from "../BasePageHeader";
-import { Never } from "../../Utils";
+import { Never } from "../../Interfaces";
+import { BasePageContent } from "../BasePageContent";
 
 type BaseProps = {
   title: string;
@@ -47,7 +48,7 @@ export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (prop
           <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} debounce={350} />
         </IonToolbar>
       </IonHeader>
-      <IonContent className={classes.root}>
+      <BasePageContent>
         <IonList>
           {props.children}
 
@@ -65,7 +66,7 @@ export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (prop
             </ClickableIonItem>
           )}
         </IonList>
-      </IonContent>
+      </BasePageContent>
     </IonPage>
   );
 };

@@ -1,8 +1,9 @@
 import React from "react";
 import { IonContent, IonPage, IonButton, IonLoading } from "@ionic/react";
 import { BasePageHeader } from "../BasePageHeader";
-import { useBasePageWithInputCardsStyles } from "./BasePageWithInputCards.styles";
 import { NetworkErrorAlert } from "../Alerts";
+import { SubmitButton } from "../SubmitButton";
+import { BasePageContent } from "../BasePageContent";
 
 export interface IBasePageWithInputCardsProps {
   title: string;
@@ -19,12 +20,10 @@ export interface IBasePageWithInputCardsProps {
 export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (props) => {
   const { onClosePathname, onSubmitClick, title, onClose, loadingSpinnerProps, showSubmit } = props;
 
-  const classes = useBasePageWithInputCardsStyles();
-
   return (
     <IonPage>
       <BasePageHeader title={title} onClosePathname={onClosePathname} onClose={onClose} />
-      <IonContent className={classes.root}>
+      <BasePageContent>
         {loadingSpinnerProps && <IonLoading spinner="lines" message={loadingSpinnerProps.message} isOpen={loadingSpinnerProps.show} />}
 
         <NetworkErrorAlert />
@@ -32,11 +31,13 @@ export const BasePageWithInputCards: React.FC<IBasePageWithInputCardsProps> = (p
         {props.children}
 
         {showSubmit && (
-          <IonButton className={classes.submit} expand="block" onClick={onSubmitClick}>
-            Submit
-          </IonButton>
+          <SubmitButton
+            onSubmit={() => {
+              onSubmitClick && onSubmitClick();
+            }}
+          />
         )}
-      </IonContent>
+      </BasePageContent>
     </IonPage>
   );
 };

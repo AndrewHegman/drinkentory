@@ -1,19 +1,19 @@
 import React from "react";
 import { RootPage } from "../../Components/RootPage";
-import { IonList, IonSearchbar, IonIcon, IonAlert } from "@ionic/react";
+import { IonList, IonSearchbar, IonIcon, IonAlert, useIonRouter } from "@ionic/react";
 import { addCircleOutline, filterOutline } from "ionicons/icons";
 import { InventoryItem } from "../../Components/InventoryItem";
-import { QuantityChangeDirection } from "../../Utils";
 import { useInventoryStyles } from "./Inventory.styles";
 import { Link } from "react-router-dom";
 import { InventoryFilterPopover } from "../../Components/Popovers/InventoryFilterPopover";
 import { connect, useDispatch, ConnectedProps } from "react-redux";
 import { RootState } from "../../Redux/Store/index";
-import { BeerDocument } from "../../Interfaces";
-import { features } from "../../Utils";
+import { BeerDocument, QuantityChangeDirection } from "../../Interfaces";
+import { features, routes } from "../../Utils";
 import { actions, selectors } from "../../Redux";
 import { NetworkErrorAlert } from "../../Components/Alerts";
 import { SkeletonLoading } from "../../Components/SkeletonLoading";
+import { MoreInfoAlert } from "../../Components/Alerts";
 
 const mapStateToProps = (state: RootState) => {
   return {
@@ -29,13 +29,14 @@ export interface IInventory extends PropsFromRedux {}
 
 const InventoryComponent: React.FC<IInventory> = (props) => {
   const dispatch = useDispatch();
+  const ionRouter = useIonRouter();
 
-  // TODO (2): Get search bar working
   const [beers, setBeers] = React.useState<BeerDocument[]>();
   const [searchbarText, setSearchbarText] = React.useState<string>("");
   const [showFilterPopover, setShowFilterPopover] = React.useState<boolean>(false);
   const [showLoadingAlert, setShowLoadingAlert] = React.useState<boolean>(false);
   const [loadingAlertMessage, setLoadingAlertMessage] = React.useState<string>("");
+  const [showMoreInfoAlert, setShowMoreInfoAlert] = React.useState<boolean>(false);
 
   const waitingOnUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const waitingOnFetchTimeout = React.useRef<NodeJS.Timeout>();
@@ -65,6 +66,11 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
       setShowLoadingAlert(false);
       waitingOnUpdateTimeout.current && clearTimeout(waitingOnUpdateTimeout.current);
     }
+
+    return () => {
+      setShowLoadingAlert(false);
+      waitingOnUpdateTimeout.current && clearTimeout(waitingOnUpdateTimeout.current);
+    };
   }, [isWaitingOnBeerUpdate]);
 
   React.useEffect(() => {
@@ -102,7 +108,15 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
             beer.brewery.name.toLowerCase().includes(lowerSearchString)
         )
         .map((beer) => (
-          <InventoryItem key={beer._id} onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)} beer={beer} />
+          <InventoryItem
+            key={beer._id}
+            onQuantityChange={(dir: QuantityChangeDirection) => handleQuantityChange(beer._id, dir)}
+            onItemClick={() => {
+              setShowMoreInfoAlert(true);
+              dispatch(actions.beer.setBeerBeingEditted(beer));
+            }}
+            beer={beer}
+          />
         ));
     } else {
       return <SkeletonLoading length={8} />;
@@ -130,6 +144,15 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
     <>
       <RootPage headerContent={toolbarHeaderContent} loadingSpinnerProps={{ show: showLoadingAlert, message: loadingAlertMessage }}>
         <NetworkErrorAlert />
+        <MoreInfoAlert
+          message={"No information has been added about this beer"}
+          onClose={() => setShowMoreInfoAlert(false)}
+          onEdit={() => {
+            setShowMoreInfoAlert(false);
+            ionRouter.push(`${routes.editMoreInfo.pathname}${window.location.search}`);
+          }}
+          isOpen={showMoreInfoAlert}
+        />
         <IonList>{getContent()}</IonList>
       </RootPage>
       <InventoryFilterPopover isOpen={showFilterPopover} onClose={() => closeFilterPopover()} />

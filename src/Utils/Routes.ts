@@ -17,7 +17,7 @@ export interface IRoute {
   componentProps?: { [key: string]: any };
 }
 
-export const routes: { [key: string]: IRoute } = {
+export const routes = {
   inventoryRoute: {
     pathname: "/inventory",
     exact: true,
@@ -27,7 +27,7 @@ export const routes: { [key: string]: IRoute } = {
   statisticsRoute: {
     pathname: "/statistics",
     exact: true,
-    component: Inventory,
+    component: Statistics,
   },
 
   addNewItemRoute: {

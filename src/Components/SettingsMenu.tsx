@@ -1,8 +1,7 @@
 import React from "react";
 import { IonLabel, IonItem, IonListHeader, IonRadioGroup, IonList, IonRadio } from "@ionic/react";
 import { SegmentChangeEventDetail } from "@ionic/core";
-import { ServerEndpoint } from "../Utils/Types";
-import { config } from "../Utils/Constants";
+import { ServerEndpoint, config } from "../Interfaces";
 
 require("dotenv");
 

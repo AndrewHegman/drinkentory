@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Ref } from "react";
 import { useHistory } from "react-router";
 import {
   IonPage,
@@ -13,11 +13,10 @@ import {
   IonPopover,
   IonLoading,
 } from "@ionic/react";
-import { Domains } from "../../Interfaces";
+import { Domains, SearchParams } from "../../Interfaces";
 import { SettingsMenu } from "../SettingsMenu";
 import { menuOutline } from "ionicons/icons";
 import { useRootPageStyles } from "./RootPage.styles";
-import { SearchParams } from "../../Utils/Constants";
 import { RootState } from "../../Redux/Store/index";
 import { connect, ConnectedProps, useDispatch } from "react-redux";
 
@@ -34,6 +33,7 @@ export interface IRootPageProps extends PropsFromRedux {
   };
   toolbarHeaderContent?: React.ReactNode;
   headerContent?: React.ReactNode;
+  containerRef?: Ref<HTMLIonContentElement>;
 }
 
 const mapStateToProps = (state: RootState) => {
@@ -107,7 +107,7 @@ const RootPageComponent: React.FC<React.PropsWithChildren<IRootPageProps>> = (pr
         </IonToolbar>
         {headerContent}
       </IonHeader>
-      <IonContent fullscreen={true}>
+      <IonContent fullscreen={true} ref={props.containerRef} id={"ion-content-id"}>
         {loadingSpinnerProps && <IonLoading spinner="lines" message={loadingSpinnerProps.message} isOpen={loadingSpinnerProps.show} />}
         {props.children}
       </IonContent>

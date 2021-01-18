@@ -1,7 +1,7 @@
 import Axios, { AxiosError } from "axios";
 import { BeerActions, BeerActionTypes } from "./Types";
 import { selectors } from "../../";
-import { Container } from "../../../Interfaces";
+import { BeerDocument, Container } from "../../../Interfaces";
 import { ThunkAction } from "redux-thunk";
 import { RootState } from "../index";
 import { CommonActions, CommonActionTypes } from "../Common/Types";
@@ -151,4 +151,12 @@ export const beer = {
         });
     };
   },
+
+  setBeerBeingEditted: (beer: BeerDocument): BeerActionTypes => {
+    return BeerActions.setBeerBeingEditted(beer);
+  },
+
+  // clearBeerBeingEditted: (): BeerActionTypes => {
+  //   return BeerActions.clearBeerBeingEditted();
+  // },
 } as const;

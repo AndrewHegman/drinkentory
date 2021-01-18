@@ -18,6 +18,9 @@ export const actionTypes = {
 
   WAIT_ON_ADD_NEW_BEER: "WAIT_ON_ADD_NEW_BEER",
   ADD_NEW_BEER_FINISHED: "ADD_NEW_BEER_FINISHED",
+
+  SET_BEER_BEING_EDITTED: "SET_BEER_BEING_EDITTED",
+  CLEAR_BEER_BEING_EDITTED: "CLEAR_BEER_BEING_EDITTED",
 } as const;
 
 export interface BeerState {
@@ -26,6 +29,7 @@ export interface BeerState {
   isWaitingOnFetch: boolean;
   isWaitingOnBeerUpdate: boolean;
   isWaitingOnAddNewBeer: boolean;
+  beerBeingEditted: BeerDocument;
 }
 
 export const BeerActions = {
@@ -98,6 +102,15 @@ export const BeerActions = {
       type: actionTypes.ADD_NEW_BEER_FINISHED,
       newBeer,
     } as const),
+
+  setBeerBeingEditted: (beer: BeerDocument) => ({
+    type: actionTypes.SET_BEER_BEING_EDITTED,
+    beer,
+  }),
+
+  // clearBeerBeingEditted: () => ({
+  //   type: actionTypes.CLEAR_BEER_BEING_EDITTED,
+  // }),
 };
 
 export type BeerActionTypes = ActionType<typeof BeerActions>;

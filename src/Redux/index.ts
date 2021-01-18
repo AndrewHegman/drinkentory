@@ -4,6 +4,7 @@ import * as stylesActions from "./Store/Styles/Actions";
 import * as domainsActions from "./Store/Domain/Actions";
 import * as geographyActions from "./Store/Geography/Actions";
 import * as commonActions from "./Store/Common/Actions";
+import * as historyActions from "./Store/History/Actions";
 
 import * as beerSelectors from "./Store/Beer/Selectors";
 import * as breweriesSelectors from "./Store/Breweries/Selectors";
@@ -16,6 +17,8 @@ import { initialState as commonInitialState } from "./Store/Common/Reducers";
 import { initialState as domainInitialState } from "./Store/Domain/Reducers";
 import { initialState as geographyInitialState } from "./Store/Geography/Reducers";
 import { initialState as styleInitialState } from "./Store/Styles/Reducers";
+import { initialState as historyInitialState } from "./Store/History/Reducers";
+
 import { RootState } from "./Store/index";
 
 export const actions = {
@@ -25,6 +28,7 @@ export const actions = {
   ...domainsActions,
   ...geographyActions,
   ...commonActions,
+  ...historyActions,
 };
 
 export const selectors = {
@@ -52,5 +56,8 @@ export const initialState: RootState = {
   },
   styles: {
     ...styleInitialState,
+  },
+  history: {
+    ...historyInitialState,
   },
 };

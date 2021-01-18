@@ -1,4 +1,4 @@
-import { ServerAddress } from "../../../Utils";
+import { ServerAddress } from "../../../Interfaces";
 import { CommonState, CommonActionTypes, actionTypes } from "./Types";
 
 // Pulled from serviceWorker.ts created by CRA

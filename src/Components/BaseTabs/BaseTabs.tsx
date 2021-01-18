@@ -2,7 +2,7 @@ import React from "react";
 import { IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
 import { Route } from "react-router";
 import { IonReactRouter } from "@ionic/react-router";
-import { routes, tabs } from "../../Utils";
+import { IRoute, routes, tabs } from "../../Utils";
 
 interface IBaseTabsProps {}
 
@@ -12,7 +12,7 @@ export const BaseTabs: React.FC<IBaseTabsProps> = () => {
       <IonTabs>
         <IonRouterOutlet>
           {Object.keys(routes).map((routeName, idx) => {
-            const route = routes[routeName];
+            const route = (routes as { [key: string]: IRoute })[routeName];
             return (
               <Route
                 key={idx}

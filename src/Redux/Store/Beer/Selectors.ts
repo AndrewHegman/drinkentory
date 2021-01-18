@@ -16,6 +16,8 @@ export const beer = {
 
   getBeerById: (state: RootState, id: string): BeerDocument | undefined => state.beer.inventory.find((beer: BeerDocument) => beer._id === id),
 
+  getBeerByStyle: (state: RootState, style: string): BeerDocument[] => state.beer.inventory.filter((beer) => beer.style._id === style),
+
   getExpandedBeerById: (state: RootState, id: string): BeerDocument | undefined => {
     const beer = state.beer.inventory.find((beer: BeerDocument) => beer._id === id);
     if (!beer) {

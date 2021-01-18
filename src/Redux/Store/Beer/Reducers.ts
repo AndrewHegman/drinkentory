@@ -1,5 +1,5 @@
 import { actionTypes, BeerActionTypes, BeerState } from "./Types";
-import { BreweryDocument, NewBeer, StyleDocument, Container } from "../../../Interfaces";
+import { BreweryDocument, NewBeer, StyleDocument, Container, BeerDocument } from "../../../Interfaces";
 
 const initialNewBeerState: NewBeer = {
   name: "",
@@ -15,6 +15,7 @@ export const initialState: BeerState = {
   newBeer: initialNewBeerState,
   isWaitingOnBeerUpdate: false,
   isWaitingOnAddNewBeer: false,
+  beerBeingEditted: {} as BeerDocument,
 };
 
 export const beerReducer = (state = initialState, action: BeerActionTypes): BeerState => {
@@ -120,6 +121,18 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
         isWaitingOnAddNewBeer: false,
         inventory: [...state.inventory, action.newBeer],
       };
+
+    case actionTypes.SET_BEER_BEING_EDITTED:
+      return {
+        ...state,
+        beerBeingEditted: action.beer,
+      };
+
+    // case actionTypes.CLEAR_BEER_BEING_EDITTED:
+    //   return {
+    //     ...state,
+    //     beerBeingEditted: null,
+    //   };
 
     default:
       return state;

@@ -5,6 +5,8 @@ import { domainReducer } from "./Domain/Reducers";
 import { geographyReducer } from "./Geography/Reducers";
 import { commonReducer } from "./Common/Reducers";
 import { combineReducers } from "redux";
+import { historyReducer } from "./History/Reducers";
+
 export const rootReducer = combineReducers({
   breweries: breweryReducer,
   beer: beerReducer,
@@ -12,6 +14,7 @@ export const rootReducer = combineReducers({
   domain: domainReducer,
   geography: geographyReducer,
   common: commonReducer,
+  history: historyReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

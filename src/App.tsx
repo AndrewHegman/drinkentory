@@ -31,6 +31,7 @@ export const App: React.FC<IAppProps> = (props: IAppProps) => {
         <IonRouterOutlet>
           <Route path="/inventory" component={BaseTabs} />
           <Route path="/statistics" component={BaseTabs} />
+          <Route path="/editinfo" component={BaseTabs} />
           <Redirect exact from="/" to="/inventory" />
           <Route component={NotFound} />
         </IonRouterOutlet>

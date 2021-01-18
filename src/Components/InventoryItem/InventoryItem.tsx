@@ -1,23 +1,20 @@
 import React from "react";
-import { IonItem, IonIcon, IonText, useIonRouter } from "@ionic/react";
+import { IonItem, IonIcon, IonText } from "@ionic/react";
 import { addCircleOutline, removeCircleOutline } from "ionicons/icons";
 import { useInventoryItemStyles } from "./InventoryItem.styles";
-import { QuantityChangeDirection, routes } from "../../Utils/";
-import { BeerDocument } from "../../Interfaces/Beer.types";
+import { BeerDocument, QuantityChangeDirection } from "../../Interfaces";
 import { ListItemBeer } from "../ListItem";
-import { MoreInfoAlert } from "../Alerts";
 
 interface IBaseInventoryItemProps {
   beer: BeerDocument;
   onQuantityChange: (dir: QuantityChangeDirection) => void;
+  onItemClick?: () => void;
 }
 
 export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
   const [content, setContent] = React.useState<React.ReactNode>();
-  const [showMoreInfoAlert, setShowMoreInfoAlert] = React.useState<boolean>(false);
-  const ionRouter = useIonRouter();
 
-  const { onQuantityChange, beer } = props;
+  const { onQuantityChange, beer, onItemClick } = props;
 
   const classes = useInventoryItemStyles();
 
@@ -26,16 +23,7 @@ export const InventoryItem: React.FC<IBaseInventoryItemProps> = (props) => {
   }, [beer]);
 
   return (
-    <IonItem onClick={() => setShowMoreInfoAlert(true)}>
-      <MoreInfoAlert
-        message={"No information has been added about this beer"}
-        onClose={() => setShowMoreInfoAlert(false)}
-        onEdit={() => {
-          setShowMoreInfoAlert(false);
-          ionRouter.push(`${routes.editMoreInfo.pathname}${window.location.search}`);
-        }}
-        isOpen={showMoreInfoAlert}
-      />
+    <IonItem onClick={() => onItemClick && onItemClick()}>
       {content}
       <IonIcon
         icon={addCircleOutline}
