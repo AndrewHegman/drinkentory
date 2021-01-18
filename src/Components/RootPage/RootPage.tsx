@@ -13,11 +13,10 @@ import {
   IonPopover,
   IonLoading,
 } from "@ionic/react";
-import { Domains } from "../../Interfaces";
+import { Domains, SearchParams } from "../../Interfaces";
 import { SettingsMenu } from "../SettingsMenu";
 import { menuOutline } from "ionicons/icons";
 import { useRootPageStyles } from "./RootPage.styles";
-import { SearchParams } from "../../Utils/Constants";
 import { RootState } from "../../Redux/Store/index";
 import { connect, ConnectedProps, useDispatch } from "react-redux";
 

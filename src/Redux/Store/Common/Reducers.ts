@@ -1,4 +1,4 @@
-import { ServerAddress } from "../../../Utils";
+import { ServerAddress } from "../../../Interfaces";
 import { CommonState, CommonActionTypes, actionTypes } from "./Types";
 
 // Pulled from serviceWorker.ts created by CRA
@@ -11,7 +11,7 @@ const isLocalhost = Boolean(
 );
 
 export const initialState: CommonState = {
-  isNetworkError: true,
+  isNetworkError: false,
   networkErrorMessage: "",
   serverAddress: isLocalhost ? ServerAddress.Localhost : ServerAddress.Production,
 };
