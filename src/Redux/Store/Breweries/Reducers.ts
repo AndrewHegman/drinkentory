@@ -6,7 +6,7 @@ const initialNewBrewery: NewBrewery = {
   place: {} as PlaceDocument,
 };
 
-const initialState: BreweryState = {
+export const initialState: BreweryState = {
   isBreweriesLoading: false,
   breweries: [],
   updatingNewBreweryLocation: false,

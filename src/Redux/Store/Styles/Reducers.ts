@@ -6,7 +6,7 @@ const initialNewStyle: AddStyleDto = {
   baseStyle: "",
 };
 
-const initialState: StyleState = {
+export const initialState: StyleState = {
   isLoadingStyles: false,
   isWaitingOnNewStyle: false,
   styles: [],
@@ -32,7 +32,6 @@ export const styleReducer = (state = initialState, action: StyleActionTypes): St
         isWaitingOnNewStyle: true,
       };
     case actionTypes.ADD_NEW_STYLE_FINISHED:
-      console.log(action.style);
       return {
         ...state,
         isWaitingOnNewStyle: false,

@@ -83,13 +83,14 @@ export const beer = {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnFetch());
       const { serverAddress } = getState().common;
-      return Axios.get(`${serverAddress}/v1/beer/${id}?expand=brewery,style`)
-        .then((res) => res.data)
-        .then((json) => dispatch(BeerActions.fetchByIdReceived(json)));
+      return Axios.get(`${serverAddress}/v1/beer/${id}?expand=brewery,style`).then((res) => dispatch(BeerActions.fetchByIdReceived(res.data)));
     };
   },
 
-  incrementBeerQuantity: (id: string, changeAmt?: number): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
+  incrementBeerQuantity: (
+    id: string,
+    changeAmt?: number
+  ): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnUpdateBeer());
 
@@ -105,11 +106,18 @@ export const beer = {
       return Axios.put(`${serverAddress}/v1/beer/${id}`, {
         quantity: quantity + (changeAmt ? changeAmt : 1),
         historicQuantity: historicQuantity + (changeAmt ? changeAmt : 1),
-      }).then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)));
+      })
+        .then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)))
+        .catch((error: AxiosError) => {
+          return dispatch(CommonActions.setNetworkError(formatErrorMessage(error)));
+        });
     };
   },
 
-  decrementBeerQuantity: (id: string, changeAmt?: number): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
+  decrementBeerQuantity: (
+    id: string,
+    changeAmt?: number
+  ): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnUpdateBeer());
 
@@ -121,22 +129,25 @@ export const beer = {
       const { serverAddress } = getState().common;
 
       return Axios.put(`${serverAddress}/v1/beer/${id}`, { quantity: quantity - (changeAmt ? changeAmt : 1) })
-        .then((res) => res.data)
-        .then((json) => {
-          return dispatch(BeerActions.updateBeerFinished(id, json));
+        .then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)))
+        .catch((error: AxiosError) => {
+          return dispatch(CommonActions.setNetworkError(formatErrorMessage(error)));
         });
     };
   },
 
-  updateBeerQuantity: (id: string, quantity: number): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
+  updateBeerQuantity: (
+    id: string,
+    quantity: number
+  ): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnUpdateBeer());
       const { serverAddress } = getState().common;
 
       return Axios.put(`${serverAddress}/v1/beer/${id}`, { quantity })
-        .then((res) => res.data)
-        .then((json) => {
-          return dispatch(BeerActions.updateBeerFinished(id, json));
+        .then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)))
+        .catch((error: AxiosError) => {
+          return dispatch(CommonActions.setNetworkError(formatErrorMessage(error)));
         });
     };
   },

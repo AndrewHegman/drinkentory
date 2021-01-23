@@ -6,3 +6,4 @@ export * from "./Wine.types";
 export * from "./Country.types";
 export * from "./State.types";
 export * from "./Place.types";
+export * from "./Common.types";
