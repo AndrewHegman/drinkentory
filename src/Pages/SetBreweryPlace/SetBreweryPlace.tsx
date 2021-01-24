@@ -34,10 +34,10 @@ export const SetBreweryPlaceComponent: React.FC<IAddNewItemModal> = (props) => {
     debounce: 0, // debounce handled in BasePageWithSearchBar by the IonSearchBar component
   });
 
-  // React.useEffect(() => {
-  //   dispatch(actions.geography.initializeGeocodingService());
-  //   dispatch(actions.geography.initializePlacesService());
-  // }, [dispatch]);
+  React.useEffect(() => {
+    dispatch(actions.geography.initializeGeocodingService());
+    dispatch(actions.geography.initializePlacesService());
+  }, [dispatch]);
 
   const handleItemClick = (suggestion: Suggestion) => {
     const setNewBreweryPlace = (place: PlaceDocument) => {
