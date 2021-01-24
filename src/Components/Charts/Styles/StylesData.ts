@@ -61,6 +61,6 @@ export const getStylesByBreweryData = (styleId: string, beer: BeerDocument[]) =>
       }
     });
 
-  const data: StyleData[] = tmpData.map((_data) => ({ name: shortenName(_data.name), value: _data.value }));
+  const data: StyleData[] = tmpData.map((_data) => ({ name: _data.name, value: _data.value })).sort((a, b) => b.value - a.value);
   return data;
 };

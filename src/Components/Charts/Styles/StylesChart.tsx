@@ -15,7 +15,6 @@ const mapStateToProps = (state: RootState) => {
     styles: state.styles.styles,
     beer: state.beer.inventory,
     history: state.history.history,
-    // breweries: state.breweries.breweries,
   };
 };
 
