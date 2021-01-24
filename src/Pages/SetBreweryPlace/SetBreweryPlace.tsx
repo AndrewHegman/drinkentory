@@ -74,7 +74,6 @@ export const SetBreweryPlaceComponent: React.FC<IAddNewItemModal> = (props) => {
       </ClickableIonItem>
     ));
   };
-
   return (
     <BasePageWithSearchBar
       title="Choose the Location"
