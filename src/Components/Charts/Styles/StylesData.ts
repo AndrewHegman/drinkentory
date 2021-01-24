@@ -1,6 +1,13 @@
 import { BeerDocument, StyleDocument, StyleData, BreweryDocument } from "../../../Interfaces";
 import * as _ from "lodash";
 
+const shortenName = (name: string) => {
+  if (name.length > 12) {
+    return `${name.slice(0, 12)}...`;
+  }
+  return name;
+};
+
 export const getStylesByBeerData = (styles: StyleDocument[], beer: BeerDocument[]) => {
   // https://24ways.org/2019/five-interesting-ways-to-use-array-reduce/
   const totalQuantity = beer.reduce((a, b) => a + b.historicQuantity, 0);
@@ -30,22 +37,30 @@ export const getStylesByBeerData = (styles: StyleDocument[], beer: BeerDocument[
   return data;
 };
 
-//5fee0c0fef79624794d973cc
 export const getStylesByBreweryData = (styleId: string, beer: BeerDocument[]) => {
-  let data: StyleData[] = [];
+  console.log(styleId);
+  beer.forEach((_beer) => _beer.style._id);
+  console.log(beer.filter((_beer) => _beer.style._id === styleId));
+  // Create an interface that has a unique ID so we can properly search...see below
+  let tmpData: (StyleData & { _id: string })[] = [];
 
-  beer.filter((_beer) => _beer.style._id === styleId).forEach((selectedBeer) => console.log(selectedBeer));
+  // Get all beers with given style ID as a list
+  beer
+    .filter((_beer) => _beer.style._id === styleId)
+    .forEach((item) => {
+      // See if the brewery has been added yet (via ID)
+      const dataIdx = tmpData.findIndex((_data) => _data._id === item.brewery._id);
+      if (dataIdx < 0) {
+        tmpData.push({
+          _id: item.brewery._id,
+          name: item.brewery.name,
+          value: item.historicQuantity,
+        });
+      } else {
+        tmpData[dataIdx].value += item.historicQuantity;
+      }
+    });
 
-  // Get all unique styles
-  // _.uniqBy(beer, "style._id").forEach((item) => {
-  //   // Count breweries based on style
-  //   console.log(item.style.name);
-  //   beer
-  //     .filter((_beer) => _beer.style._id === item.style._id)
-  //     .forEach((styleItem) => {
-  //       console.log(`\t${styleItem.brewery.name}`);
-  //     });
-  // });
-
+  const data: StyleData[] = tmpData.map((_data) => ({ name: shortenName(_data.name), value: _data.value }));
   return data;
 };

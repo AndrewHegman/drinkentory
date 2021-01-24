@@ -19,7 +19,8 @@ const mapStateToProps = (state: RootState) => {
     styles: state.styles.styles,
     beer: state.beer.inventory,
     history: state.history.history,
-    isDataLoading: state.styles.isLoadingStyles || state.history.isLoadingHistory || state.beer.isWaitingOnFetch,
+    isDataLoading:
+      state.styles.isLoadingStyles || state.history.isLoadingHistory || state.beer.isWaitingOnFetch || state.breweries.isBreweriesLoading,
   };
 };
 
@@ -40,6 +41,7 @@ const StatisticsComponent: React.FC<IStatisticsProps> = (props) => {
     dispatch(actions.history.fetchHistory());
     dispatch(actions.beer.fetchAllBeer());
     dispatch(actions.styles.fetchAllStyles());
+    dispatch(actions.breweries.fetchAllBreweries());
   }, [dispatch]);
 
   // We have to wait for ion-content to fully render so we can get an accurate size of the container.

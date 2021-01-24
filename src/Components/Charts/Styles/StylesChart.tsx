@@ -1,10 +1,12 @@
 import React from "react";
-import { PieChart, Pie, Cell, Sector } from "recharts";
-import { IonSegment, IonSegmentButton, IonLabel } from "@ionic/react";
-import { StyleData } from "../../../Interfaces";
+import { BarChart } from "recharts";
+import { IonSegment, IonSegmentButton, IonLabel, IonSelectOption, IonSelect } from "@ionic/react";
+import { BreweryDocument, StyleData } from "../../../Interfaces";
 import { connect, ConnectedProps } from "react-redux";
 import { RootState } from "../../../Redux/Store/index";
 import { getStylesByBeerData, getStylesByBreweryData } from "./StylesData";
+import { StylesByBreweryChart } from "./StylesByBreweryChart";
+import { PieChart, Pie, Cell, Sector } from "recharts";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -13,6 +15,7 @@ const mapStateToProps = (state: RootState) => {
     styles: state.styles.styles,
     beer: state.beer.inventory,
     history: state.history.history,
+    // breweries: state.breweries.breweries,
   };
 };
 
@@ -29,6 +32,8 @@ export const StylesChartComponent: React.FC<IStylesChartProps> = (props) => {
   }
 
   const [chartType, setChartType] = React.useState<StyleChartType>(StyleChartType.ByBrewery);
+  const [style, setStyle] = React.useState<string>(props.styles[0]._id);
+
   const handleStylesTypeChange = (event: React.MouseEvent<HTMLIonSegmentElement, MouseEvent>) => {
     setChartType((event.target as any).value as StyleChartType);
   };
@@ -40,8 +45,20 @@ export const StylesChartComponent: React.FC<IStylesChartProps> = (props) => {
         data = getStylesByBeerData(props.styles, props.beer);
         return <StylesByBeerChart data={data} width={props.width} height={props.height} />;
       case StyleChartType.ByBrewery:
-        data = getStylesByBreweryData("5fee0c0fef79624794d973cc", props.beer);
-        return <div>by brewery</div>;
+        data = getStylesByBreweryData(style, props.beer);
+        return (
+          <>
+            <IonSelect value={style} onIonChange={(e) => setStyle(e.detail.value)}>
+              {props.styles.map((style) => (
+                <IonSelectOption value={style._id} key={style._id}>
+                  {style.name}
+                </IonSelectOption>
+              ))}
+            </IonSelect>
+            <StylesByBreweryChart data={data} width={props.width} height={props.height} />
+          </>
+        );
+      // return <div>by brewery</div>;
       case StyleChartType.ByDate:
         return <div>by date</div>;
     }
