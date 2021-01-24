@@ -27,3 +27,4 @@ _logs/*
 
 .env
 .eslintcache
+debug.log

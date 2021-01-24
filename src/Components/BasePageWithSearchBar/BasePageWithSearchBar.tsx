@@ -31,10 +31,6 @@ export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (prop
 
   const classes = useBasePageWithSearchBarStyles();
 
-  React.useEffect(() => {
-    onSearchTextChange && onSearchTextChange(searchText);
-  }, [searchText, onSearchTextChange]);
-
   const onCloseButtonClick = () => {
     setSearchText("");
     onClose && onClose();
@@ -44,7 +40,14 @@ export const BasePageWithSearchBar: React.FC<BasePageWithSearchBarProps> = (prop
       <IonHeader>
         <BasePageHeader title={title} onClosePathname={onClosePathname} onClose={onCloseButtonClick} />
         <IonToolbar>
-          <IonSearchbar onIonChange={(event) => setSearchText(event.detail.value ? event.detail.value : "")} debounce={350} />
+          <IonSearchbar
+            onIonChange={(event) => {
+              const _searchText = event.detail.value ? event.detail.value : "";
+              setSearchText(_searchText);
+              onSearchTextChange && onSearchTextChange(_searchText);
+            }}
+            debounce={350}
+          />
         </IonToolbar>
       </IonHeader>
       <IonContent className={classes.root}>
