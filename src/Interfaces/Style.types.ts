@@ -8,3 +8,8 @@ export type AddStyleDto = {
   name: string;
   baseStyle: string;
 };
+
+export type StyleData = {
+  name: string;
+  value: number;
+};
