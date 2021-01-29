@@ -1,6 +1,6 @@
 import React from "react";
 import { RootPage } from "../../Components/RootPage";
-import { IonList, IonSearchbar, IonIcon, IonAlert } from "@ionic/react";
+import { IonList, IonSearchbar, IonIcon, IonItem } from "@ionic/react";
 import { addCircleOutline, filterOutline } from "ionicons/icons";
 import { InventoryItem } from "../../Components/InventoryItem";
 import { QuantityChangeDirection } from "../../Utils";
@@ -36,6 +36,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   const [showFilterPopover, setShowFilterPopover] = React.useState<boolean>(false);
   const [showLoadingAlert, setShowLoadingAlert] = React.useState<boolean>(false);
   const [loadingAlertMessage, setLoadingAlertMessage] = React.useState<string>("");
+  const [inventoryTotal, setInventoryTotal] = React.useState<number>(0);
 
   const waitingOnUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const waitingOnFetchTimeout = React.useRef<NodeJS.Timeout>();
@@ -50,6 +51,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
     // TODO (1): Populate fields if they aren't already expanded
     if (!isWaitingOnBeerFetch) {
       setBeers(currentBeer);
+      setInventoryTotal(currentBeer.reduce((count, beer) => (count += beer.quantity), 0));
     }
   }, [isWaitingOnBeerFetch, currentBeer]);
 
@@ -130,7 +132,12 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
     <>
       <RootPage headerContent={toolbarHeaderContent} loadingSpinnerProps={{ show: showLoadingAlert, message: loadingAlertMessage }}>
         <NetworkErrorAlert />
-        <IonList>{getContent()}</IonList>
+        <IonList>
+          {getContent()}
+          <IonItem className={classes.totalInventoryCountRow}>
+            <div style={{ textAlign: "center", width: "100%" }}>{`Total beers: ${inventoryTotal}`}</div>
+          </IonItem>
+        </IonList>
       </RootPage>
       <InventoryFilterPopover isOpen={showFilterPopover} onClose={() => closeFilterPopover()} />
     </>
