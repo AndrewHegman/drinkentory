@@ -20,4 +20,8 @@ export const useInventoryStyles = makeStyles({
     fontSize: "xxx-large",
     cursor: "pointer",
   },
+  totalInventoryCountRow: {
+    "--background": "lightgrey",
+    textAlign: "center",
+  },
 });
