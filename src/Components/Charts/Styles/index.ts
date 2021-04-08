@@ -1,1 +1,1 @@
-export * from "./StylesChart";
+export * from "./StylesChart/StylesChart";

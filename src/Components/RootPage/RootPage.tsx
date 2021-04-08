@@ -81,6 +81,7 @@ const RootPageComponent = React.forwardRef<HTMLIonContentElement, IRootPageProps
   };
 
   const classes = useRootPageStyles();
+  console.log(loadingSpinnerProps?.show);
   return (
     <IonPage>
       {!isProd && (

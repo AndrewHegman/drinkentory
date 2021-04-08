@@ -1,12 +1,16 @@
 import React from "react";
 import { BarChart } from "recharts";
-import { IonSegment, IonSegmentButton, IonLabel, IonSelectOption, IonSelect } from "@ionic/react";
-import { BreweryDocument, StyleData } from "../../../Interfaces";
+import { useHistory } from "react-router";
+import { IonSegment, IonSegmentButton, IonLabel, IonSelectOption, IonSelect, IonToggle } from "@ionic/react";
+import { BreweryDocument, SearchParams, StyleData } from "../../../../Interfaces";
 import { connect, ConnectedProps } from "react-redux";
-import { RootState } from "../../../Redux/Store/index";
-import { getStylesByBeerData, getStylesByBreweryData } from "./StylesData";
-import { StylesByBreweryChart } from "./StylesByBreweryChart";
+import { RootState } from "../../../../Redux/Store/index";
+import { getStylesByBeerData, getStylesByBreweryData, getStylesByDate, getFavoriteStylesByDate } from "../StylesData";
+import { StylesByBreweryChart } from "../StylesByBreweryChart";
 import { PieChart, Pie, Cell, Sector } from "recharts";
+import { useStylesChartStyles } from "./StylesChart.styles";
+
+import * as queryString from "query-string";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -32,9 +36,56 @@ export const StylesChartComponent: React.FC<IStylesChartProps> = (props) => {
 
   const [chartType, setChartType] = React.useState<StyleChartType>(StyleChartType.ByBrewery);
   const [style, setStyle] = React.useState<string>(props.styles[0]._id);
+  const [showFavoriteStyles, setShowFavoriteStyles] = React.useState<boolean>(false);
+
+  const history = useHistory();
+  const classes = useStylesChartStyles();
+
+  React.useEffect(() => {
+    const urlParams = queryString.parse(history.location.search);
+    if (!urlParams[SearchParams.DataType] || !Object.values(StyleChartType).includes(urlParams[SearchParams.DataType] as StyleChartType)) {
+      urlParams[SearchParams.DataType] = chartType;
+      history.push({
+        search: `?${queryString.stringify(urlParams)}`,
+      });
+    } else {
+      setChartType(urlParams[SearchParams.DataType] as StyleChartType);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const urlParams = queryString.parse(history.location.search);
+
+    urlParams[SearchParams.DataType] = chartType;
+    history.push({
+      search: `?${queryString.stringify(urlParams)}`,
+    });
+  }, [chartType]);
 
   const handleStylesTypeChange = (event: React.MouseEvent<HTMLIonSegmentElement, MouseEvent>) => {
     setChartType((event.target as any).value as StyleChartType);
+  };
+
+  const getStyleSelector = (includeFavorite: boolean = false) => {
+    return (
+      <>
+        {includeFavorite && (
+          <div className={classes.favoritesToggleContainer}>
+            <IonToggle checked={showFavoriteStyles} onIonChange={(e) => setShowFavoriteStyles(e.detail.checked)}>
+              Favorite Styles
+            </IonToggle>
+            <IonLabel className={classes.favoritesToggleLabel}>Show favorites only</IonLabel>
+          </div>
+        )}
+        <IonSelect disabled={showFavoriteStyles} value={style} onIonChange={(e) => setStyle(e.detail.value)} placeholder={"Choose a style"}>
+          {props.styles.map((style) => (
+            <IonSelectOption value={style._id} key={style._id}>
+              {style.name}
+            </IonSelectOption>
+          ))}
+        </IonSelect>
+      </>
+    );
   };
 
   const getChart = () => {
@@ -45,21 +96,22 @@ export const StylesChartComponent: React.FC<IStylesChartProps> = (props) => {
         return <StylesByBeerChart data={data} width={props.width} height={props.height} />;
       case StyleChartType.ByBrewery:
         data = getStylesByBreweryData(style, props.beer);
+        console.log(data);
         return (
           <>
-            <IonSelect value={style} onIonChange={(e) => setStyle(e.detail.value)}>
-              {props.styles.map((style) => (
-                <IonSelectOption value={style._id} key={style._id}>
-                  {style.name}
-                </IonSelectOption>
-              ))}
-            </IonSelect>
+            {getStyleSelector()}
             <StylesByBreweryChart data={data} width={props.width} height={props.height} />
           </>
         );
-      // return <div>by brewery</div>;
       case StyleChartType.ByDate:
-        return <div>by date</div>;
+        data = getStylesByDate(props.history, props.beer, "2021");
+        console.log(data);
+        return (
+          <>
+            {getStyleSelector(true)}
+            <StylesByBreweryChart data={data} width={props.width} height={props.height} />
+          </>
+        );
     }
   };
 

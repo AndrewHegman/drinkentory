@@ -7,6 +7,10 @@ import { NetworkErrorAlert } from "../../Components/Alerts";
 import { getHistoryData } from "./History";
 import { HistoryChart, StylesChart } from "../../Components/Charts";
 import { IonSegment, IonSegmentButton, IonLabel, useIonViewWillEnter } from "@ionic/react";
+import { useHistory } from "react-router";
+import * as queryString from "query-string";
+import { SearchParams } from "../../Interfaces";
+
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 enum StatisticsType {
@@ -36,6 +40,19 @@ const StatisticsComponent: React.FC<IStatisticsProps> = (props) => {
   const containerRef = React.useRef<HTMLIonContentElement>(null);
 
   const dispatch = useDispatch();
+  const history = useHistory();
+
+  React.useEffect(() => {
+    const urlParams = queryString.parse(history.location.search);
+    if (!urlParams[SearchParams.Type] || !Object.values(StatisticsType).includes(urlParams[SearchParams.Type] as StatisticsType)) {
+      urlParams[SearchParams.Type] = statisticsType;
+      history.push({
+        search: `?${queryString.stringify(urlParams)}`,
+      });
+    } else {
+      setStatisticsType(urlParams[SearchParams.Type] as StatisticsType);
+    }
+  }, []);
 
   React.useEffect(() => {
     dispatch(actions.history.fetchHistory());
@@ -44,11 +61,18 @@ const StatisticsComponent: React.FC<IStatisticsProps> = (props) => {
     dispatch(actions.breweries.fetchAllBreweries());
   }, [dispatch]);
 
+  React.useEffect(() => {
+    const urlParams = queryString.parse(history.location.search);
+    urlParams[SearchParams.Type] = statisticsType;
+    history.push({
+      search: `?${queryString.stringify(urlParams)}`,
+    });
+  }, [statisticsType]);
+
   // We have to wait for ion-content to fully render so we can get an accurate size of the container.
   useIonViewWillEnter(() => {
     if (containerRef.current) {
       if (containerRef.current.offsetHeight > 0 && containerRef.current.offsetWidth > 0) {
-        console.log(containerRef.current.offsetHeight);
         setShowChart(true);
       }
     }
@@ -60,8 +84,6 @@ const StatisticsComponent: React.FC<IStatisticsProps> = (props) => {
 
   const getChart = () => {
     if (showChart && !props.isDataLoading) {
-      console.log(containerRef.current?.offsetHeight);
-
       switch (statisticsType) {
         case StatisticsType.Activity:
           return (
@@ -71,7 +93,6 @@ const StatisticsComponent: React.FC<IStatisticsProps> = (props) => {
               width={containerRef.current!.offsetWidth}
             />
           );
-        // return <div>history chart</div>;
         case StatisticsType.Styles:
           return <StylesChart width={containerRef.current?.offsetWidth || 0} height={containerRef.current?.offsetHeight || 0} />;
       }

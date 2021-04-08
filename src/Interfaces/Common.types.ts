@@ -17,7 +17,9 @@ export enum config {
 
 export enum SearchParams {
   Domain = "domain",
-  NewName = "name",
+  DataType = "datatype",
+  Type = "type",
+  CurrentStyle = "currentstyle",
 }
 
 export enum ServerAddress {

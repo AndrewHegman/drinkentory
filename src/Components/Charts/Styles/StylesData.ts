@@ -1,5 +1,10 @@
-import { BeerDocument, StyleDocument, StyleData, BreweryDocument } from "../../../Interfaces";
+import { BeerDocument, StyleDocument, StyleData, BreweryDocument, HistoryDocument } from "../../../Interfaces";
 import * as _ from "lodash";
+import { selectors } from "../../../Redux";
+import { S_IFREG } from "constants";
+import * as d3 from "d3";
+import { nest } from "d3-collection";
+const monthMap = ["Jan", "Feb", "Mar", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const shortenName = (name: string) => {
   if (name.length > 12) {
@@ -38,9 +43,7 @@ export const getStylesByBeerData = (styles: StyleDocument[], beer: BeerDocument[
 };
 
 export const getStylesByBreweryData = (styleId: string, beer: BeerDocument[]) => {
-  console.log(styleId);
   beer.forEach((_beer) => _beer.style._id);
-  console.log(beer.filter((_beer) => _beer.style._id === styleId));
   // Create an interface that has a unique ID so we can properly search...see below
   let tmpData: (StyleData & { _id: string })[] = [];
 
@@ -63,4 +66,35 @@ export const getStylesByBreweryData = (styleId: string, beer: BeerDocument[]) =>
 
   const data: StyleData[] = tmpData.map((_data) => ({ name: _data.name, value: _data.value })).sort((a, b) => b.value - a.value);
   return data;
+};
+
+export const getStylesByDate = (historyData: HistoryDocument[], beer: BeerDocument[], year: string, style?: string): StyleData[] => {
+  if (!style) {
+    return getFavoriteStylesByDate(historyData, beer, year);
+  }
+  return (historyData.map((data) => monthMap[new Date(data.date).getMonth()]) as any) as StyleData[];
+};
+
+export const getFavoriteStylesByDate = (historyData: HistoryDocument[], beer: BeerDocument[], year: string): StyleData[] => {
+  const monthBuckets: { [key: string]: number }[] = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+
+  historyData.forEach((data) => {
+    const tmp = { ...beer.find((beer) => beer._id === data.beerId)?.style!, changeAmt: data.changeAmt, month: new Date(data.date).getMonth() };
+
+    if (tmp._id) {
+      if (!monthBuckets[tmp.month][tmp._id]) {
+        monthBuckets[tmp.month][tmp._id] = tmp.changeAmt;
+      } else {
+        monthBuckets[tmp.month][tmp._id] += tmp.changeAmt;
+      }
+    }
+  });
+  return monthBuckets.map((month) => {
+    const tmp = _.toPairs(month);
+    const min = _.minBy(tmp, (t) => t[1]);
+    return {
+      name: min ? min[0] : "",
+      value: min ? min[1] : 0,
+    };
+  });
 };
