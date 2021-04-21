@@ -7,12 +7,14 @@ import { routes, tabs } from "../../Utils";
 interface IBaseTabsProps {}
 
 export const BaseTabs: React.FC<IBaseTabsProps> = () => {
+  console.log("...ok?");
   return (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
           {Object.keys(routes).map((routeName, idx) => {
             const route = routes[routeName];
+            console.log(routes);
             return (
               <Route
                 key={idx}

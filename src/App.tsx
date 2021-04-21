@@ -19,7 +19,9 @@ import "@ionic/react/css/display.css";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { BaseTabs } from "./Components/BaseTabs";
+import { Login } from "./Pages/Login";
 import { NotFound } from "./Pages/NotFound";
+
 require("dotenv");
 
 export interface IAppProps {}
@@ -31,6 +33,7 @@ export const App: React.FC<IAppProps> = (props: IAppProps) => {
         <IonRouterOutlet>
           <Route path="/inventory" component={BaseTabs} />
           <Route path="/statistics" component={BaseTabs} />
+          <Route path="/login" component={Login} />
           <Redirect exact from="/" to="/inventory" />
           <Route component={NotFound} />
         </IonRouterOutlet>

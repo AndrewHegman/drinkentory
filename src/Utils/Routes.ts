@@ -8,6 +8,7 @@ import { SetBreweryPlace } from "../Pages/SetBreweryPlace";
 import { SetStyle } from "../Pages/SetStyle";
 import { CreateNewStyle } from "../Pages/CreateNewStyle";
 import { SetBaseStyle } from "../Pages/SetBaseStyle";
+import { Login } from "../Pages/Login";
 
 export interface IRoute {
   pathname: string;
@@ -17,6 +18,12 @@ export interface IRoute {
 }
 
 export const routes: { [key: string]: IRoute } = {
+  loginRoute: {
+    pathname: "/login",
+    exact: true,
+    component: Login,
+  },
+
   inventoryRoute: {
     pathname: "/inventory",
     exact: true,
