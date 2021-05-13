@@ -91,6 +91,8 @@ export const beerReducer = (state = initialState, action: BeerActionTypes): Beer
       };
 
     case actionTypes.UPDATE_BEER_FINISHED:
+      console.log("here?");
+      console.log(action.beer);
       return {
         ...state,
         isWaitingOnBeerUpdate: false,

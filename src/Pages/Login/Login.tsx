@@ -6,26 +6,50 @@ import {
   IonToolbar,
   IonContent,
   IonInput,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonCardContent,
   IonItem,
-  IonIcon,
   IonLabel,
   IonButton,
+  useIonRouter,
 } from "@ionic/react";
 import React from "react";
-import { RootPage } from "../../Components/RootPage";
-import { routes } from "../../Utils";
+import { connect, ConnectedProps, useDispatch } from "react-redux";
+import { authorizeUser } from "../../API/user";
+import { RootState } from "../../Redux/Store/index";
+import { users } from "../../Redux/Store/Users/Actions";
 
-export interface ILogin {}
+export interface ILoginProps extends PropsFromRedux {
+  successRedirectRoute: string;
+}
 
-export const Login: React.FC<ILogin> = (props: ILogin) => {
-  let username;
+const mapStateToProps = (state: RootState) => {
+  return {
+    address: state.common.serverAddress,
+  };
+};
 
-  const handleSubmit = () => {
-    console.log("neat");
+export const LoginComponent: React.FC<ILoginProps> = (props: ILoginProps) => {
+  const [username, setUsername] = React.useState<string>("arhegman@gmail.com");
+  const [password, setPassword] = React.useState<string>("changeme1");
+  const [showLadingSpinner, setShowLoadingSpinner] = React.useState<boolean>(false);
+  const dispatch = useDispatch();
+  const ionRouter = useIonRouter();
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    setShowLoadingSpinner(true);
+
+    authorizeUser(props.address, "arhegman@gmail.com", "changeme1")
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        console.log(res);
+        setShowLoadingSpinner(false);
+        dispatch(users.setToken(res.access_token));
+        ionRouter.push(props.successRedirectRoute);
+      });
   };
 
   return (
@@ -36,14 +60,15 @@ export const Login: React.FC<ILogin> = (props: ILogin) => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <form onSubmit={() => handleSubmit()}>
+        {showLadingSpinner && <div>Logging in...</div>}
+        <form onSubmit={handleSubmit}>
           <IonItem>
             <IonLabel position="floating">Floating Label</IonLabel>
-            <IonInput type={"email"} value={username}></IonInput>
+            <IonInput type={"email"} value={username} onIonChange={(event) => setUsername(event.detail.value || "")} required />
           </IonItem>
           <IonItem>
             <IonLabel position="floating">Floating Label</IonLabel>
-            <IonInput type={"password"} value={username}></IonInput>
+            <IonInput type={"password"} value={password} onIonChange={(event) => setPassword(event.detail.value || "")} required></IonInput>
           </IonItem>
           <IonButton type="submit">Submit</IonButton>
         </form>
@@ -51,3 +76,8 @@ export const Login: React.FC<ILogin> = (props: ILogin) => {
     </IonPage>
   );
 };
+
+const connector = connect(mapStateToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+export const Login = connector(LoginComponent);

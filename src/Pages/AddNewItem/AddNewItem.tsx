@@ -90,7 +90,7 @@ export const AddNewItemComponent: React.FC<IAddNewItemModal> = (props) => {
       return false;
     }
     setShowQuantityAlert(false);
-    dispatch(actions.beer.incrementBeerQuantity(beerId.current, parseInt(q)));
+    dispatch(actions.beer.updateBeerQuantity(beerId.current, parseInt(q)));
     ionRouter.push(inventoryRoute.pathname, "back");
     return true;
   };

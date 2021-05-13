@@ -8,13 +8,14 @@ import { SetBreweryPlace } from "../Pages/SetBreweryPlace";
 import { SetStyle } from "../Pages/SetStyle";
 import { CreateNewStyle } from "../Pages/CreateNewStyle";
 import { SetBaseStyle } from "../Pages/SetBaseStyle";
-import { Login } from "../Pages/Login";
+import { Login } from "../Pages/Login/Login";
 
 export interface IRoute {
   pathname: string;
   exact: boolean;
   component: React.FC<any> | React.ComponentClass<any>;
   componentProps?: { [key: string]: any };
+  isPublic?: boolean; // default to false
 }
 
 export const routes: { [key: string]: IRoute } = {
@@ -22,6 +23,10 @@ export const routes: { [key: string]: IRoute } = {
     pathname: "/login",
     exact: true,
     component: Login,
+    isPublic: true,
+    componentProps: {
+      successRedirectRoute: "/inventory",
+    },
   },
 
   inventoryRoute: {
@@ -83,4 +88,6 @@ export const routes: { [key: string]: IRoute } = {
     exact: true,
     component: SetBaseStyle,
   },
-};
+} as const;
+
+console.log(routes);

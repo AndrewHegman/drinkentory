@@ -9,6 +9,7 @@ import * as beerSelectors from "./Store/Beer/Selectors";
 import * as breweriesSelectors from "./Store/Breweries/Selectors";
 import * as geographySelectors from "./Store/Geography/Selectors";
 import * as styleSelectors from "./Store/Styles/Selectors";
+import * as userSelectors from "./Store/Users/Selectors";
 
 import { initialState as beerInitialState } from "./Store/Beer/Reducers";
 import { initialState as breweriesInitialState } from "./Store/Breweries/Reducers";
@@ -16,6 +17,8 @@ import { initialState as commonInitialState } from "./Store/Common/Reducers";
 import { initialState as domainInitialState } from "./Store/Domain/Reducers";
 import { initialState as geographyInitialState } from "./Store/Geography/Reducers";
 import { initialState as styleInitialState } from "./Store/Styles/Reducers";
+import { initialState as userInitialState } from "./Store/Users/Reducers";
+
 import { RootState } from "./Store/index";
 
 export const actions = {
@@ -32,6 +35,7 @@ export const selectors = {
   ...breweriesSelectors,
   ...geographySelectors,
   ...styleSelectors,
+  ...userSelectors,
 };
 
 export const initialState: RootState = {
@@ -52,5 +56,8 @@ export const initialState: RootState = {
   },
   styles: {
     ...styleInitialState,
+  },
+  users: {
+    ...userInitialState,
   },
 };

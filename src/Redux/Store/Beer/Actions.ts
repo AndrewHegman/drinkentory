@@ -6,6 +6,9 @@ import { ThunkAction } from "redux-thunk";
 import { RootState } from "../index";
 import { CommonActions, CommonActionTypes } from "../Common/Types";
 import { formatErrorMessage } from "../../Common";
+import { Beer as BeerAPI } from "../../../API/beer";
+
+type CommonBeerAction = BeerActionTypes | CommonActionTypes;
 
 export const beer = {
   setNewBeerName: (name: string): BeerActionTypes => {
@@ -54,85 +57,61 @@ export const beer = {
   > => {
     return (dispatch, getState) => {
       dispatch(BeerActions.waitOnAddNewBeer());
-      const { beer, common } = getState();
-      const { newBeer } = beer;
+      const { newBeer } = getState().beer;
 
-      return Axios.post(`${common.serverAddress}/v1/beer`, {
-        name: newBeer.name,
-        brewery: newBeer.brewery._id,
-        style: newBeer.style._id,
-        container: newBeer.container,
-        quantity: newBeer.quantity,
-        historicQuantity: newBeer.quantity,
-      })
+      return BeerAPI.addNewBeer(newBeer)
         .then((res) => dispatch(BeerActions.addNewBeerFinished(res.data)))
         .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 
-  fetchAllBeer: (): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
-    return (dispatch, getState) => {
-      const { serverAddress } = getState().common;
-
+  fetchAllBeer: (): ThunkAction<
+    Promise<ReturnType<typeof BeerActions.fetchAllBeerReceived> | CommonActionTypes>,
+    RootState,
+    {},
+    CommonBeerAction
+  > => {
+    return (dispatch) => {
       dispatch(BeerActions.waitOnFetch());
-      return Axios.get(`${serverAddress}/v1/beer`).then((res) => dispatch(BeerActions.fetchAllBeerReceived(res.data)));
+      return BeerAPI.fetchAllBeer()
+        .then((result) => dispatch(BeerActions.fetchAllBeerReceived(result as any)))
+        .catch((error) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 
-  fetchBeerById: (id: string): ThunkAction<Promise<BeerActionTypes>, RootState, {}, BeerActionTypes> => {
-    return (dispatch, getState) => {
+  fetchBeerById: (id: string): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
+    return (dispatch) => {
       dispatch(BeerActions.waitOnFetch());
-      const { serverAddress } = getState().common;
-      return Axios.get(`${serverAddress}/v1/beer/${id}?expand=brewery,style`).then((res) => dispatch(BeerActions.fetchByIdReceived(res.data)));
+      return BeerAPI.fetchBeerById(id)
+        .then((res) => dispatch(BeerActions.fetchByIdReceived(res.data)))
+        .catch((error) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 
   incrementBeerQuantity: (
-    id: string,
-    changeAmt?: number
+    id: string
   ): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
-    return (dispatch, getState) => {
+    return (dispatch) => {
       dispatch(BeerActions.waitOnUpdateBeer());
 
-      const beer = selectors.beer.getBeerById(getState(), id);
-
-      if (beer === undefined) {
-        throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);
-      }
-
-      const { quantity, historicQuantity } = beer;
-      const { serverAddress } = getState().common;
-
-      return Axios.put(`${serverAddress}/v1/beer/${id}`, {
-        quantity: quantity + (changeAmt ? changeAmt : 1),
-        historicQuantity: historicQuantity + (changeAmt ? changeAmt : 1),
-      })
-        .then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)))
-        .catch((error: AxiosError) => {
-          return dispatch(CommonActions.setNetworkError(formatErrorMessage(error)));
-        });
+      return BeerAPI.incrementBeerQuantity(id)
+        .then((res) => {
+          console.log(res);
+          return dispatch(BeerActions.updateBeerFinished(id, res));
+        })
+        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 
   decrementBeerQuantity: (
-    id: string,
-    changeAmt?: number
+    id: string
   ): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
-    return (dispatch, getState) => {
+    return (dispatch) => {
       dispatch(BeerActions.waitOnUpdateBeer());
 
-      const quantity = selectors.beer.getBeerById(getState(), id)?.quantity;
-
-      if (quantity === undefined) {
-        throw new Error(`Unable to find quantity of beer with ID of <b>${id}</b> in Redux store`);
-      }
-      const { serverAddress } = getState().common;
-
-      return Axios.put(`${serverAddress}/v1/beer/${id}`, { quantity: quantity - (changeAmt ? changeAmt : 1) })
+      return BeerAPI.decrementBeerQuantity(id)
         .then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)))
-        .catch((error: AxiosError) => {
-          return dispatch(CommonActions.setNetworkError(formatErrorMessage(error)));
-        });
+        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 
@@ -140,15 +119,12 @@ export const beer = {
     id: string,
     quantity: number
   ): ThunkAction<Promise<BeerActionTypes | CommonActionTypes>, RootState, {}, BeerActionTypes | CommonActionTypes> => {
-    return (dispatch, getState) => {
+    return (dispatch) => {
       dispatch(BeerActions.waitOnUpdateBeer());
-      const { serverAddress } = getState().common;
 
-      return Axios.put(`${serverAddress}/v1/beer/${id}`, { quantity })
+      return BeerAPI.updateBeerQuantity(id, quantity)
         .then((res) => dispatch(BeerActions.updateBeerFinished(id, res.data)))
-        .catch((error: AxiosError) => {
-          return dispatch(CommonActions.setNetworkError(formatErrorMessage(error)));
-        });
+        .catch((error: AxiosError) => dispatch(CommonActions.setNetworkError(formatErrorMessage(error))));
     };
   },
 } as const;

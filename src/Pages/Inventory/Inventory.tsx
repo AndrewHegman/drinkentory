@@ -22,6 +22,7 @@ const mapStateToProps = (state: RootState) => {
     isWaitingOnAddNewBeer: state.beer.isWaitingOnAddNewBeer,
     isWaitingOnBeerUpdate: state.beer.isWaitingOnBeerUpdate,
     isWaitingOnBeerFetch: state.beer.isWaitingOnFetch,
+    isNetworkError: state.common.isNetworkError,
   };
 };
 
@@ -41,7 +42,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   const waitingOnUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const waitingOnFetchTimeout = React.useRef<NodeJS.Timeout>();
 
-  const { currentBeer, isWaitingOnBeerUpdate, isWaitingOnBeerFetch } = props;
+  const { currentBeer, isWaitingOnBeerUpdate, isWaitingOnBeerFetch, isNetworkError } = props;
 
   React.useEffect(() => {
     dispatch(actions.beer.fetchAllBeer());
@@ -58,7 +59,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
   React.useEffect(() => {
     // We should only show loading spinner if the network request is taking a little while
     // Otherwise the loading spinner flashes on the screen
-    if (isWaitingOnBeerUpdate) {
+    if (isWaitingOnBeerUpdate && !isNetworkError) {
       waitingOnUpdateTimeout.current = setTimeout(() => {
         setLoadingAlertMessage("Please wait...");
         setShowLoadingAlert(true);
@@ -67,10 +68,17 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
       setShowLoadingAlert(false);
       waitingOnUpdateTimeout.current && clearTimeout(waitingOnUpdateTimeout.current);
     }
-  }, [isWaitingOnBeerUpdate]);
+  }, [isWaitingOnBeerUpdate, isNetworkError]);
 
   React.useEffect(() => {
-    if (isWaitingOnBeerFetch) {
+    if (isNetworkError) {
+      setShowLoadingAlert(false);
+    }
+  }, [isNetworkError]);
+
+  React.useEffect(() => {
+    if (isWaitingOnBeerFetch && !isNetworkError) {
+      // Don't show error message for 100ms (to prevent it from flickering)
       waitingOnFetchTimeout.current = setTimeout(() => {
         setLoadingAlertMessage("Loading current inventory...this may take some time");
         setShowLoadingAlert(true);
@@ -79,7 +87,7 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
       setShowLoadingAlert(false);
       waitingOnFetchTimeout.current && clearTimeout(waitingOnFetchTimeout.current);
     }
-  }, [isWaitingOnBeerFetch]);
+  }, [isWaitingOnBeerFetch, isNetworkError]);
 
   const handleQuantityChange = (id: string, dir: QuantityChangeDirection) => {
     if (dir === QuantityChangeDirection.Up) {
@@ -127,6 +135,8 @@ const InventoryComponent: React.FC<IInventory> = (props) => {
       </Link>
     </div>
   );
+
+  console.log();
 
   return (
     <>

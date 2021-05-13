@@ -12,7 +12,10 @@ export const beer = {
 
   getAllBeer: (state: RootState): BeerDocument[] => state.beer.inventory,
 
-  getCurrentBeer: (state: RootState): BeerDocument[] => state.beer.inventory.filter((beer) => beer.quantity > 0),
+  getCurrentBeer: (state: RootState): BeerDocument[] => {
+    console.log(state.beer.inventory);
+    return state.beer.inventory.filter((beer) => beer.quantity > 0);
+  },
 
   getBeerById: (state: RootState, id: string): BeerDocument | undefined => state.beer.inventory.find((beer: BeerDocument) => beer._id === id),
 
